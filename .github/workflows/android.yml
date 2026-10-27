@@ -204,7 +204,9 @@ jobs:
           WAVESTR_SMOKE=1 timeout -k 10 240 xvfb-run -a -s "-screen 0 1280x900x24" ./gradlew --no-daemon :desktop:run > "$RUNNER_TEMP/smoke.log" 2>&1 || code=$?
           grep -E "^::" "$RUNNER_TEMP/smoke.log" || echo "::warning::La prueba de arranque no dejó resultados"
           grep -nE "Exception|Error|Caused by|^\s+at (io\.github|uk\.co|org\.jetbrains\.skia|androidx)|SIGSEGV|fatal" "$RUNNER_TEMP/smoke.log" | grep -v "^::" | head -30 | sed 's/^/::warning::smoke /' || true
-          tail -n 15 "$RUNNER_TEMP/smoke.log" | sed 's/^/::notice::smoke tail /'
+          grep -A14 "SIGSEGV" "$RUNNER_TEMP/smoke.log" | head -16 | sed 's/^/::notice::crash /' || true
+          f=$(ls hs_err_pid*.log desktop/hs_err_pid*.log 2>/dev/null | head -1)
+          if [ -n "$f" ]; then grep -A3 -E "^Java frames|^Native frames" "$f" | head -24 | sed 's/^/::notice::hs_err /'; fi
           [ "$code" = 0 ] || echo "::warning::La prueba de arranque terminó con código $code"
 
       - name: Linux (.deb y .tar.gz)
