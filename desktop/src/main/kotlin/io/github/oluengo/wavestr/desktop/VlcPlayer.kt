@@ -165,22 +165,25 @@ class VlcPlayer(private val scope: CoroutineScope, private val onStationPlay: (S
 }
 
 /**
- * Recibe los fotogramas de VLC (RV32 = BGRA) y los deja en un Bitmap de Skia.
- * [frame] cambia con cada fotograma para que Compose vuelva a pintar.
+ * Recibe los fotogramas de VLC (RV32 = BGRA) en un búfer propio; solo el hilo de la UI toca el Bitmap de Skia
+ * ([current]), así nunca se pinta un bitmap a medio escribir. [frame] cambia con cada fotograma.
  */
 class VideoFrames : BufferFormatCallback, RenderCallback {
     val frame = mutableLongStateOf(0L)
-    @Volatile var bitmap: Bitmap? = null
+    private val lock = Any()
+    private var back = ByteArray(0)
+    private var fresh = false
+    @Volatile var width = 0
         private set
-    private var bytes = ByteArray(0)
-    private var width = 0
-    private var height = 0
+    @Volatile var height = 0
+        private set
+    private var ui: Bitmap? = null
 
     override fun getBufferFormat(sourceWidth: Int, sourceHeight: Int): BufferFormat {
-        synchronized(this) {
+        synchronized(lock) {
             width = sourceWidth; height = sourceHeight
-            bytes = ByteArray(sourceWidth * sourceHeight * 4)
-            bitmap = Bitmap().apply { allocPixels(ImageInfo(sourceWidth, sourceHeight, ColorType.BGRA_8888, ColorAlphaType.OPAQUE)) }
+            back = ByteArray(sourceWidth * sourceHeight * 4)
+            fresh = false
         }
         return RV32BufferFormat(sourceWidth, sourceHeight)
     }
@@ -188,19 +191,27 @@ class VideoFrames : BufferFormatCallback, RenderCallback {
     override fun allocatedBuffers(buffers: Array<out ByteBuffer>) {}
 
     override fun display(mediaPlayer: MediaPlayer, nativeBuffers: Array<out ByteBuffer>, bufferFormat: BufferFormat) {
-        synchronized(this) {
-            val b = bitmap ?: return
+        synchronized(lock) {
             val src = nativeBuffers[0]
             src.rewind()
-            if (src.remaining() < bytes.size) return
-            src.get(bytes, 0, bytes.size)
-            b.installPixels(bytes)
+            if (back.isEmpty() || src.remaining() < back.size) return
+            src.get(back, 0, back.size)
+            fresh = true
         }
         frame.longValue++
     }
 
+    /** Llamar solo desde la UI: devuelve el último fotograma (o null si no hay vídeo). */
+    fun current(): Bitmap? = synchronized(lock) {
+        if (width == 0 || height == 0 || back.isEmpty()) return null
+        val b = ui?.takeIf { it.width == width && it.height == height }
+            ?: Bitmap().apply { allocPixels(ImageInfo(width, height, ColorType.BGRA_8888, ColorAlphaType.OPAQUE)) }.also { ui?.close(); ui = it }
+        if (fresh) { b.installPixels(back); fresh = false }
+        b
+    }
+
     fun clear() {
-        synchronized(this) { bitmap = null }
+        synchronized(lock) { width = 0; height = 0; back = ByteArray(0); fresh = false }
         frame.longValue++
     }
 }

@@ -163,7 +163,7 @@ private fun VideoCanvas(frames: VideoFrames, modifier: Modifier) {
     val tick by frames.frame
     Canvas(modifier) {
         tick
-        val bmp = frames.bitmap ?: return@Canvas
+        val bmp = frames.current() ?: return@Canvas
         val img = bmp.asComposeImageBitmap()
         val scale = minOf(size.width / img.width, size.height / img.height)
         val w = (img.width * scale).toInt(); val h = (img.height * scale).toInt()

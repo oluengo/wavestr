@@ -143,8 +143,7 @@ private suspend fun smokeTest(c: DesktopContainer, window: java.awt.Window) {
     c.player.play(NowPlaying("smoke-video", "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", "HLS", "", null, null, isLive = true))
     kotlinx.coroutines.delay(12_000)
     val frames = c.player.video.frame.longValue - before
-    val bmp = c.player.video.bitmap
-    c.player.state.value.let { report(if (frames > 10) "notice" else "error", "Escritorio vídeo: sonando=${it.isPlaying} fotogramas=$frames tamaño=${bmp?.width}x${bmp?.height}") }
+    c.player.state.value.let { report(if (frames > 10) "notice" else "error", "Escritorio vídeo: sonando=${it.isPlaying} fotogramas=$frames tamaño=${c.player.video.width}x${c.player.video.height}") }
     runCatching {
         val r = window.bounds
         val img = java.awt.Robot().createScreenCapture(r)
