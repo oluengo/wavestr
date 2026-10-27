@@ -51,7 +51,7 @@ import io.github.oluengo.radiostr.data.AppLanguage
 import io.github.oluengo.radiostr.ui.theme.Rs
 import java.util.Locale
 
-const val REPO_URL = "https://github.com/oluengo/Radiostr"
+const val REPO_URL = "https://github.com/oluengo/radiostr"
 
 /** Las mismas direcciones que en Usus. Se copian al tocar. */
 private data class Donation(val name: String, val address: String, val color: Color, val symbol: String, val symbolColor: Color)
@@ -130,7 +130,7 @@ fun AboutSection() {
 
     Box(Modifier.padding(top = 8.dp)) {
         Group {
-            LinkRow(Icons.Outlined.Code, R.string.about_source, "github.com/oluengo/Radiostr", "↗") { openUrl(ctx, REPO_URL) }
+            LinkRow(Icons.Outlined.Code, R.string.about_source, "github.com/oluengo/radiostr", "↗") { openUrl(ctx, REPO_URL) }
             HorizontalDivider(color = Rs.colors.line)
             LinkRow(Icons.Outlined.BugReport, R.string.about_bug, stringResource(R.string.about_bug_sub), "↗") { openUrl(ctx, issueUrl(ctx, bug = true)) }
             HorizontalDivider(color = Rs.colors.line)
