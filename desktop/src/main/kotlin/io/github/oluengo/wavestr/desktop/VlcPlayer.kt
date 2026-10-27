@@ -166,7 +166,7 @@ class VlcPlayer(private val scope: CoroutineScope, private val http: okhttp3.OkH
      */
     private fun watchIcy(item: NowPlaying) {
         icyJob?.cancel()
-        if (!item.isRadio || !item.url.startsWith("https://", ignoreCase = true) || item.url.contains(".m3u8", ignoreCase = true)) return
+        if (item.isLive || !item.url.startsWith("https://", ignoreCase = true) || item.url.contains(".m3u8", ignoreCase = true)) return
         icyJob = scope.launch(Dispatchers.IO) {
             var misses = 0
             while (misses < 3) {
