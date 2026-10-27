@@ -19,6 +19,9 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
+      - name: Errores de compilación como anotaciones
+        run: echo "::add-matcher::.github/kotlin-matcher.json"
+
       - name: Comprobar traducciones (ca/es/en)
         run: python3 scripts/check_strings.py
 
