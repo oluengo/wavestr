@@ -30,17 +30,17 @@ jobs:
       RADIOSTR_BETA: ${{ github.ref == 'refs/heads/beta' && '1' || '' }}
       RADIOSTR_BETA_N: ${{ github.run_number }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Errores de compilación como anotaciones
         run: echo "::add-matcher::.github/kotlin-matcher.json"
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 17
 
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
 
       - name: Comprobar traducciones (ca/es/en)
         run: python3 scripts/check_strings.py
@@ -86,6 +86,12 @@ jobs:
           RADIOSTR_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           RADIOSTR_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
+          for v in RADIOSTR_KEYSTORE_PASSWORD RADIOSTR_KEY_ALIAS RADIOSTR_KEY_PASSWORD; do
+            if [ -z "${!v}" ]; then echo "::error::Falta el secret de firma correspondiente a $v"; exit 1; fi
+          done
+          if ! keytool -list -keystore "$RADIOSTR_KEYSTORE" -storepass "$RADIOSTR_KEYSTORE_PASSWORD" -alias "$RADIOSTR_KEY_ALIAS" > /dev/null 2> "$RUNNER_TEMP/kt.err"; then
+            echo "::error::La clave no abre con esos secrets: $(head -c 300 "$RUNNER_TEMP/kt.err" | tr '\n' ' ')"; exit 1
+          fi
           ./gradlew assembleRelease --stacktrace
           mkdir -p dist
           cp app/build/outputs/apk/release/app-release.apk "dist/${{ steps.v.outputs.file }}-${{ steps.v.outputs.version }}.apk"
@@ -115,7 +121,7 @@ jobs:
           "$bt/aapt2" dump permissions "$f" | tee dist/permisos.txt
           if grep -E "STORAGE|LOCATION|CAMERA|RECORD_AUDIO|CONTACTS" dist/permisos.txt; then echo "::error::Permiso no esperado"; exit 1; fi
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.v.outputs.file }}-${{ steps.v.outputs.version }}-android
           path: dist/

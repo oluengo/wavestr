@@ -32,6 +32,27 @@
           "code": 1
         }
       ]
+    },
+    {
+      "owner": "gradle-what-went-wrong",
+      "pattern": [
+        {
+          "regexp": "^\\* What went wrong:$"
+        },
+        {
+          "regexp": "^(.+)$",
+          "message": 1
+        }
+      ]
+    },
+    {
+      "owner": "gradle-cause",
+      "pattern": [
+        {
+          "regexp": "^(?:> |Caused by: )(.*(?:[Kk]eystore|password|alias|[Ss]igning|tampered|key).*)$",
+          "message": 1
+        }
+      ]
     }
   ]
 }

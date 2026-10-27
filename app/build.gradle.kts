@@ -69,6 +69,11 @@ android {
     lint {
         abortOnError = false
     }
+    // Sin el bloque de dependencias cifrado de Google (como Usus; lo piden F-Droid/IzzyOnDroid).
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
 }
 
 dependencies {
