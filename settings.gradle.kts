@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "radiostr"
+rootProject.name = "wavestr"
 include(":app")

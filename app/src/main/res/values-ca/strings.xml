@@ -86,7 +86,7 @@
     <string name="about_ai">Feta amb IA · provada per humans.</string>
     <string name="about_license_title">Llicència MIT i garanties</string>
     <string name="about_license_body">Programari lliure amb llicència MIT: pots fer-lo servir, copiar-lo, modificar-lo i distribuir-lo, també amb finalitats comercials, mantenint l’avís de copyright i de llicència.</string>
-    <string name="about_warranty">Sense garanties. Els autors no responen de pèrdues de dades, pagaments fallits ni cap altre dany derivat del seu ús. Els zaps van directament de la teva cartera al destinatari; Radiostr mai no guarda els teus diners.</string>
+    <string name="about_warranty">Sense garanties. Els autors no responen de pèrdues de dades, pagaments fallits ni cap altre dany derivat del seu ús. Els zaps van directament de la teva cartera al destinatari; Wavestr mai no guarda els teus diners.</string>
     <string name="about_legal_english">El text legal vàlid és l’original en anglès.</string>
     <string name="about_source">Codi font</string>
     <string name="about_bug">Informar d’un problema</string>
@@ -143,7 +143,7 @@
     <string name="radio_pick_tag">Tria un estil per veure’n les emissores.</string>
     <string name="radio_error">No s’ha pogut connectar amb el directori de ràdios. Revisa la connexió i torna-ho a provar.</string>
     <string name="radio_source_note">Directori: Radio Browser (lliure, sense compte). En escoltar una emissora se li suma una escolta.</string>
-    <string name="radio_country_note">Per defecte, el país del dispositiu. Radiostr no fa servir la teva ubicació.</string>
+    <string name="radio_country_note">Per defecte, el país del dispositiu. Wavestr no fa servir la teva ubicació.</string>
     <string name="radio_down">No respon</string>
     <string name="radio_play_error">Aquesta emissora no respon. Prova un altre format o tria una altra emissora.</string>
     <string name="radio_try_other">Prova un altre format</string>
@@ -177,7 +177,7 @@
     <string name="me_signer">signatura</string>
     <string name="me_pubkey">La teva clau pública</string>
     <string name="me_lightning">Cartera Lightning</string>
-    <string name="me_readonly_note">Radiostr llegeix el teu perfil (kind 0) i els teus relays (NIP-65), però no els modifica. Per editar-los fes servir el teu client de Nostr habitual.</string>
+    <string name="me_readonly_note">Wavestr llegeix el teu perfil (kind 0) i els teus relays (NIP-65), però no els modifica. Per editar-los fes servir el teu client de Nostr habitual.</string>
     <plurals name="fav_count">
         <item quantity="one">%d preferit</item>
         <item quantity="other">%d preferits</item>
@@ -211,11 +211,11 @@
     <string name="backup_exported">Còpia desada.</string>
     <string name="backup_m3u_exported">Llista M3U desada.</string>
     <string name="backup_write_error">No s’ha pogut desar el fitxer. Prova en una altra ubicació.</string>
-    <string name="backup_invalid">Aquest fitxer no és una còpia de Radiostr.</string>
+    <string name="backup_invalid">Aquest fitxer no és una còpia de Wavestr.</string>
     <string name="backup_imported">Còpia importada: %1$d preferits, %2$d carpetes, %3$d emissores importades.</string>
     <string name="wallet_title">Zaps i cartera</string>
     <string name="wallet_none">Sense cartera connectada</string>
-    <string name="wallet_none_sub">Els zaps obriran la teva app de cartera per pagar. Amb Nostr Wallet Connect pagues amb un toc sense sortir de Radiostr.</string>
+    <string name="wallet_none_sub">Els zaps obriran la teva app de cartera per pagar. Amb Nostr Wallet Connect pagues amb un toc sense sortir de Wavestr.</string>
     <string name="wallet_connect">Connecta la cartera (NWC)</string>
     <string name="wallet_connect_short">Connecta</string>
     <string name="wallet_connect_help">A la teva cartera (Alby Hub, Primal, Coinos, Rizful…), crea una connexió Nostr Wallet Connect i enganxa’n aquí l’enllaç.</string>
@@ -228,7 +228,7 @@
     <string name="wallet_connected_ok">Cartera connectada.</string>
     <string name="wallet_saved_untested">Cartera desada, però no ha respost a la prova. Torna-ho a provar d’aquí a una estona.</string>
     <string name="wallet_disconnect">Desconnecta</string>
-    <string name="wallet_budget">Límit mensual a Radiostr</string>
+    <string name="wallet_budget">Límit mensual a Wavestr</string>
     <string name="wallet_budget_sub">Els zaps que superin el que queda aquest mes es bloquegen. La cartera pot tenir també el seu propi límit.</string>
     <string name="wallet_default_zap">Import per defecte del zap</string>
     <string name="zap_button">Envia un zap</string>
@@ -239,7 +239,7 @@
     <string name="zap_via_external">Sense cartera connectada: s’obrirà la teva app de cartera per pagar.</string>
     <string name="zap_anonymous">Sense Amber, el zap s’envia de manera anònima.</string>
     <string name="zap_send">⚡ Envia %s sats</string>
-    <string name="zap_custody_note">El pagament va directe a la cartera de l’streamer. Radiostr mai no guarda els teus diners.</string>
+    <string name="zap_custody_note">El pagament va directe a la cartera de l’streamer. Wavestr mai no guarda els teus diners.</string>
     <string name="zap_sent">⚡ %1$s sats enviats a %2$s</string>
     <string name="zap_sent_note">Apareixerà al xat del directe d’aquí a uns segons.</string>
     <string name="zap_pay_external">Factura a punt. Paga-la a la teva app de cartera; el zap apareixerà al xat quan es pagui.</string>

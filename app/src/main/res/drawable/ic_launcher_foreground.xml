@@ -1,23 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Icono provisional: punto de emisión con ondas -->
+<!-- Wavestr: anillo («O») atravesado por una onda de sonido. Cabe en la zona segura del icono adaptable (66 dp). -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M54,47a7,7 0,1 1,0 14a7,7 0,1 1,0 -14z" />
-    <path
         android:strokeColor="#FFFFFF"
-        android:strokeWidth="5"
-        android:strokeLineCap="round"
+        android:strokeWidth="5.6"
         android:fillColor="#00000000"
-        android:pathData="M41,41a18.4,18.4 0,0 0,0 26M67,41a18.4,18.4 0,0 1,0 26" />
+        android:pathData="M54,31.6a22.4,22.4 0,1 1,0 44.8a22.4,22.4 0,1 1,0 -44.8z" />
     <path
-        android:strokeColor="#FFFFFF"
-        android:strokeWidth="5"
+        android:strokeColor="#F5B342"
+        android:strokeWidth="4"
         android:strokeLineCap="round"
+        android:strokeLineJoin="round"
         android:fillColor="#00000000"
-        android:pathData="M33,33a29.7,29.7 0,0 0,0 42M75,33a29.7,29.7 0,0 1,0 42" />
+        android:pathData="M25.2,54L38,54Q42,38 46,54T54,54Q58,70 62,54T70,54L82.8,54" />
 </vector>

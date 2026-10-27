@@ -1,9 +1,9 @@
-// Beta (RADIOSTR_BETA=1, rama beta en CI): otra app, «Radiostr Beta» (io.github.oluengo.radiostr.beta),
+// Beta (WAVESTR_BETA=1, rama beta en CI): otra app, «Wavestr Beta» (io.github.oluengo.wavestr.beta),
 // versión X.Y.Z-beta.N y código versionCode·1000 + N. Se instala junto a la normal, con sus propios datos.
-val radiostrVersion = "0.3.0"
-val radiostrCode = 3
-val beta = System.getenv("RADIOSTR_BETA") == "1"
-val betaN = (System.getenv("RADIOSTR_BETA_N") ?: "0").toInt()
+val wavestrVersion = "0.4.0"
+val wavestrCode = 4
+val beta = System.getenv("WAVESTR_BETA") == "1"
+val betaN = (System.getenv("WAVESTR_BETA_N") ?: "0").toInt()
 
 plugins {
     alias(libs.plugins.android.application)
@@ -12,16 +12,16 @@ plugins {
 }
 
 android {
-    namespace = "io.github.oluengo.radiostr"
+    namespace = "io.github.oluengo.wavestr"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = if (beta) "io.github.oluengo.radiostr.beta" else "io.github.oluengo.radiostr"
+        applicationId = if (beta) "io.github.oluengo.wavestr.beta" else "io.github.oluengo.wavestr"
         minSdk = 26
         targetSdk = 35
-        versionCode = if (beta) radiostrCode * 1000 + (betaN % 1000) else radiostrCode
-        versionName = if (beta) "$radiostrVersion-beta.$betaN" else radiostrVersion
-        resValue("string", "app_name", if (beta) "Radiostr Beta" else "Radiostr")
+        versionCode = if (beta) wavestrCode * 1000 + (betaN % 1000) else wavestrCode
+        versionName = if (beta) "$wavestrVersion-beta.$betaN" else wavestrVersion
+        resValue("string", "app_name", if (beta) "Wavestr Beta" else "Wavestr")
         buildConfigField("boolean", "BETA", beta.toString())
         // Solo nuestros tres idiomas: evita que las librerías añadan otros al APK.
         resourceConfigurations += listOf("en", "es", "ca")
@@ -29,13 +29,13 @@ android {
 
     signingConfigs {
         // Firma de release desde variables de entorno (GitHub Actions). Si faltan, release queda sin firmar.
-        val ksPath = System.getenv("RADIOSTR_KEYSTORE")?.takeIf { it.isNotBlank() }
+        val ksPath = System.getenv("WAVESTR_KEYSTORE")?.takeIf { it.isNotBlank() }
         if (ksPath != null) {
             create("release") {
                 storeFile = file(ksPath)
-                storePassword = System.getenv("RADIOSTR_KEYSTORE_PASSWORD")
-                keyAlias = System.getenv("RADIOSTR_KEY_ALIAS")
-                keyPassword = System.getenv("RADIOSTR_KEY_PASSWORD")
+                storePassword = System.getenv("WAVESTR_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("WAVESTR_KEY_ALIAS")
+                keyPassword = System.getenv("WAVESTR_KEY_PASSWORD")
             }
         }
     }

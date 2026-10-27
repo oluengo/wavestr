@@ -1,7 +1,8 @@
 # Cambios
 
-## Próxima versión
+## 0.4.0
 
+- **Radiostr pasa a llamarse Wavestr** (el nombre ya existía). Nuevo logo: un anillo atravesado por una onda. Es otra app para Android: instala Wavestr y, si tenías Radiostr, exporta antes tus favoritos (Ajustes → Datos y copias) e impórtalos en Wavestr.
 - **Favoritos en Nostr:** tras entrar con Amber, la app pregunta si guardarlos en Nostr, cifrados para que solo tú los leas. Se sincronizan solos y se recuperan en otro móvil con tu cuenta (Ajustes → Favoritos en Nostr).
 - **Violeta** como color de acento por defecto (también en el icono).
 
@@ -16,7 +17,7 @@
 
 ## 0.2.0
 
-- **Tu perfil de Nostr:** tu avatar arriba en cada pestaña; al tocarlo, tu nombre, NIP-05, seguidos, relays, npub y dirección Lightning. Radiostr lo lee, no lo modifica.
+- **Tu perfil de Nostr:** tu avatar arriba en cada pestaña; al tocarlo, tu nombre, NIP-05, seguidos, relays, npub y dirección Lightning. Wavestr lo lee, no lo modifica.
 - **Radio online** con el directorio libre Radio Browser: populares, por país (por defecto el del móvil), por estilo y búsqueda.
 - Las emisoras con varias URLs se agrupan y su **calidad** se elige en el reproductor (Auto: la mejor con wifi, la más ligera con datos).
 - **Canción que suena** (metadatos ICY) y aviso cuando una emisora no responde, con opción de probar otro formato.

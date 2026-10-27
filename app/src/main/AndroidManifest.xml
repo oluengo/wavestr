@@ -24,7 +24,7 @@
     </queries>
 
     <application
-        android:name=".RadiostrApp"
+        android:name=".WavestrApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher"
@@ -32,7 +32,7 @@
         android:localeConfig="@xml/locales_config"
         android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Radiostr">
+        android:theme="@style/Theme.Wavestr">
 
         <activity
             android:name=".MainActivity"

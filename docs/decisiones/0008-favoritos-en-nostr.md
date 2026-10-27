@@ -4,7 +4,7 @@
 
 ## Decisión
 
-Toda la biblioteca (carpetas, subcarpetas, radios, streamers e importadas) se guarda en **un evento reemplazable kind 30078** (NIP-78, datos de app) con `d = radiostr/favorites`, cifrado con **NIP-44 para uno mismo** por Amber.
+Toda la biblioteca (carpetas, subcarpetas, radios, streamers e importadas) se guarda en **un evento reemplazable kind 30078** (NIP-78, datos de app) con `d = wavestr/favorites`, cifrado con **NIP-44 para uno mismo** por Amber.
 
 - Es opcional: tras entrar con Amber, la app **pregunta** una vez; se cambia en Ajustes.
 - Sincroniza sola (al abrir y 4 s después de cada cambio) si Amber dio permiso «siempre»; si no, queda pendiente y se sincroniza a mano.

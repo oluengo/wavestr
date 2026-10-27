@@ -2,11 +2,11 @@
 -keepattributes *Annotation*, InnerClasses
 -dontnote kotlinx.serialization.**
 -keepclassmembers class kotlinx.serialization.json.** { *** Companion; }
--keep,includedescriptorclasses class io.github.oluengo.radiostr.**$$serializer { *; }
--keepclassmembers class io.github.oluengo.radiostr.** {
+-keep,includedescriptorclasses class io.github.oluengo.wavestr.**$$serializer { *; }
+-keepclassmembers class io.github.oluengo.wavestr.** {
     *** Companion;
 }
--keepclasseswithmembers class io.github.oluengo.radiostr.** {
+-keepclasseswithmembers class io.github.oluengo.wavestr.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
 

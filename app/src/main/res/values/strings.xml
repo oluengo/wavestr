@@ -87,7 +87,7 @@
     <string name="about_ai">Built with AI · tested by humans.</string>
     <string name="about_license_title">MIT licence and warranty</string>
     <string name="about_license_body">Free software under the MIT license: you may use, copy, modify and distribute it, including commercially, as long as the copyright and license notice is kept.</string>
-    <string name="about_warranty">No warranty. The authors are not liable for data loss, failed payments or any other damage arising from its use. Zaps go straight from your wallet to the recipient; Radiostr never holds your money.</string>
+    <string name="about_warranty">No warranty. The authors are not liable for data loss, failed payments or any other damage arising from its use. Zaps go straight from your wallet to the recipient; Wavestr never holds your money.</string>
     <string name="about_legal_english">The legally binding text is the English original.</string>
     <string name="about_source">Source code</string>
     <string name="about_bug">Report a problem</string>
@@ -144,7 +144,7 @@
     <string name="radio_pick_tag">Pick a style to see its stations.</string>
     <string name="radio_error">Couldn’t reach the radio directory. Check your connection and try again.</string>
     <string name="radio_source_note">Directory: Radio Browser (free, no account). Playing a station counts a listen there.</string>
-    <string name="radio_country_note">Defaults to your device’s country. Radiostr doesn’t use your location.</string>
+    <string name="radio_country_note">Defaults to your device’s country. Wavestr doesn’t use your location.</string>
     <string name="radio_down">Not responding</string>
     <string name="radio_play_error">This station isn’t responding. Try another format or pick another station.</string>
     <string name="radio_try_other">Try another format</string>
@@ -178,7 +178,7 @@
     <string name="me_signer">signer</string>
     <string name="me_pubkey">Your public key</string>
     <string name="me_lightning">Lightning wallet</string>
-    <string name="me_readonly_note">Radiostr reads your profile (kind 0) and relays (NIP-65) but never changes them. Edit them in your usual Nostr client.</string>
+    <string name="me_readonly_note">Wavestr reads your profile (kind 0) and relays (NIP-65) but never changes them. Edit them in your usual Nostr client.</string>
     <plurals name="fav_count">
         <item quantity="one">%d favorite</item>
         <item quantity="other">%d favorites</item>
@@ -212,11 +212,11 @@
     <string name="backup_exported">Backup saved.</string>
     <string name="backup_m3u_exported">M3U list saved.</string>
     <string name="backup_write_error">Couldn’t save the file. Try another location.</string>
-    <string name="backup_invalid">That file isn’t a Radiostr backup.</string>
+    <string name="backup_invalid">That file isn’t a Wavestr backup.</string>
     <string name="backup_imported">Backup imported: %1$d favorites, %2$d folders, %3$d imported stations.</string>
     <string name="wallet_title">Zaps and wallet</string>
     <string name="wallet_none">No wallet connected</string>
-    <string name="wallet_none_sub">Zaps will open your wallet app to pay. With Nostr Wallet Connect you pay with one tap without leaving Radiostr.</string>
+    <string name="wallet_none_sub">Zaps will open your wallet app to pay. With Nostr Wallet Connect you pay with one tap without leaving Wavestr.</string>
     <string name="wallet_connect">Connect wallet (NWC)</string>
     <string name="wallet_connect_short">Connect</string>
     <string name="wallet_connect_help">In your wallet (Alby Hub, Primal, Coinos, Rizful…), create a Nostr Wallet Connect connection and paste its link here.</string>
@@ -229,7 +229,7 @@
     <string name="wallet_connected_ok">Wallet connected.</string>
     <string name="wallet_saved_untested">Wallet saved, but it didn’t answer the test. Try again in a moment.</string>
     <string name="wallet_disconnect">Disconnect</string>
-    <string name="wallet_budget">Monthly limit in Radiostr</string>
+    <string name="wallet_budget">Monthly limit in Wavestr</string>
     <string name="wallet_budget_sub">Zaps above what’s left this month are blocked. Your wallet may have its own limit too.</string>
     <string name="wallet_default_zap">Default zap amount</string>
     <string name="zap_button">Send zap</string>
@@ -240,7 +240,7 @@
     <string name="zap_via_external">No wallet connected: your wallet app will open to pay.</string>
     <string name="zap_anonymous">Without Amber, the zap is sent anonymously.</string>
     <string name="zap_send">⚡ Send %s sats</string>
-    <string name="zap_custody_note">The payment goes straight to the streamer’s wallet. Radiostr never holds your money.</string>
+    <string name="zap_custody_note">The payment goes straight to the streamer’s wallet. Wavestr never holds your money.</string>
     <string name="zap_sent">⚡ %1$s sats sent to %2$s</string>
     <string name="zap_sent_note">It will show in the stream chat in a few seconds.</string>
     <string name="zap_pay_external">Invoice ready. Pay it in your wallet app; the zap will show in the chat when it’s paid.</string>

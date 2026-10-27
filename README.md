@@ -1,21 +1,21 @@
-# Radiostr
+# Wavestr
 
 Radio online y directos de Nostr en una sola app Android.
 *Online radio and Nostr live streams in one Android app. Català · Español · English.*
 
-> Estado: **beta pública** ([Radiostr Beta](https://github.com/oluengo/radiostr/releases/tag/radiostr-beta)). Aún sin versión estable.
+> Estado: **beta pública** ([Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta)). Aún sin versión estable.
 
 ## Instalar la beta
 
-La beta se instala como otra app, **Radiostr Beta**, junto a la normal y con sus propios datos. Puede tener fallos.
+La beta se instala como otra app, **Wavestr Beta**, junto a la normal y con sus propios datos. Puede tener fallos.
 
-- **Obtainium:** añade `https://github.com/oluengo/radiostr` y activa «incluir pre-releases». Te avisará de cada nueva beta.
-- **Directo:** descarga el APK de la [pre-release Radiostr Beta](https://github.com/oluengo/radiostr/releases/tag/radiostr-beta).
+- **Obtainium:** añade `https://github.com/oluengo/wavestr` y activa «incluir pre-releases». Te avisará de cada nueva beta.
+- **Directo:** descarga el APK de la [pre-release Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta).
 
 Comprueba que la huella del certificado coincide (también está en Ajustes → Acerca de):
 `06:23:37:6B:0C:75:09:50:D7:E5:F1:4E:ED:06:C3:B3:C4:86:8B:B2:64:8B:8F:34:34:76:E2:DE:90:70:0F:89`
 
-¿Algo no va? [Abre un aviso](https://github.com/oluengo/radiostr/issues/new?labels=bug) o usa Ajustes → Acerca de → Informar de un problema.
+¿Algo no va? [Abre un aviso](https://github.com/oluengo/wavestr/issues/new?labels=bug) o usa Ajustes → Acerca de → Informar de un problema.
 
 ## Qué hace
 
@@ -55,10 +55,10 @@ python3 scripts/check_strings.py # comprueba las traducciones
 GitHub Actions ([`android.yml`](.github/workflows/android.yml)):
 
 - **Push a `main`:** tests, traducciones y APK en «Artifacts».
-- **Etiqueta `v*`** (igual que `radiostrVersion` en `app/build.gradle.kts`): Release con el APK firmado y las notas de [CHANGELOG.md](CHANGELOG.md). De ahí lo recogen Obtainium y Zapstore.
-- **Versión de pruebas (beta):** cada push a la rama `beta` publica la pre-release **Radiostr Beta** (`X.Y.Z-beta.N`). Se instala como otra app (`io.github.oluengo.radiostr.beta`), junto a la normal y con sus propios datos. En Obtainium se añade aparte activando «incluir pre-releases». Cuando la beta está bien, se pasa a `main` y se publica la versión normal.
+- **Etiqueta `v*`** (igual que `wavestrVersion` en `app/build.gradle.kts`): Release con el APK firmado y las notas de [CHANGELOG.md](CHANGELOG.md). De ahí lo recogen Obtainium y Zapstore.
+- **Versión de pruebas (beta):** cada push a la rama `beta` publica la pre-release **Wavestr Beta** (`X.Y.Z-beta.N`). Se instala como otra app (`io.github.oluengo.wavestr.beta`), junto a la normal y con sus propios datos. En Obtainium se añade aparte activando «incluir pre-releases». Cuando la beta está bien, se pasa a `main` y se publica la versión normal.
 
-Firma: secrets `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` y `ANDROID_KEY_PASSWORD` (mismos nombres que en Usus; la clave es propia de Radiostr, alias `radiostr`). Sin ellos se genera un APK de depuración y no se publica nada.
+Firma: secrets `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` y `ANDROID_KEY_PASSWORD` (mismos nombres que en Usus; la clave es propia de Wavestr, alias `wavestr`). Sin ellos se genera un APK de depuración y no se publica nada.
 
 ## Traducir
 

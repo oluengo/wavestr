@@ -1,4 +1,4 @@
-# Radiostr · Plan técnico v0.4
+# Wavestr · Plan técnico v0.5
 
 *27 oct 2026 · v0.1 → v0.2: idiomas, decisiones abiertas cerradas, estado de las fases. Ver «Cambios» al final.*
 
@@ -19,7 +19,7 @@ Radio online (PLS/M3U) y directos de Nostr en una sola app Android. **Nostr firs
 | Calidad | Visible siempre. Seleccionable cuando hay varias variantes. Modo Auto según wifi/datos |
 | Extras | Botón sorpresa (favoritas / del mundo), perfiles de streamer, ficha de emisora, tema claro/oscuro/auto |
 | Idiomas | Català, castellano e inglés. Por defecto, el idioma del dispositivo; si no es ninguno de los tres, inglés. Selector en Ajustes |
-| Distribución | GitHub Releases + Obtainium + Zapstore. Sin Google Play ni F-Droid por ahora. Rama `beta` → app aparte «Radiostr Beta» como en Usus |
+| Distribución | GitHub Releases + Obtainium + Zapstore. Sin Google Play ni F-Droid por ahora. Rama `beta` → app aparte «Wavestr Beta» como en Usus |
 | Acerca de | Como Usus: «Hecha con IA · probada por humanos», licencia MIT y garantías, enlaces a GitHub y apoyo con Bitcoin y Lightning (tocar para copiar) |
 | Fuera | Top zappers |
 
@@ -197,7 +197,7 @@ Cada fase termina con un APK usable.
 | 1 | Librería Nostr | Cliente propio mínimo + Amber para firmar y cifrar | 0003 |
 | 2 | Carpetas privadas o públicas | Privadas por defecto (NIP-51 cifradas); se podrá publicar una carpeta | 0006 |
 | 3 | PWA | Descartada por ahora; solo demos HTML de la UI | 0001 |
-| 4 | Nombre | Radiostr. Pendiente: comprobar dominio y Zapstore antes de la primera release | — |
+| 4 | Nombre | Wavestr. Pendiente: comprobar dominio y Zapstore antes de la primera release | — |
 | 5 | Licencia | MIT | 0007 |
 | 6 | Idiomas | ca/es/en, por defecto el del dispositivo o inglés | 0004 |
 | 7 | Distribución | GitHub Releases + Obtainium + Zapstore | 0005 |
@@ -208,11 +208,11 @@ Todas se pueden revisar: cada ADR explica el motivo y qué haría cambiarla.
 
 ## 10. Repositorio
 
-Propuesta: `oluengo/radiostr`
+Propuesta: `oluengo/wavestr`
 
 ```
-radiostr/
-├── app/src/main/java/io/github/oluengo/radiostr/
+wavestr/
+├── app/src/main/java/io/github/oluengo/wavestr/
 │   ├── nostr/       ← eventos, NIP-19/53/65, relays, Amber
 │   ├── player/      ← PlaybackService, PlayerConnection, HLS
 │   ├── data/        ← ajustes e idioma
@@ -240,6 +240,7 @@ radiostr/
 
 ## Cambios
 
+- **v0.5 (27 oct):** el proyecto pasa de Radiostr a **Wavestr** (el nombre estaba cogido), con nuevo logo (anillo y onda) y violeta como acento. Favoritos en Nostr con NIP-78 cifrado (ADR 0008).
 - **v0.4 (27 oct):** F2 en marcha: NWC y zaps con criptografía propia en Kotlin en vez de `secp256k1-kmp` (sin dependencias nativas); carátulas desde la web de la emisora; copia de favoritos JSON/M3U; color de acento (§10, §11).
 - **v0.3 (27 oct):** canal beta y sección «Acerca de» con apoyo al proyecto, como en Usus (§1).
 - **v0.2 (27 oct):** idiomas ca/es/en (§1, §2, §6b); decisiones abiertas cerradas con ADR (§9); cliente Nostr propio y contenedor manual en vez de Koin (§2); un solo módulo para empezar (§3); Room aplazado a F3; distribución sin F-Droid ni Play (§7); estado de F0/F1; estructura real del repo (§10).

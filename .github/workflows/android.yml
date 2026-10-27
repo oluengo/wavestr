@@ -1,8 +1,8 @@
-# Compila Radiostr (Android).
+# Compila Wavestr (Android).
 # - Push a main / pull request: tests, traducciones y APK en «Artifacts».
-# - Push a la rama beta: «Radiostr Beta», otra app (io.github.oluengo.radiostr.beta) con sus propios datos,
-#   versión X.Y.Z-beta.N. Se publica como pre-release «Radiostr Beta» (etiqueta radiostr-beta, se rehace en cada push).
-# - Etiqueta v* (p. ej. v0.1.0, igual que radiostrVersion en app/build.gradle.kts): Release con el APK firmado.
+# - Push a la rama beta: «Wavestr Beta», otra app (io.github.oluengo.wavestr.beta) con sus propios datos,
+#   versión X.Y.Z-beta.N. Se publica como pre-release «Wavestr Beta» (etiqueta wavestr-beta, se rehace en cada push).
+# - Etiqueta v* (p. ej. v0.1.0, igual que wavestrVersion en app/build.gradle.kts): Release con el APK firmado.
 #   De ahí lo recogen Obtainium y Zapstore.
 # Firma: secretos ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD
 # (los mismos nombres que en Usus). Sin ellos se genera un APK de depuración y no se publica nada.
@@ -27,8 +27,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      RADIOSTR_BETA: ${{ github.ref == 'refs/heads/beta' && '1' || '' }}
-      RADIOSTR_BETA_N: ${{ github.run_number }}
+      WAVESTR_BETA: ${{ github.ref == 'refs/heads/beta' && '1' || '' }}
+      WAVESTR_BETA_N: ${{ github.run_number }}
     steps:
       - uses: actions/checkout@v7
 
@@ -51,18 +51,18 @@ jobs:
       - name: Versión
         id: v
         run: |
-          v="$(sed -n 's/^val radiostrVersion = "\(.*\)"/\1/p' app/build.gradle.kts)"
-          if [ "$RADIOSTR_BETA" = "1" ]; then
-            echo "version=$v-beta.$RADIOSTR_BETA_N" >> "$GITHUB_OUTPUT"; echo "file=radiostr-beta" >> "$GITHUB_OUTPUT"
+          v="$(sed -n 's/^val wavestrVersion = "\(.*\)"/\1/p' app/build.gradle.kts)"
+          if [ "$WAVESTR_BETA" = "1" ]; then
+            echo "version=$v-beta.$WAVESTR_BETA_N" >> "$GITHUB_OUTPUT"; echo "file=wavestr-beta" >> "$GITHUB_OUTPUT"
           else
-            echo "version=$v" >> "$GITHUB_OUTPUT"; echo "file=radiostr" >> "$GITHUB_OUTPUT"
+            echo "version=$v" >> "$GITHUB_OUTPUT"; echo "file=wavestr" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Comprobar que la etiqueta coincide con la versión
         if: startsWith(github.ref, 'refs/tags/v')
         run: |
           if [ "${GITHUB_REF_NAME#v}" != "${{ steps.v.outputs.version }}" ]; then
-            echo "::error::La etiqueta $GITHUB_REF_NAME no coincide con radiostrVersion ${{ steps.v.outputs.version }}"; exit 1
+            echo "::error::La etiqueta $GITHUB_REF_NAME no coincide con wavestrVersion ${{ steps.v.outputs.version }}"; exit 1
           fi
 
       - name: Clave de firma
@@ -71,8 +71,8 @@ jobs:
           KS: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
           if [ -n "$KS" ]; then
-            echo "$KS" | base64 -d > "$RUNNER_TEMP/radiostr.jks"
-            echo "RADIOSTR_KEYSTORE=$RUNNER_TEMP/radiostr.jks" >> "$GITHUB_ENV"
+            echo "$KS" | base64 -d > "$RUNNER_TEMP/wavestr.jks"
+            echo "WAVESTR_KEYSTORE=$RUNNER_TEMP/wavestr.jks" >> "$GITHUB_ENV"
             echo "signed=true" >> "$GITHUB_OUTPUT"
           else
             echo "::warning::Sin clave de firma: se genera un APK de depuración y no se publica nada."
@@ -82,20 +82,20 @@ jobs:
       - name: Compilar (firmado)
         if: steps.key.outputs.signed == 'true'
         env:
-          RADIOSTR_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          RADIOSTR_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          RADIOSTR_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          WAVESTR_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          WAVESTR_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          WAVESTR_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          for v in RADIOSTR_KEYSTORE_PASSWORD RADIOSTR_KEY_ALIAS RADIOSTR_KEY_PASSWORD; do
+          for v in WAVESTR_KEYSTORE_PASSWORD WAVESTR_KEY_ALIAS WAVESTR_KEY_PASSWORD; do
             if [ -z "${!v}" ]; then echo "::error::Falta el secret de firma correspondiente a $v"; exit 1; fi
           done
           # Diagnóstico sin mostrar secretos: tamaño y tipo del archivo, si abre la contraseña y qué alias contiene.
-          echo "Keystore: $(stat -c %s "$RADIOSTR_KEYSTORE") bytes · $(file -b "$RADIOSTR_KEYSTORE" | cut -c1-60)"
-          if ! keytool -list -keystore "$RADIOSTR_KEYSTORE" -storepass "$RADIOSTR_KEYSTORE_PASSWORD" > "$RUNNER_TEMP/kt.out" 2>&1; then
+          echo "Keystore: $(stat -c %s "$WAVESTR_KEYSTORE") bytes · $(file -b "$WAVESTR_KEYSTORE" | cut -c1-60)"
+          if ! keytool -list -keystore "$WAVESTR_KEYSTORE" -storepass "$WAVESTR_KEYSTORE_PASSWORD" > "$RUNNER_TEMP/kt.out" 2>&1; then
             echo "::error::ANDROID_KEYSTORE_PASSWORD no abre el keystore (o ANDROID_KEYSTORE_BASE64 no es un keystore válido): $(grep -i 'error' "$RUNNER_TEMP/kt.out" | head -c 300)"; exit 1
           fi
           aliases=$(grep -iE 'PrivateKeyEntry' "$RUNNER_TEMP/kt.out" | cut -d, -f1 | tr '\n' ' ')
-          if ! keytool -list -keystore "$RADIOSTR_KEYSTORE" -storepass "$RADIOSTR_KEYSTORE_PASSWORD" -alias "$RADIOSTR_KEY_ALIAS" > /dev/null 2>&1; then
+          if ! keytool -list -keystore "$WAVESTR_KEYSTORE" -storepass "$WAVESTR_KEYSTORE_PASSWORD" -alias "$WAVESTR_KEY_ALIAS" > /dev/null 2>&1; then
             echo "::error::ANDROID_KEY_ALIAS no coincide. Alias en el keystore: $aliases"; exit 1
           fi
           ./gradlew assembleRelease --stacktrace
@@ -119,7 +119,7 @@ jobs:
         run: |
           f=$(ls dist/*.apk); bt=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
           "$bt/apksigner" verify --print-certs "$f" | grep -i sha-256 | tee dist/firma-sha256.txt
-          rm -f "$RUNNER_TEMP/radiostr.jks"
+          rm -f "$RUNNER_TEMP/wavestr.jks"
 
       - name: Permisos del APK
         run: |
@@ -141,15 +141,15 @@ jobs:
           v="${{ steps.v.outputs.version }}"
           awk -v v="$v" '$0 ~ "^## " v {f=1; next} /^## / && f {exit} f' CHANGELOG.md > "$RUNNER_TEMP/notas.md"
           printf '\n---\nHuella del certificado: `%s`\n' "$(sed 's/.*: //' dist/firma-sha256.txt)" >> "$RUNNER_TEMP/notas.md"
-          gh release create "$GITHUB_REF_NAME" dist/*.apk --title "Radiostr $v" --notes-file "$RUNNER_TEMP/notas.md"
+          gh release create "$GITHUB_REF_NAME" dist/*.apk --title "Wavestr $v" --notes-file "$RUNNER_TEMP/notas.md"
 
-      # Beta: una sola pre-release «Radiostr Beta» (etiqueta radiostr-beta) que se rehace en cada push; no cuenta como última versión.
+      # Beta: una sola pre-release «Wavestr Beta» (etiqueta wavestr-beta) que se rehace en cada push; no cuenta como última versión.
       - name: Pre-release beta
-        if: env.RADIOSTR_BETA == '1' && steps.key.outputs.signed == 'true'
+        if: env.WAVESTR_BETA == '1' && steps.key.outputs.signed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release delete radiostr-beta --cleanup-tag --yes || true
+          gh release delete wavestr-beta --cleanup-tag --yes || true
           printf '%s\n\n%s\n' "**Versión de pruebas** ${{ steps.v.outputs.version }} · $(git log -1 --format=%s)" \
-            "Se instala como otra app, «Radiostr Beta», con sus propios datos: no toca la Radiostr normal. Puede tener fallos." > "$RUNNER_TEMP/beta.md"
-          gh release create radiostr-beta dist/*.apk --prerelease --target "$GITHUB_SHA" --title "Radiostr Beta ${{ steps.v.outputs.version }}" --notes-file "$RUNNER_TEMP/beta.md"
+            "Se instala como otra app, «Wavestr Beta», con sus propios datos: no toca la Wavestr normal. Puede tener fallos." > "$RUNNER_TEMP/beta.md"
+          gh release create wavestr-beta dist/*.apk --prerelease --target "$GITHUB_SHA" --title "Wavestr Beta ${{ steps.v.outputs.version }}" --notes-file "$RUNNER_TEMP/beta.md"
