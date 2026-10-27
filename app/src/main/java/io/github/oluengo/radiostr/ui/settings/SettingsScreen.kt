@@ -1,0 +1,188 @@
+package io.github.oluengo.radiostr.ui.settings
+
+import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.github.oluengo.radiostr.AppContainer
+import io.github.oluengo.radiostr.BuildConfig
+import io.github.oluengo.radiostr.R
+import io.github.oluengo.radiostr.data.AppLanguage
+import io.github.oluengo.radiostr.data.AppSettings
+import io.github.oluengo.radiostr.data.LoginMethod
+import io.github.oluengo.radiostr.data.ThemeMode
+import io.github.oluengo.radiostr.nostr.Nip19
+import io.github.oluengo.radiostr.nostr.RelayPool
+import io.github.oluengo.radiostr.ui.common.LoginButtons
+import io.github.oluengo.radiostr.ui.common.ScreenHeader
+import io.github.oluengo.radiostr.ui.common.SectionLabel
+import io.github.oluengo.radiostr.ui.theme.Rs
+import kotlinx.coroutines.launch
+
+@Composable
+fun SettingsScreen(c: AppContainer) {
+    val s by c.settings.flow.collectAsStateWithLifecycle(initialValue = AppSettings())
+    val scope = rememberCoroutineScope()
+
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+        ScreenHeader(stringResource(R.string.tab_settings), null)
+        Column(Modifier.padding(horizontal = 20.dp)) {
+
+            SectionLabel(stringResource(R.string.settings_appearance))
+            Group {
+                Text(stringResource(R.string.settings_theme), fontWeight = FontWeight.SemiBold)
+                val themes = listOf(
+                    ThemeMode.LIGHT to R.string.theme_light,
+                    ThemeMode.DARK to R.string.theme_dark,
+                    ThemeMode.SYSTEM to R.string.theme_system,
+                )
+                SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(top = 8.dp)) {
+                    themes.forEachIndexed { i, (mode, label) ->
+                        SegmentedButton(
+                            selected = s.theme == mode,
+                            onClick = { scope.launch { c.settings.setTheme(mode) } },
+                            shape = SegmentedButtonDefaults.itemShape(i, themes.size),
+                        ) { Text(stringResource(label)) }
+                    }
+                }
+            }
+
+            SectionLabel(stringResource(R.string.settings_language))
+            LanguagePicker()
+
+            SectionLabel(stringResource(R.string.settings_playback))
+            Group {
+                ToggleRow(R.string.set_audio_screen_off, R.string.set_audio_screen_off_sub, s.audioOnScreenOff) {
+                    scope.launch { c.settings.setAudioOnScreenOff(it) }
+                }
+                HorizontalDivider(color = Rs.colors.line)
+                ToggleRow(R.string.set_audio_cell, R.string.set_audio_cell_sub, s.audioOnCellular) {
+                    scope.launch { c.settings.setAudioOnCellular(it) }
+                }
+            }
+
+            SectionLabel(stringResource(R.string.settings_account))
+            Group {
+                val pk = s.pubkey
+                if (pk == null) {
+                    Text(stringResource(R.string.account_none), fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.login_prompt_body), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
+                    LoginButtons(c, Modifier.padding(top = 10.dp))
+                } else {
+                    Text(Nip19.shortNpub(pk), fontFamily = FontFamily.Monospace, fontWeight = FontWeight.SemiBold)
+                    Text(
+                        stringResource(if (s.loginMethod == LoginMethod.AMBER) R.string.account_amber else R.string.account_readonly),
+                        color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall,
+                    )
+                    OutlinedButton(onClick = { scope.launch { c.settings.logout() } }, modifier = Modifier.padding(top = 8.dp)) {
+                        Text(stringResource(R.string.logout))
+                    }
+                }
+            }
+
+            SectionLabel(stringResource(R.string.settings_relays))
+            Group {
+                (RelayPool.DEFAULT + RelayPool.INDEXERS).forEach {
+                    Text(it, fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(vertical = 3.dp))
+                }
+                Text(stringResource(R.string.relays_note), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 6.dp))
+            }
+
+            SectionLabel(stringResource(R.string.settings_about))
+            Group {
+                Text(stringResource(R.string.version, BuildConfig.VERSION_NAME), fontWeight = FontWeight.SemiBold)
+                Text("github.com/oluengo/radiostr", color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
+            }
+            Row(Modifier.padding(vertical = 24.dp)) {}
+        }
+    }
+}
+
+@Composable
+private fun LanguagePicker() {
+    // Se lee al componer; AppCompat recrea la Activity al cambiar, así que no hace falta observarlo.
+    var current by remember { mutableStateOf(AppLanguage.current()) }
+    val options = listOf<Pair<String?, String>>(
+        null to stringResource(R.string.lang_system),
+        "ca" to "Català",
+        "es" to "Español",
+        "en" to "English",
+    )
+    Group {
+        options.forEach { (tag, label) ->
+            Row(
+                Modifier.fillMaxWidth()
+                    .selectable(selected = current == tag, role = Role.RadioButton, onClick = {
+                        current = tag
+                        AppLanguage.set(tag)
+                    })
+                    .padding(vertical = 2.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                RadioButton(selected = current == tag, onClick = null)
+                Text(label, modifier = Modifier.padding(start = 12.dp))
+            }
+        }
+        Text(stringResource(R.string.lang_note), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 4.dp))
+    }
+}
+
+@Composable
+private fun ToggleRow(@StringRes title: Int, @StringRes sub: Int, checked: Boolean, onChange: (Boolean) -> Unit) {
+    Row(
+        Modifier.fillMaxWidth().selectable(selected = checked, role = Role.Switch) { onChange(!checked) }.padding(vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(stringResource(title), fontWeight = FontWeight.SemiBold)
+            Text(stringResource(sub), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
+        }
+        Switch(checked = checked, onCheckedChange = null)
+    }
+}
+
+@Composable
+private fun Group(content: @Composable ColumnScope.() -> Unit) {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        border = BorderStroke(1.dp, Rs.colors.line),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(Modifier.padding(14.dp), content = content)
+    }
+}

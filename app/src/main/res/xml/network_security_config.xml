@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Muchas emisoras de radio aún emiten por http://. Se permite texto plano para la
+     reproducción; el resto de la app (relays, APIs, LNURL) usa siempre https/wss. -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

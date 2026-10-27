@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tab_live">Directes</string>
+    <string name="tab_radio">Ràdios</string>
+    <string name="tab_favorites">Preferits</string>
+    <string name="tab_settings">Configuració</string>
+
+    <string name="live_title">En directe</string>
+    <string name="live_sub_following">De la gent que segueixes a Nostr</string>
+    <string name="live_sub_global">A tot Nostr</string>
+    <string name="chip_following">Seguits</string>
+    <string name="chip_global">Global</string>
+    <string name="featured">Destacat</string>
+    <string name="also_live_count">També en directe · %d</string>
+    <string name="live_badge">EN DIRECTE</string>
+    <string name="listeners">%d escoltant</string>
+    <string name="untitled_stream">Directe sense títol</string>
+    <string name="live_empty_following">Ningú dels que segueixes és en directe ara. Llisca cap avall per actualitzar o mira Global.</string>
+    <string name="live_empty_global">Ara mateix no hi ha directes en aquests relays. Llisca cap avall per actualitzar.</string>
+    <string name="live_error">No s’ha pogut connectar amb els relays. Revisa la connexió i llisca cap avall per tornar-ho a provar.</string>
+    <string name="refresh">Actualitza</string>
+
+    <string name="login_prompt_title">Inicia la sessió per veure qui segueixes</string>
+    <string name="login_prompt_body">Connecta’t amb Amber o enganxa el teu npub per navegar en mode només lectura.</string>
+    <string name="login_amber">Entra amb Amber</string>
+    <string name="login_npub">Fes servir el meu npub (només lectura)</string>
+    <string name="npub_explain">En mode només lectura veus els directes de la gent que segueixes. Per enviar zaps més endavant necessitaràs Amber.</string>
+    <string name="npub_invalid">Això no sembla un npub. Ha de començar per npub1.</string>
+    <string name="amber_missing">Amber no està instal·lat. Instal·la’l per iniciar la sessió o fes servir el teu npub.</string>
+    <string name="amber_failed">Amber no ha retornat cap clau. Torna-ho a provar o fes servir el teu npub.</string>
+    <string name="save">Desa</string>
+    <string name="cancel">Cancel·la</string>
+    <string name="back">Enrere</string>
+
+    <string name="player_audio">Només àudio</string>
+    <string name="player_video">Vídeo</string>
+    <string name="mode_audio">NOMÉS ÀUDIO</string>
+    <string name="mode_video">VÍDEO</string>
+    <string name="hint_video">Vídeo · canvia a només àudio sense tallar el directe.</string>
+    <string name="hint_audio_separate">Aquest directe té la pista d’àudio separada: estalvies bateria i dades.</string>
+    <string name="hint_audio_muxed">Estalvies bateria. Aquest directe barreja àudio i vídeo, així que les dades no baixen.</string>
+    <string name="hint_audio_unknown">Només àudio: el vídeo no es descodifica per estalviar bateria.</string>
+    <string name="hint_cellular">Estàs amb dades mòbils, així que només sona l’àudio. Toca Vídeo per veure’l igualment o canvia-ho a Configuració.</string>
+    <string name="quality_video">Qualitat del vídeo</string>
+    <string name="quality_auto">Auto</string>
+    <string name="quality_auto_desc">Auto (la millor per a la teva connexió)</string>
+    <string name="play">Reprodueix</string>
+    <string name="pause">Pausa</string>
+    <string name="stop">Atura</string>
+    <string name="minimize">Minimitza</string>
+    <string name="view_profile">Mostra el perfil ›</string>
+    <string name="player_error">No s’ha pogut reproduir aquest directe. Potser ja ha acabat.</string>
+    <string name="nothing_playing">No sona res.</string>
+
+    <string name="profile_live_now">En directe ara</string>
+    <string name="profile_past">Directes anteriors</string>
+    <string name="profile_no_past">Encara no hi ha enregistraments.</string>
+    <string name="recording">enregistrament</string>
+    <string name="copy">Copia</string>
+    <string name="copied">Copiat</string>
+
+    <string name="radio_soon_title">Les ràdios són de camí</string>
+    <string name="radio_soon_body">La ràdio en línia, amb importació PLS/M3U i un directori mundial, arriba en una propera versió.</string>
+    <string name="fav_soon_title">Els preferits són de camí</string>
+    <string name="fav_soon_body">Les carpetes i subcarpetes sincronitzades per Nostr arriben en una propera versió.</string>
+
+    <string name="settings_appearance">Aparença</string>
+    <string name="settings_theme">Tema</string>
+    <string name="theme_light">Clar</string>
+    <string name="theme_dark">Fosc</string>
+    <string name="theme_system">Auto</string>
+    <string name="settings_language">Idioma</string>
+    <string name="lang_system">Idioma del dispositiu</string>
+    <string name="lang_note">L’idioma del dispositiu fa servir Català o Español si el mòbil els té configurats, i English en qualsevol altre cas.</string>
+    <string name="settings_playback">Reproducció</string>
+    <string name="set_audio_screen_off">Passa a àudio en apagar la pantalla</string>
+    <string name="set_audio_screen_off_sub">En tornar, recupera el vídeo</string>
+    <string name="set_audio_cell">Només àudio amb dades mòbils</string>
+    <string name="set_audio_cell_sub">Vídeo només amb wifi</string>
+    <string name="settings_account">Compte</string>
+    <string name="account_none">Sense sessió</string>
+    <string name="account_amber">Sessió iniciada amb Amber</string>
+    <string name="account_readonly">Només lectura</string>
+    <string name="logout">Tanca la sessió</string>
+    <string name="settings_relays">Relays</string>
+    <string name="relays_note">Els teus relays (NIP-65) s’afegeixen sols en iniciar la sessió.</string>
+    <string name="settings_about">Quant a</string>
+    <string name="version">Versió %s</string>
+</resources>

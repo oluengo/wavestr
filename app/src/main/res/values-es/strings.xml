@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tab_live">Directos</string>
+    <string name="tab_radio">Radios</string>
+    <string name="tab_favorites">Favoritos</string>
+    <string name="tab_settings">Ajustes</string>
+
+    <string name="live_title">En directo</string>
+    <string name="live_sub_following">De la gente que sigues en Nostr</string>
+    <string name="live_sub_global">En todo Nostr</string>
+    <string name="chip_following">Seguidos</string>
+    <string name="chip_global">Global</string>
+    <string name="featured">Destacado</string>
+    <string name="also_live_count">También en directo · %d</string>
+    <string name="live_badge">EN DIRECTO</string>
+    <string name="listeners">%d escuchando</string>
+    <string name="untitled_stream">Directo sin título</string>
+    <string name="live_empty_following">Nadie de los que sigues está en directo ahora. Desliza hacia abajo para actualizar o mira Global.</string>
+    <string name="live_empty_global">No hay directos en estos relays ahora mismo. Desliza hacia abajo para actualizar.</string>
+    <string name="live_error">No se ha podido conectar con los relays. Revisa la conexión y desliza hacia abajo para reintentar.</string>
+    <string name="refresh">Actualizar</string>
+
+    <string name="login_prompt_title">Inicia sesión para ver a quién sigues</string>
+    <string name="login_prompt_body">Conéctate con Amber o pega tu npub para navegar en solo lectura.</string>
+    <string name="login_amber">Entrar con Amber</string>
+    <string name="login_npub">Usar mi npub (solo lectura)</string>
+    <string name="npub_explain">En solo lectura ves los directos de la gente que sigues. Para enviar zaps más adelante necesitarás Amber.</string>
+    <string name="npub_invalid">Eso no parece un npub. Debe empezar por npub1.</string>
+    <string name="amber_missing">Amber no está instalado. Instálalo para iniciar sesión o usa tu npub.</string>
+    <string name="amber_failed">Amber no ha devuelto ninguna clave. Inténtalo de nuevo o usa tu npub.</string>
+    <string name="save">Guardar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="back">Volver</string>
+
+    <string name="player_audio">Solo audio</string>
+    <string name="player_video">Vídeo</string>
+    <string name="mode_audio">SOLO AUDIO</string>
+    <string name="mode_video">VÍDEO</string>
+    <string name="hint_video">Vídeo · cambia a solo audio sin cortar el directo.</string>
+    <string name="hint_audio_separate">Este directo tiene pista de audio separada: ahorras batería y datos.</string>
+    <string name="hint_audio_muxed">Ahorras batería. Este directo mezcla audio y vídeo, así que los datos no bajan.</string>
+    <string name="hint_audio_unknown">Solo audio: el vídeo no se decodifica para ahorrar batería.</string>
+    <string name="hint_cellular">Estás con datos móviles, así que suena solo el audio. Toca Vídeo para verlo igualmente o cámbialo en Ajustes.</string>
+    <string name="quality_video">Calidad de vídeo</string>
+    <string name="quality_auto">Auto</string>
+    <string name="quality_auto_desc">Auto (la mejor para tu conexión)</string>
+    <string name="play">Reproducir</string>
+    <string name="pause">Pausar</string>
+    <string name="stop">Detener</string>
+    <string name="minimize">Minimizar</string>
+    <string name="view_profile">Ver perfil ›</string>
+    <string name="player_error">No se ha podido reproducir este directo. Puede que haya terminado.</string>
+    <string name="nothing_playing">No suena nada.</string>
+
+    <string name="profile_live_now">En directo ahora</string>
+    <string name="profile_past">Directos anteriores</string>
+    <string name="profile_no_past">Aún no hay grabaciones.</string>
+    <string name="recording">grabación</string>
+    <string name="copy">Copiar</string>
+    <string name="copied">Copiado</string>
+
+    <string name="radio_soon_title">Las radios están en camino</string>
+    <string name="radio_soon_body">La radio online, con importación PLS/M3U y un directorio mundial, llega en una próxima versión.</string>
+    <string name="fav_soon_title">Los favoritos están en camino</string>
+    <string name="fav_soon_body">Las carpetas y subcarpetas sincronizadas por Nostr llegan en una próxima versión.</string>
+
+    <string name="settings_appearance">Apariencia</string>
+    <string name="settings_theme">Tema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Oscuro</string>
+    <string name="theme_system">Auto</string>
+    <string name="settings_language">Idioma</string>
+    <string name="lang_system">Idioma del dispositivo</string>
+    <string name="lang_note">El idioma del dispositivo usa Català o Español si tu móvil está en ellos, y English en cualquier otro caso.</string>
+    <string name="settings_playback">Reproducción</string>
+    <string name="set_audio_screen_off">Pasar a audio al apagar la pantalla</string>
+    <string name="set_audio_screen_off_sub">Al volver, recupera el vídeo</string>
+    <string name="set_audio_cell">Solo audio con datos móviles</string>
+    <string name="set_audio_cell_sub">Vídeo solo con wifi</string>
+    <string name="settings_account">Cuenta</string>
+    <string name="account_none">Sin sesión</string>
+    <string name="account_amber">Sesión iniciada con Amber</string>
+    <string name="account_readonly">Solo lectura</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="settings_relays">Relays</string>
+    <string name="relays_note">Tus propios relays (NIP-65) se añaden solos al iniciar sesión.</string>
+    <string name="settings_about">Acerca de</string>
+    <string name="version">Versión %s</string>
+</resources>
