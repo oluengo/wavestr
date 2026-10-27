@@ -1,6 +1,6 @@
 # Cambios
 
-## Próxima versión
+## 0.6.0
 
 - **Wavestr para Linux y Windows** (beta): `.deb`, `.tar.gz` y `.msi`. Ventana que se adapta (formato móvil, navegación lateral o tres columnas con el reproductor fijo), icono en la bandeja para seguir escuchando con la ventana cerrada, tamaño y posición recordados. Directos, radios (con importación PLS/M3U), favoritos con carpetas, sorpresa, relays, copias para pasar los favoritos del móvil. Reproduce con VLC. Inicio de sesión con npub (solo lectura) por ahora.
 
