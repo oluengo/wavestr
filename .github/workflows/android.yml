@@ -196,23 +196,33 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends vlc-bin vlc-plugin-base vlc-plugin-video-output xvfb > /dev/null
 
-      - name: Prueba de arranque (xvfb + VLC)
+      - name: Prueba de arranque · HLS con adaptive (xvfb + VLC)
         if: runner.os == 'Linux'
         run: |
-          ./gradlew :desktop:classes --stacktrace
-          for demux in adaptive avformat; do
-            rm -f /tmp/wavestr_hs_err.log
-            code=0
-            if [ "$demux" = avformat ]; then export WAVESTR_HLS_DEMUX=avformat; else unset WAVESTR_HLS_DEMUX; fi
-            WAVESTR_SMOKE=1 timeout -k 10 240 xvfb-run -a -s "-screen 0 1280x900x24" ./gradlew --no-daemon :desktop:run > "$RUNNER_TEMP/smoke.log" 2>&1 || code=$?
-            grep -E "^::" "$RUNNER_TEMP/smoke.log" | sed "s/^::\([a-z]*\)::/::\1::[$demux] /" || echo "::warning::[$demux] La prueba de arranque no dejó resultados"
-            grep -A3 "Problematic frame" "$RUNNER_TEMP/smoke.log" | sed "s/^/::notice::[$demux] crash /" || true
-            if [ -f /tmp/wavestr_hs_err.log ]; then
-              grep -E "^Current thread" /tmp/wavestr_hs_err.log | sed "s/^/::notice::[$demux] hs_err /" || true
-              grep -A22 -E "^Native frames" /tmp/wavestr_hs_err.log | head -23 | sed "s/^/::notice::[$demux] hs_err /" || true
-            fi
-            [ "$code" = 0 ] || echo "::warning::[$demux] La prueba de arranque terminó con código $code"
-          done
+          ./gradlew :desktop:classes -q
+          rm -f /tmp/wavestr_hs_err.log
+          code=0
+          WAVESTR_SMOKE=1 timeout -k 10 240 xvfb-run -a -s "-screen 0 1280x900x24" ./gradlew --no-daemon :desktop:run > "$RUNNER_TEMP/smoke.log" 2>&1 || code=$?
+          grep -E "^::" "$RUNNER_TEMP/smoke.log" | grep -v "Escritorio paso" || echo "::warning::La prueba de arranque no dejó resultados"
+          if [ -f /tmp/wavestr_hs_err.log ]; then
+            frames=$( (grep -E "^# C|^Current thread" /tmp/wavestr_hs_err.log; grep -A14 -E "^Native frames" /tmp/wavestr_hs_err.log | tail -n +2) | head -18 | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::warning::Fallo nativo%0A$frames"
+          fi
+          [ "$code" = 0 ] || echo "::warning::La prueba de arranque terminó con código $code"
+
+      - name: Prueba de arranque · HLS con avformat (xvfb + VLC)
+        if: runner.os == 'Linux'
+        run: |
+          ./gradlew :desktop:classes -q
+          rm -f /tmp/wavestr_hs_err.log
+          code=0
+          WAVESTR_HLS_DEMUX=avformat WAVESTR_SMOKE=1 timeout -k 10 240 xvfb-run -a -s "-screen 0 1280x900x24" ./gradlew --no-daemon :desktop:run > "$RUNNER_TEMP/smoke.log" 2>&1 || code=$?
+          grep -E "^::" "$RUNNER_TEMP/smoke.log" | grep -v "Escritorio paso" || echo "::warning::La prueba de arranque no dejó resultados"
+          if [ -f /tmp/wavestr_hs_err.log ]; then
+            frames=$( (grep -E "^# C|^Current thread" /tmp/wavestr_hs_err.log; grep -A14 -E "^Native frames" /tmp/wavestr_hs_err.log | tail -n +2) | head -18 | sed ':a;N;$!ba;s/\n/%0A/g')
+            echo "::warning::Fallo nativo%0A$frames"
+          fi
+          [ "$code" = 0 ] || echo "::warning::La prueba de arranque terminó con código $code"
 
       - name: Linux (.deb y .tar.gz)
         if: runner.os == 'Linux'
