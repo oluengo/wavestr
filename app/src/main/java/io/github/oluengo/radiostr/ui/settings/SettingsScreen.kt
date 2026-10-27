@@ -38,7 +38,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.oluengo.radiostr.AppContainer
-import io.github.oluengo.radiostr.BuildConfig
 import io.github.oluengo.radiostr.R
 import io.github.oluengo.radiostr.data.AppLanguage
 import io.github.oluengo.radiostr.data.AppSettings
@@ -122,10 +121,7 @@ fun SettingsScreen(c: AppContainer) {
             }
 
             SectionLabel(stringResource(R.string.settings_about))
-            Group {
-                Text(stringResource(R.string.version, BuildConfig.VERSION_NAME), fontWeight = FontWeight.SemiBold)
-                Text("github.com/oluengo/radiostr", color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
-            }
+            AboutSection()
             Row(Modifier.padding(vertical = 24.dp)) {}
         }
     }
@@ -176,7 +172,7 @@ private fun ToggleRow(@StringRes title: Int, @StringRes sub: Int, checked: Boole
 }
 
 @Composable
-private fun Group(content: @Composable ColumnScope.() -> Unit) {
+internal fun Group(content: @Composable ColumnScope.() -> Unit) {
     Surface(
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surfaceContainer,

@@ -1,4 +1,4 @@
-# Radiostr · Plan técnico v0.2
+# Radiostr · Plan técnico v0.3
 
 *27 oct 2026 · v0.1 → v0.2: idiomas, decisiones abiertas cerradas, estado de las fases. Ver «Cambios» al final.*
 
@@ -19,7 +19,8 @@ Radio online (PLS/M3U) y directos de Nostr en una sola app Android. **Nostr firs
 | Calidad | Visible siempre. Seleccionable cuando hay varias variantes. Modo Auto según wifi/datos |
 | Extras | Botón sorpresa (favoritas / del mundo), perfiles de streamer, ficha de emisora, tema claro/oscuro/auto |
 | Idiomas | Català, castellano e inglés. Por defecto, el idioma del dispositivo; si no es ninguno de los tres, inglés. Selector en Ajustes |
-| Distribución | GitHub Releases + Obtainium + Zapstore. Sin Google Play ni F-Droid por ahora |
+| Distribución | GitHub Releases + Obtainium + Zapstore. Sin Google Play ni F-Droid por ahora. Rama `beta` → app aparte «Radiostr Beta» como en Usus |
+| Acerca de | Como Usus: «Hecha con IA · probada por humanos», licencia MIT y garantías, enlaces a GitHub y apoyo con Bitcoin y Lightning (tocar para copiar) |
 | Fuera | Top zappers |
 
 ---
@@ -239,5 +240,6 @@ radiostr/
 
 ## Cambios
 
+- **v0.3 (27 oct):** canal beta y sección «Acerca de» con apoyo al proyecto, como en Usus (§1).
 - **v0.2 (27 oct):** idiomas ca/es/en (§1, §2, §6b); decisiones abiertas cerradas con ADR (§9); cliente Nostr propio y contenedor manual en vez de Koin (§2); un solo módulo para empezar (§3); Room aplazado a F3; distribución sin F-Droid ni Play (§7); estado de F0/F1; estructura real del repo (§10).
 - **v0.1 (26 oct):** primera versión.

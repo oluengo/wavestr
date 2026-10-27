@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- English: default language. Devices in any language other than ca/es fall back here. -->
 <resources>
-    <string name="app_name" translatable="false">Radiostr</string>
-
     <string name="tab_live">Live</string>
     <string name="tab_radio">Radios</string>
     <string name="tab_favorites">Favorites</string>
@@ -89,4 +87,24 @@
     <string name="relays_note">Your own relays (NIP-65) are added automatically when you sign in.</string>
     <string name="settings_about">About</string>
     <string name="version">Version %s</string>
+
+    <!-- Acerca de y apoyo (mismos textos que Usus) -->
+    <string name="about_ai">Built with AI · tested by humans.</string>
+    <string name="about_license_title">MIT licence and warranty</string>
+    <string name="about_license_body">Free software under the MIT license: you may use, copy, modify and distribute it, including commercially, as long as the copyright and license notice is kept.</string>
+    <string name="about_warranty">No warranty. The authors are not liable for data loss, failed payments or any other damage arising from its use. Zaps go straight from your wallet to the recipient; Radiostr never holds your money.</string>
+    <string name="about_legal_english">The legally binding text is the English original.</string>
+    <string name="about_source">Source code</string>
+    <string name="about_bug">Report a problem</string>
+    <string name="about_bug_sub">Something isn’t working as it should</string>
+    <string name="about_idea">Suggest an improvement</string>
+    <string name="about_idea_sub">Ideas and requests</string>
+    <string name="support_title">Support the project</string>
+    <string name="support_body">If you find it useful, you can support the project. Tap to copy:</string>
+    <string name="copy_address">Copy %s address</string>
+    <string name="issue_what_happened">What happened</string>
+    <string name="issue_steps">Steps to reproduce it</string>
+    <string name="issue_expected">What you expected</string>
+    <string name="issue_what_you_want">What you would like</string>
+    <string name="issue_what_for">What you would use it for</string>
 </resources>

@@ -86,4 +86,24 @@
     <string name="relays_note">Tus propios relays (NIP-65) se añaden solos al iniciar sesión.</string>
     <string name="settings_about">Acerca de</string>
     <string name="version">Versión %s</string>
+
+    <!-- Acerca de y apoyo (mismos textos que Usus) -->
+    <string name="about_ai">Hecha con IA · probada por humanos.</string>
+    <string name="about_license_title">Licencia MIT y garantías</string>
+    <string name="about_license_body">Software libre bajo licencia MIT: puedes usarlo, copiarlo, modificarlo y distribuirlo, también con fines comerciales, manteniendo el aviso de copyright y de licencia.</string>
+    <string name="about_warranty">Sin garantías. Los autores no responden de pérdidas de datos, pagos fallidos ni ningún otro daño derivado de su uso. Los zaps van directamente de tu cartera al destinatario; Radiostr nunca guarda tu dinero.</string>
+    <string name="about_legal_english">El texto legal válido es el original en inglés.</string>
+    <string name="about_source">Código fuente</string>
+    <string name="about_bug">Informar de un problema</string>
+    <string name="about_bug_sub">Algo no funciona como debería</string>
+    <string name="about_idea">Proponer una mejora</string>
+    <string name="about_idea_sub">Ideas y peticiones</string>
+    <string name="support_title">Apoyar el proyecto</string>
+    <string name="support_body">Si te resulta útil, puedes apoyar el proyecto. Toca para copiar:</string>
+    <string name="copy_address">Copiar dirección %s</string>
+    <string name="issue_what_happened">Qué ha pasado</string>
+    <string name="issue_steps">Pasos para reproducirlo</string>
+    <string name="issue_expected">Qué esperabas</string>
+    <string name="issue_what_you_want">Qué te gustaría</string>
+    <string name="issue_what_for">Para qué lo usarías</string>
 </resources>

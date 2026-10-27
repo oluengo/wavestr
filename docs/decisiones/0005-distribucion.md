@@ -6,6 +6,8 @@
 
 APK firmado publicado en GitHub Releases al etiquetar `v*`. Desde ahí lo recogen Obtainium y Zapstore. Sin Google Play ni F-Droid por ahora.
 
+Versión de pruebas como en Usus: la rama `beta` publica la pre-release «Radiostr Beta» (`io.github.oluengo.radiostr.beta`, `X.Y.Z-beta.N`), que convive con la normal.
+
 ## Motivo
 
 - Mismo criterio que Usus.

@@ -185,6 +185,13 @@ input.field{width:100%;border:1px solid var(--line);background:var(--bg);color:v
 .qopt{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);text-align:left;width:100%}
 .qopt.on{border-color:var(--accent);background:var(--accent-soft)}
 .qopt .kind{font-variant-numeric:tabular-nums}
+.donb{display:flex;align-items:center;gap:12px;width:100%;padding:10px 0;text-align:left;border-bottom:1px solid var(--line)}
+.donb:last-child{border-bottom:0}
+.dico{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-style:normal;flex:none}
+.donb .mono{display:block;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.lic{font-family:var(--mono);font-size:10px;line-height:1.35;white-space:pre-wrap;background:var(--bg);border-radius:8px;padding:10px;margin:8px 0 0;max-height:180px;overflow:auto}
+details.lic-d summary{cursor:pointer;color:var(--muted);font-size:13px;margin-top:10px}
+.verb{font-family:var(--mono);font-size:12px;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){.bars i{animation:none;height:60%}.sheet{transition:none}}
 </style>
 </head>
@@ -281,6 +288,36 @@ function setLang(pref){
   LANG_PREF=pref; LANG=pref==="auto"?detectLang():pref;
   try{localStorage.setItem("rn-lang",pref);}catch(_){}
   applyStatic(); view(); mini(); if($("sheet").classList.contains("open")) player();
+}
+
+/* ---- Acerca de y apoyo (mismos textos y direcciones que Usus) ---- */
+Object.assign(TR.en,{"Acerca de": "About", "versión": "version", "Hecha con IA · probada por humanos.": "Built with AI · tested by humans.", "Licencia MIT y garantías": "MIT licence and warranty", "Software libre bajo licencia MIT: puedes usarlo, copiarlo, modificarlo y distribuirlo, también con fines comerciales, manteniendo el aviso de copyright y de licencia.": "Free software under the MIT license: you may use, copy, modify and distribute it, including commercially, as long as the copyright and license notice is kept.", "Sin garantías. Los autores no responden de pérdidas de datos, pagos fallidos ni ningún otro daño derivado de su uso. Los zaps van directamente de tu cartera al destinatario; Radiostr nunca guarda tu dinero.": "No warranty. The authors are not liable for data loss, failed payments or any other damage arising from its use. Zaps go straight from your wallet to the recipient; Radiostr never holds your money.", "El texto legal válido es el original en inglés.": "The legally binding text is the English original.", "Código fuente": "Source code", "Informar de un problema": "Report a problem", "Algo no funciona como debería": "Something isn’t working as it should", "Proponer una mejora": "Suggest an improvement", "Ideas y peticiones": "Ideas and requests", "Apoyar el proyecto": "Support the project", "Si te resulta útil, puedes apoyar el proyecto. Toca para copiar:": "If you find it useful, you can support the project. Tap to copy:", "Copiar dirección {x}": "Copy {x} address", "Se abre en GitHub (demo)": "Opens on GitHub (demo)"});
+Object.assign(TR.ca,{"Acerca de": "Quant a", "versión": "versió", "Hecha con IA · probada por humanos.": "Feta amb IA · provada per humans.", "Licencia MIT y garantías": "Llicència MIT i garanties", "Software libre bajo licencia MIT: puedes usarlo, copiarlo, modificarlo y distribuirlo, también con fines comerciales, manteniendo el aviso de copyright y de licencia.": "Programari lliure amb llicència MIT: pots fer-lo servir, copiar-lo, modificar-lo i distribuir-lo, també amb finalitats comercials, mantenint l’avís de copyright i de llicència.", "Sin garantías. Los autores no responden de pérdidas de datos, pagos fallidos ni ningún otro daño derivado de su uso. Los zaps van directamente de tu cartera al destinatario; Radiostr nunca guarda tu dinero.": "Sense garanties. Els autors no responen de pèrdues de dades, pagaments fallits ni cap altre dany derivat del seu ús. Els zaps van directament de la teva cartera al destinatari; Radiostr mai no guarda els teus diners.", "El texto legal válido es el original en inglés.": "El text legal vàlid és l’original en anglès.", "Código fuente": "Codi font", "Informar de un problema": "Informar d’un problema", "Algo no funciona como debería": "Alguna cosa no funciona com hauria", "Proponer una mejora": "Proposar una millora", "Ideas y peticiones": "Idees i peticions", "Apoyar el proyecto": "Dona suport al projecte", "Si te resulta útil, puedes apoyar el proyecto. Toca para copiar:": "Si et resulta útil, pots donar suport al projecte. Toca per copiar:", "Copiar dirección {x}": "Copia l’adreça {x}", "Se abre en GitHub (demo)": "S’obre a GitHub (demo)"});
+const MIT="MIT License\n\nCopyright (c) 2026 Oscar Luengo\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.";
+const DONATE=[["Bitcoin","bc1pnvdct6hfnh67p7dcg2e5mdveyz8jlxuzv4yflkxqccc72qkuc8ls8raspa","#F7931A","₿","#fff"],["Lightning / zaps","oluengo@rizful.com","#7B3FE4","⚡","#FFD43B"]];
+const shortAddr=a=>a.length>24?`${a.slice(0,12)}…${a.slice(-8)}`:a;
+function aboutBlock(){
+  const link=(ico,ti,sub)=>`<div class="row" data-ext="1"><div class="cover" style="width:36px;height:36px;border-radius:10px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:16px">${ico}</div><div class="txt"><div class="title">${ti}</div><div class="sub">${sub}</div></div><span class="kind">↗</span></div>`;
+  return `<div class="label"><span>${t("Acerca de")}</span></div>
+    <div class="set" style="padding:14px">
+      <div style="display:flex;align-items:baseline;gap:8px"><b style="font-family:var(--display);font-size:20px">Radiostr</b><span class="verb">${t("versión")} 0.1.0 beta</span></div>
+      <div class="sub" style="margin-top:2px">${t("Hecha con IA · probada por humanos.")}</div>
+      <details class="lic-d"><summary>${t("Licencia MIT y garantías")}</summary>
+        <p class="sub" style="margin:8px 0 0">${t("Software libre bajo licencia MIT: puedes usarlo, copiarlo, modificarlo y distribuirlo, también con fines comerciales, manteniendo el aviso de copyright y de licencia.")}</p>
+        <p class="sub" style="margin:8px 0 0">${t("Sin garantías. Los autores no responden de pérdidas de datos, pagos fallidos ni ningún otro daño derivado de su uso. Los zaps van directamente de tu cartera al destinatario; Radiostr nunca guarda tu dinero.")}</p>
+        <pre class="lic">${esc(MIT)}</pre>${LANG!=="en"?`<p class="sub" style="font-size:11px;margin:6px 0 0">${t("El texto legal válido es el original en inglés.")}</p>`:""}
+      </details>
+    </div>
+    <div class="set" style="margin-top:8px">
+      ${link("&lt;/&gt;",t("Código fuente"),"github.com/oluengo/Radiostr")}
+      ${link("🐞",t("Informar de un problema"),t("Algo no funciona como debería"))}
+      ${link("💡",t("Proponer una mejora"),t("Ideas y peticiones"))}
+    </div>
+    <div class="label"><span>${t("Apoyar el proyecto")}</span></div>
+    <div class="set" style="padding:10px 14px">
+      <div class="sub" style="margin-bottom:4px">${t("Si te resulta útil, puedes apoyar el proyecto. Toca para copiar:")}</div>
+      ${DONATE.map(([n,a,bg,sym,fg])=>`<button class="donb" data-copy="${a}" aria-label="${t("Copiar dirección {x}",{x:n})}"><i class="dico" style="background:${bg};color:${fg}">${sym}</i><span style="flex:1;min-width:0"><b>${n}</b><span class="mono">${shortAddr(a)}</span></span><svg viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px;color:var(--muted)"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button>`).join("")}
+    </div>`;
 }
 const grad=(a,b)=>`linear-gradient(135deg,${a},${b})`;
 const fmt=n=>n.toLocaleString({ca:"ca-ES",es:"es-ES",en:"en-GB"}[LANG]);
@@ -396,7 +433,8 @@ function view(){
     <div class="empty-note">${t("En el coche no hay vídeo ni zaps: solo audio.")}</div>
     <div class="label"><span>${t("Cuenta")}</span></div>
     <div class="set"><div class="row"><div class="txt"><div class="title">npub1oscar…8k2q</div><div class="sub">${t("Firmado con Amber (NIP-55)")}</div></div></div>
-    <div class="row"><div class="txt"><div class="title">${t("Relays")}</div><div class="sub">${t("4 conectados")}</div></div></div></div>`;
+    <div class="row"><div class="txt"><div class="title">${t("Relays")}</div><div class="sub">${t("4 conectados")}</div></div></div></div>
+    ${aboutBlock()}`;
   }
 }
 function effectiveMode(){ return (S.cellAudio&&S.net==="cell")?"audio":S.mode; }
@@ -642,6 +680,7 @@ document.addEventListener("click",e=>{
   if(!menu.hidden && !e.target.closest("#menu") && !e.target.closest("#dice")) menu.hidden=true;
   if(e.target.closest("#dice")){ menu.hidden=!menu.hidden; return; }
   const rnd=e.target.closest("[data-rand]"); if(rnd){ randomPick(rnd.dataset.rand); return; }
+  if(e.target.closest("[data-ext]")){ toast(t("Se abre en GitHub (demo)")); return; }
   const lg=e.target.closest("[data-lang]"); if(lg){ setLang(lg.dataset.lang); return; }
   const th=e.target.closest("[data-th]"); if(th){ S.theme=th.dataset.th; applyTheme(); view(); return; }
   if(e.target.closest("#pHost")){ S.cur.kind?stationPage(S.cur):profilePage(S.cur); return; }

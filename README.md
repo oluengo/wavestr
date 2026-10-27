@@ -31,7 +31,13 @@ Requisitos: JDK 17 y Android SDK 35.
 python3 scripts/check_strings.py # comprueba las traducciones
 ```
 
-GitHub Actions compila el APK de depuración en cada push a `main`. Al subir una etiqueta `v*`, publica el APK firmado en Releases (necesita los secrets `KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS` y `KEY_PASSWORD`).
+GitHub Actions ([`android.yml`](.github/workflows/android.yml)):
+
+- **Push a `main`:** tests, traducciones y APK en «Artifacts».
+- **Etiqueta `v*`** (igual que `radiostrVersion` en `app/build.gradle.kts`): Release con el APK firmado y las notas de [CHANGELOG.md](CHANGELOG.md). De ahí lo recogen Obtainium y Zapstore.
+- **Versión de pruebas (beta):** cada push a la rama `beta` publica la pre-release **Radiostr Beta** (`X.Y.Z-beta.N`). Se instala como otra app (`io.github.oluengo.radiostr.beta`), junto a la normal y con sus propios datos. En Obtainium se añade aparte activando «incluir pre-releases». Cuando la beta está bien, se pasa a `main` y se publica la versión normal.
+
+Firma: secrets `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` y `ANDROID_KEY_PASSWORD` (mismos nombres que en Usus). Sin ellos se genera un APK de depuración y no se publica nada.
 
 ## Traducir
 
@@ -42,6 +48,11 @@ Los textos están en `app/src/main/res/values/strings.xml` (inglés), `values-es
 - [Plan técnico](docs/plan-tecnico.md)
 - [Decisiones (ADR)](docs/decisiones/README.md)
 
-## Licencia
+## Licencia y apoyo
 
-[MIT](LICENSE)
+[MIT](LICENSE). Hecha con IA · probada por humanos.
+
+Si te resulta útil, puedes apoyar el proyecto:
+
+- **Bitcoin:** `bc1pnvdct6hfnh67p7dcg2e5mdveyz8jlxuzv4yflkxqccc72qkuc8ls8raspa`
+- **Lightning / zaps:** `oluengo@rizful.com`

@@ -86,4 +86,24 @@
     <string name="relays_note">Els teus relays (NIP-65) s’afegeixen sols en iniciar la sessió.</string>
     <string name="settings_about">Quant a</string>
     <string name="version">Versió %s</string>
+
+    <!-- Acerca de y apoyo (mismos textos que Usus) -->
+    <string name="about_ai">Feta amb IA · provada per humans.</string>
+    <string name="about_license_title">Llicència MIT i garanties</string>
+    <string name="about_license_body">Programari lliure amb llicència MIT: pots fer-lo servir, copiar-lo, modificar-lo i distribuir-lo, també amb finalitats comercials, mantenint l’avís de copyright i de llicència.</string>
+    <string name="about_warranty">Sense garanties. Els autors no responen de pèrdues de dades, pagaments fallits ni cap altre dany derivat del seu ús. Els zaps van directament de la teva cartera al destinatari; Radiostr mai no guarda els teus diners.</string>
+    <string name="about_legal_english">El text legal vàlid és l’original en anglès.</string>
+    <string name="about_source">Codi font</string>
+    <string name="about_bug">Informar d’un problema</string>
+    <string name="about_bug_sub">Alguna cosa no funciona com hauria</string>
+    <string name="about_idea">Proposar una millora</string>
+    <string name="about_idea_sub">Idees i peticions</string>
+    <string name="support_title">Dona suport al projecte</string>
+    <string name="support_body">Si et resulta útil, pots donar suport al projecte. Toca per copiar:</string>
+    <string name="copy_address">Copia l’adreça %s</string>
+    <string name="issue_what_happened">Què ha passat</string>
+    <string name="issue_steps">Passos per reproduir-ho</string>
+    <string name="issue_expected">Què esperaves</string>
+    <string name="issue_what_you_want">Què t’agradaria</string>
+    <string name="issue_what_for">Per a què ho faries servir</string>
 </resources>
