@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.ExpandMore
@@ -67,6 +68,12 @@ fun PlayerScreen(c: AppContainer, onClose: () -> Unit, onOpenProfile: (String) -
     val st by c.player.state.collectAsStateWithLifecycle()
     val lib by c.library.library.collectAsStateWithLifecycle()
     val np = st.nowPlaying
+    val activity: LiveActivityViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+        factory = androidx.lifecycle.viewmodel.viewModelFactory { androidx.lifecycle.viewmodel.initializer { LiveActivityViewModel(c) } }
+    )
+    val liveAddress = np?.takeIf { it.isLive && it.hostPubkey != null }?.id
+    androidx.compose.runtime.LaunchedEffect(liveAddress) { activity.watch(liveAddress) }
+    var zapOpen by remember { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize().statusBarsPadding().verticalScroll(rememberScrollState())) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -97,7 +104,9 @@ fun PlayerScreen(c: AppContainer, onClose: () -> Unit, onOpenProfile: (String) -
                         .background(MaterialTheme.colorScheme.surfaceContainer, RoundedCornerShape(18.dp)),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Artwork(np.artworkUrl, np.id, Modifier.fillMaxWidth(0.58f).aspectRatio(1f), corner = 22.dp)
+                    val station = np.station
+                    if (station != null) io.github.oluengo.radiostr.ui.common.StationArtwork(c, station, Modifier.fillMaxWidth(0.58f).aspectRatio(1f), corner = 22.dp)
+                    else Artwork(np.artworkUrl, np.id, Modifier.fillMaxWidth(0.58f).aspectRatio(1f), corner = 22.dp)
                 }
             }
             if (st.isBuffering) CircularProgressIndicator(Modifier.align(Alignment.Center))
@@ -160,7 +169,12 @@ fun PlayerScreen(c: AppContainer, onClose: () -> Unit, onOpenProfile: (String) -
             val host = np.hostPubkey
             val favKey = station?.id ?: host?.let { "npub:$it" }
             val isFav = favKey != null && lib.isFavorite(favKey)
-            Box(Modifier.size(48.dp))
+            if (np.isLive && host != null) {
+                IconButton(
+                    onClick = { zapOpen = true }, modifier = Modifier.size(48.dp),
+                    colors = IconButtonDefaults.iconButtonColors(containerColor = Rs.colors.zapSoft, contentColor = Rs.colors.zap),
+                ) { Icon(Icons.Filled.Bolt, stringResource(R.string.zap_button)) }
+            } else Box(Modifier.size(48.dp))
             FilledIconButton(
                 onClick = c.player::togglePlay,
                 modifier = Modifier.size(64.dp),
@@ -188,6 +202,18 @@ fun PlayerScreen(c: AppContainer, onClose: () -> Unit, onOpenProfile: (String) -
                 )
             }
         }
+
+        if (liveAddress != null) LiveChat(activity)
+    }
+
+    val host = np?.hostPubkey
+    if (zapOpen && np != null && host != null) {
+        io.github.oluengo.radiostr.ui.zap.ZapSheet(
+            c,
+            io.github.oluengo.radiostr.ui.zap.ZapViewModel.Target(host, np.subtitle, liveAddress, np.title),
+            onDismiss = { zapOpen = false },
+            onZapped = { activity.refreshNow() },
+        )
     }
 }
 

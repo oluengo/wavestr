@@ -14,6 +14,9 @@ import kotlinx.coroutines.flow.map
 enum class ThemeMode { SYSTEM, LIGHT, DARK }
 enum class LoginMethod { NONE, AMBER, READ_ONLY }
 
+/** Colores de acento (los mismos que en la demo). */
+enum class Accent { GREEN, VIOLET, CORAL, BLUE, RASPBERRY }
+
 data class AppSettings(
     val theme: ThemeMode = ThemeMode.SYSTEM,
     val audioOnScreenOff: Boolean = true,
@@ -21,6 +24,7 @@ data class AppSettings(
     val pubkey: String? = null,
     val loginMethod: LoginMethod = LoginMethod.NONE,
     val signerPackage: String? = null,
+    val accent: Accent = Accent.GREEN,
 )
 
 private val Context.dataStore by preferencesDataStore(name = "settings")
@@ -33,6 +37,7 @@ class SettingsRepository(private val context: Context) {
         val pubkey = stringPreferencesKey("pubkey")
         val login = stringPreferencesKey("login_method")
         val signer = stringPreferencesKey("signer_package")
+        val accent = stringPreferencesKey("accent")
     }
 
     val flow: Flow<AppSettings> = context.dataStore.data.map { p ->
@@ -43,6 +48,7 @@ class SettingsRepository(private val context: Context) {
             pubkey = p[K.pubkey],
             loginMethod = p[K.login]?.let { runCatching { LoginMethod.valueOf(it) }.getOrNull() } ?: LoginMethod.NONE,
             signerPackage = p[K.signer],
+            accent = p[K.accent]?.let { runCatching { Accent.valueOf(it) }.getOrNull() } ?: Accent.GREEN,
         )
     }
 
@@ -53,6 +59,7 @@ class SettingsRepository(private val context: Context) {
         applyNightMode(mode)
     }
 
+    suspend fun setAccent(a: Accent) = context.dataStore.edit { it[K.accent] = a.name }
     suspend fun setAudioOnScreenOff(v: Boolean) = context.dataStore.edit { it[K.audioOff] = v }
     suspend fun setAudioOnCellular(v: Boolean) = context.dataStore.edit { it[K.audioCell] = v }
 

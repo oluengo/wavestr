@@ -103,7 +103,7 @@ fun FavoritesScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenProfile: (S
                 EmptyNote(stringResource(if (lib.favorites.isEmpty()) R.string.fav_empty_all else R.string.fav_empty_folder))
             }
             items(items, key = { it.key }) { item ->
-                ItemRow(item, onClick = {
+                ItemRow(c, item, onClick = {
                     when (item.kind) {
                         FavItem.Kind.STATION -> item.station?.let { c.player.playStation(it); onOpenPlayer() }
                         FavItem.Kind.STREAMER -> item.hostPubkey?.let(onOpenProfile)
@@ -170,10 +170,12 @@ private fun FolderRow(f: Folder, lib: Library, onOpen: () -> Unit, onMore: () ->
 }
 
 @Composable
-private fun ItemRow(item: FavItem, onClick: () -> Unit, onMore: () -> Unit) {
+private fun ItemRow(c: AppContainer, item: FavItem, onClick: () -> Unit, onMore: () -> Unit) {
     Row(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        Box(Modifier.size(52.dp)) {
-            Artwork(item.image, item.key, Modifier.size(52.dp), corner = if (item.kind == FavItem.Kind.STREAMER) 26.dp else 12.dp)
+        val station = item.station
+        if (station != null) io.github.oluengo.radiostr.ui.common.StationArtwork(c, station, Modifier.size(52.dp))
+        else Box(Modifier.size(52.dp)) {
+            Artwork(item.image, item.key, Modifier.size(52.dp), corner = 26.dp)
             if (item.image == null) Text(initials(item.title), color = Color.White, fontWeight = FontWeight.Bold, modifier = Modifier.align(Alignment.Center))
         }
         Column(Modifier.weight(1f)) {

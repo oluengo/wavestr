@@ -1,6 +1,7 @@
 package io.github.oluengo.radiostr.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import io.github.oluengo.radiostr.data.Accent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
@@ -66,12 +67,30 @@ private val RsTypography = Typography().run {
     )
 }
 
+/** Acento: (principal, suave, texto sobre suave) en claro y en oscuro. */
+private data class AccentColors(val light: Color, val lightSoft: Color, val lightOn: Color, val dark: Color, val darkSoft: Color, val darkOn: Color)
+
+private fun accentColors(a: Accent) = when (a) {
+    Accent.GREEN -> AccentColors(Color(0xFF0E7C6B), Color(0xFFDCEFEA), Color(0xFF0B5E52), Color(0xFF3FBFA6), Color(0xFF1D332E), Color(0xFF9DE3D3))
+    Accent.VIOLET -> AccentColors(Color(0xFF6D28D9), Color(0xFFEDE6FB), Color(0xFF4C1D95), Color(0xFFA78BFA), Color(0xFF2A2142), Color(0xFFDDD0FF))
+    Accent.CORAL -> AccentColors(Color(0xFFD9480F), Color(0xFFFDE9DF), Color(0xFF9A3412), Color(0xFFFF8A5B), Color(0xFF3A2318), Color(0xFFFFCDB8))
+    Accent.BLUE -> AccentColors(Color(0xFF1D4ED8), Color(0xFFE1E9FC), Color(0xFF1E3A8A), Color(0xFF7EA6FF), Color(0xFF1B2542), Color(0xFFCCDAFF))
+    Accent.RASPBERRY -> AccentColors(Color(0xFFBE185D), Color(0xFFFBE4EE), Color(0xFF831843), Color(0xFFF472B6), Color(0xFF3B1A2B), Color(0xFFFFC9E2))
+}
+
 /** El modo claro/oscuro lo fija AppCompat (setDefaultNightMode) según el ajuste; aquí solo se lee. */
 @Composable
-fun RadiostrTheme(content: @Composable () -> Unit) {
+fun RadiostrTheme(accent: Accent = Accent.GREEN, content: @Composable () -> Unit) {
     val dark = isSystemInDarkTheme()
-    androidx.compose.runtime.CompositionLocalProvider(LocalRsColors provides if (dark) DarkRs else LightRs) {
-        MaterialTheme(colorScheme = if (dark) DarkScheme else LightScheme, typography = RsTypography, content = content)
+    val a = accentColors(accent)
+    val scheme = if (dark) {
+        DarkScheme.copy(primary = a.dark, onPrimary = Color(0xFF0B0F0E), primaryContainer = a.darkSoft, onPrimaryContainer = a.darkOn)
+    } else {
+        LightScheme.copy(primary = a.light, onPrimary = Color.White, primaryContainer = a.lightSoft, onPrimaryContainer = a.lightOn)
+    }
+    val rs = (if (dark) DarkRs else LightRs).copy(accentSoft = if (dark) a.darkSoft else a.lightSoft)
+    androidx.compose.runtime.CompositionLocalProvider(LocalRsColors provides rs) {
+        MaterialTheme(colorScheme = scheme, typography = RsTypography, content = content)
     }
 }
 

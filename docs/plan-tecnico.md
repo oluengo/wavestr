@@ -1,4 +1,4 @@
-# Radiostr · Plan técnico v0.3
+# Radiostr · Plan técnico v0.4
 
 *27 oct 2026 · v0.1 → v0.2: idiomas, decisiones abiertas cerradas, estado de las fases. Ver «Cambios» al final.*
 
@@ -150,7 +150,7 @@ Cada fase termina con un APK usable.
 - Perfil del streamer y grabaciones.
 - *Hecho cuando:* escuchas un directo con la pantalla apagada y vuelves al vídeo sin corte.
 
-**F2 · Chat y zaps**
+**F2 · Chat y zaps** 🟡 *en la beta 0.3: zaps NIP-57 con NWC (NIP-47, secp256k1/Schnorr propios), límite mensual, plan B `lightning:`, chat y zaps en lectura. Falta escribir en el chat*
 - Chat 1311.
 - Zaps NIP-57: conectar NWC con límite mensual; plan B `lightning:`.
 - Totales en sats.
@@ -231,15 +231,16 @@ radiostr/
 
 ## 11. Próximos pasos
 
-1. Primera compilación en GitHub Actions y corregir lo que salga (el código no se ha podido compilar en el entorno de desarrollo; los tests de lógica sí pasan).
-2. Probar F1 en un móvil real: Amber, directos de zap.stream, pantalla apagada y cambio audio/vídeo.
-3. Crear el keystore de release y los secrets del repo para `release.yml`.
-4. F2: chat (kind 1311) y zaps con NWC.
+1. Probar en móvil real la beta 0.3: zap con NWC (Alby Hub, Rizful…), zap con Amber, carátulas y exportar/importar.
+2. Escribir en el chat (kind 1311 firmado con Amber).
+3. F4: botón sorpresa y sincronización NIP-51.
+4. F5: Android Auto.
 
 ---
 
 ## Cambios
 
+- **v0.4 (27 oct):** F2 en marcha: NWC y zaps con criptografía propia en Kotlin en vez de `secp256k1-kmp` (sin dependencias nativas); carátulas desde la web de la emisora; copia de favoritos JSON/M3U; color de acento (§10, §11).
 - **v0.3 (27 oct):** canal beta y sección «Acerca de» con apoyo al proyecto, como en Usus (§1).
 - **v0.2 (27 oct):** idiomas ca/es/en (§1, §2, §6b); decisiones abiertas cerradas con ADR (§9); cliente Nostr propio y contenedor manual en vez de Koin (§2); un solo módulo para empezar (§3); Room aplazado a F3; distribución sin F-Droid ni Play (§7); estado de F0/F1; estructura real del repo (§10).
 - **v0.1 (26 oct):** primera versión.

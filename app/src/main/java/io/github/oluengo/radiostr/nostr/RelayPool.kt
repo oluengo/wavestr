@@ -81,6 +81,38 @@ class RelayPool(private val http: OkHttpClient) {
             events.toList()
         }
 
+    /**
+     * Petición y respuesta (NWC): se suscribe a [response] y publica [request] en cada relay;
+     * devuelve el primer evento que llegue o null si se agota el tiempo.
+     */
+    suspend fun roundTrip(relays: Collection<String>, request: Event, response: Filter, timeoutMs: Long = 45_000): Event? =
+        withContext(Dispatchers.IO) {
+            val result = CompletableDeferred<Event?>()
+            val subId = "rt" + UUID.randomUUID().toString().take(8)
+            val req = buildJsonArray { add("REQ"); add(subId); add(response.toJson()) }.toString()
+            val pub = buildJsonArray { add("EVENT"); add(request.toJson()) }.toString()
+            val sockets = relays.distinct().map { url ->
+                http.newWebSocket(Request.Builder().url(url).build(), object : WebSocketListener() {
+                    override fun onOpen(webSocket: WebSocket, response: Response) {
+                        webSocket.send(req)
+                        webSocket.send(pub)
+                    }
+
+                    override fun onMessage(webSocket: WebSocket, text: String) {
+                        val arr = runCatching { NostrJson.parseToJsonElement(text) as JsonArray }.getOrNull() ?: return
+                        if ((arr.getOrNull(0) as? JsonPrimitive)?.contentOrNull == "EVENT" &&
+                            (arr.getOrNull(1) as? JsonPrimitive)?.contentOrNull == subId
+                        ) arr.getOrNull(2)?.let(Event::fromJson)?.let { result.complete(it) }
+                    }
+                })
+            }
+            try {
+                withTimeoutOrNull(timeoutMs) { result.await() }
+            } finally {
+                sockets.forEach { ws -> runCatching { ws.send(buildJsonArray { add("CLOSE"); add(subId) }.toString()); ws.close(1000, null) } }
+            }
+        }
+
     companion object {
         /** Relays por defecto: generales + índice de perfiles/listas. */
         val DEFAULT = listOf(

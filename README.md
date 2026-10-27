@@ -31,8 +31,12 @@ Comprueba que la huella del certificado coincide (también está en Ajustes → 
 - **Importar listas PLS/M3U** (enlace, contenido o archivo).
 - **Favoritos en carpetas y subcarpetas**, para radios y streamers de Nostr.
 - **Tu perfil de Nostr** (solo lectura).
+- **Zaps con NWC** a los directos, con límite mensual; chat y zaps del directo en el reproductor.
+- **Carátulas** de las radios buscadas en su web.
+- **Exportar e importar favoritos** (JSON con carpetas o M3U).
+- **Color de acento** a elegir.
 
-**Próximamente:** zaps con NWC, chat del directo, favoritos sincronizados por Nostr (NIP-51), botón sorpresa y Android Auto. El orden está en el [plan técnico](docs/plan-tecnico.md).
+**Próximamente:** escribir en el chat, favoritos sincronizados por Nostr (NIP-51), botón sorpresa y Android Auto. El orden está en el [plan técnico](docs/plan-tecnico.md).
 
 ## Demo de la interfaz
 

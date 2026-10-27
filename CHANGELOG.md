@@ -1,5 +1,14 @@
 # Cambios
 
+## 0.3.0
+
+- **Zaps con NWC:** conecta tu cartera (Nostr Wallet Connect) en Ajustes → Zaps y envía zaps a los directos desde el reproductor. Con Amber, el zap va firmado por ti; sin sesión, es anónimo. Sin cartera conectada, se abre tu app Lightning o se copia la factura.
+- **Límite mensual de zaps** e importe por defecto. La conexión NWC se guarda cifrada con el almacén de claves de Android y nunca entra en las copias.
+- **Chat y zaps del directo** visibles en el reproductor (solo lectura de momento), con el total de sats.
+- **Carátulas de las radios:** si el directorio no trae logo, se busca en la web de la emisora (icono, apple-touch-icon, og:image) y se guarda.
+- **Exportar e importar favoritos:** copia JSON completa (carpetas incluidas) o lista M3U; al importar, se combina con lo que ya tienes.
+- **Color de acento** a elegir: verde, violeta, coral, azul o frambuesa.
+
 ## 0.2.0
 
 - **Tu perfil de Nostr:** tu avatar arriba en cada pestaña; al tocarlo, tu nombre, NIP-05, seguidos, relays, npub y dirección Lightning. Radiostr lo lee, no lo modifica.

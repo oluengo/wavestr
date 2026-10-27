@@ -2,6 +2,11 @@ package io.github.oluengo.radiostr.ui.settings
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -80,6 +85,8 @@ fun SettingsScreen(c: AppContainer, onOpenMe: () -> Unit) {
                 }
             }
 
+            AccentPicker(s.accent) { a -> scope.launch { c.settings.setAccent(a) } }
+
             SectionLabel(stringResource(R.string.settings_language))
             LanguagePicker()
 
@@ -123,6 +130,12 @@ fun SettingsScreen(c: AppContainer, onOpenMe: () -> Unit) {
                     }
                 }
             }
+
+            SectionLabel(stringResource(R.string.wallet_title))
+            WalletSection(c)
+
+            SectionLabel(stringResource(R.string.backup_title))
+            BackupSection(c)
 
             SectionLabel(stringResource(R.string.settings_relays))
             Group {
@@ -192,5 +205,34 @@ internal fun Group(content: @Composable ColumnScope.() -> Unit) {
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column(Modifier.padding(14.dp), content = content)
+    }
+}
+
+@Composable
+private fun AccentPicker(current: io.github.oluengo.radiostr.data.Accent, onPick: (io.github.oluengo.radiostr.data.Accent) -> Unit) {
+    val swatches = listOf(
+        io.github.oluengo.radiostr.data.Accent.GREEN to (androidx.compose.ui.graphics.Color(0xFF0E7C6B) to R.string.accent_green),
+        io.github.oluengo.radiostr.data.Accent.VIOLET to (androidx.compose.ui.graphics.Color(0xFF6D28D9) to R.string.accent_violet),
+        io.github.oluengo.radiostr.data.Accent.CORAL to (androidx.compose.ui.graphics.Color(0xFFD9480F) to R.string.accent_coral),
+        io.github.oluengo.radiostr.data.Accent.BLUE to (androidx.compose.ui.graphics.Color(0xFF1D4ED8) to R.string.accent_blue),
+        io.github.oluengo.radiostr.data.Accent.RASPBERRY to (androidx.compose.ui.graphics.Color(0xFFBE185D) to R.string.accent_raspberry),
+    )
+    Group {
+        Text(stringResource(R.string.settings_accent), fontWeight = FontWeight.SemiBold)
+        Text(stringResource(swatches.first { it.first == current }.second.second), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.padding(top = 10.dp)) {
+            swatches.forEach { (a, pair) ->
+                val (color, label) = pair
+                val name = stringResource(label)
+                androidx.compose.foundation.layout.Box(
+                    Modifier.size(34.dp)
+                        .border(if (a == current) 3.dp else 0.dp, MaterialTheme.colorScheme.onSurface, androidx.compose.foundation.shape.CircleShape)
+                        .padding(if (a == current) 5.dp else 0.dp)
+                        .background(color, androidx.compose.foundation.shape.CircleShape)
+                        .selectable(selected = a == current, role = Role.RadioButton, onClick = { onPick(a) })
+                        .semantics { contentDescription = name },
+                )
+            }
+        }
     }
 }

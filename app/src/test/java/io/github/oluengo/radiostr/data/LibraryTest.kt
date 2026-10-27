@@ -71,3 +71,42 @@ class LibraryTest {
         assertEquals(Library(), Library.fromJson(null))
     }
 }
+
+class BackupTest {
+    private val st = Station("rb:1", "Radio, \"Clásica\"", listOf(StreamVariant("https://x/192", "AAC", 192)), favicon = "https://x/logo.png")
+
+    @Test fun mergeKeepsBothAndImportedWins() {
+        val mine = Library().addFolder("f1", "Mía", null).add(FavItem("rb:1", FavItem.Kind.STATION, "A", station = st, folderId = "f1"))
+            .add(FavItem("npub:a", FavItem.Kind.STREAMER, "Ana", hostPubkey = "a"))
+        val theirs = Library().addFolder("f1", "Renombrada", null).addFolder("f2", "Nueva", null)
+            .add(FavItem("rb:1", FavItem.Kind.STATION, "A", station = st, folderId = "f2"))
+            .add(FavItem("rb:2", FavItem.Kind.STATION, "B", station = st.copy(id = "rb:2"), folderId = "zz"))
+        val m = mine.merge(theirs)
+        assertEquals(listOf("Renombrada", "Nueva"), m.folders.map { it.name })
+        assertEquals(3, m.favorites.size)
+        assertEquals("f2", m.favorites.first { it.key == "rb:1" }.folderId)
+        assertNull(m.favorites.first { it.key == "rb:2" }.folderId)
+    }
+
+    @Test fun backupRoundTripAndForeignFiles() {
+        val lib = Library().addFolder("f1", "Jazz", null).add(FavItem("rb:1", FavItem.Kind.STATION, "A", station = st, folderId = "f1"))
+        val text = lib.toBackup(123).toString()
+        assertEquals(lib, Library.fromBackup(NostrJson.parseToJsonElement(text) as JsonObject))
+        assertEquals(lib, Library.fromBackup(lib.toJson()))
+        assertNull(Library.fromBackup(NostrJson.parseToJsonElement("""{"hola":1}""") as JsonObject))
+    }
+
+    @Test fun m3uExport() {
+        val lib = Library().addFolder("f1", "Jazz", null).addFolder("f2", "Noche", "f1")
+            .add(FavItem("rb:1", FavItem.Kind.STATION, "A", station = st, folderId = "f2"))
+            .add(FavItem("npub:a", FavItem.Kind.STREAMER, "Ana", hostPubkey = "a"))
+            .addImported(listOf(st.copy(id = "imp:1", name = "Importada", favicon = null), st))
+        val m3u = lib.toM3u()
+        assertEquals(
+            "#EXTM3U\n#EXTINF:-1 group-title=\"Jazz / Noche\" tvg-logo=\"https://x/logo.png\",Radio  'Clásica'\nhttps://x/192\n#EXTINF:-1,Importada\nhttps://x/192\n",
+            m3u,
+        )
+        val back = io.github.oluengo.radiostr.radio.Playlists.parse(m3u) as io.github.oluengo.radiostr.radio.Playlists.Result.Found
+        assertEquals(1, back.items.size) // misma URL: el lector quita duplicados
+    }
+}

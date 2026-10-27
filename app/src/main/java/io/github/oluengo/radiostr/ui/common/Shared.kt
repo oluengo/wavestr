@@ -40,6 +40,7 @@ import io.github.oluengo.radiostr.AppContainer
 import io.github.oluengo.radiostr.R
 import io.github.oluengo.radiostr.data.AppSettings
 import io.github.oluengo.radiostr.nostr.Profile
+import io.github.oluengo.radiostr.radio.SiteIcons
 import io.github.oluengo.radiostr.radio.Station
 import io.github.oluengo.radiostr.ui.theme.Rs
 import java.util.Locale
@@ -92,9 +93,50 @@ fun countryName(code: String?): String? {
     return Locale("", code).getDisplayCountry(loc).takeIf { it.isNotBlank() && it != code } ?: code
 }
 
+/**
+ * Carátula de emisora: el logo del directorio si es bueno; si no (o si falla al cargar), lo busca en
+ * la web de la emisora. Mientras tanto, o si no hay nada, iniciales sobre un degradado.
+ */
+@Composable
+fun StationArtwork(c: AppContainer, st: Station, modifier: Modifier, corner: androidx.compose.ui.unit.Dp = 12.dp) {
+    val cachedVal = remember(st.id) { c.artwork.cached(st) }
+    var url by remember(st.id) {
+        mutableStateOf(
+            when {
+                !cachedVal.isNullOrEmpty() -> cachedVal
+                SiteIcons.goodDirectoryIcon(st.favicon) -> st.favicon
+                cachedVal == "" -> st.favicon
+                else -> null
+            }
+        )
+    }
+    var failed by remember(st.id) { mutableStateOf(emptySet<String>()) }
+    var searched by remember(st.id) { mutableStateOf(cachedVal != null) }
+    LaunchedEffect(st.id, url) {
+        if (url == null && !searched) {
+            searched = true
+            url = c.artwork.resolve(st, failed) ?: st.favicon?.takeIf { it !in failed }
+        }
+    }
+    Box(modifier.clip(RoundedCornerShape(corner)).background(keyGradient(st.id)), contentAlignment = Alignment.Center) {
+        val u = url
+        if (u != null) {
+            coil.compose.AsyncImage(
+                model = u, contentDescription = null,
+                contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                modifier = Modifier.matchParentSize(),
+                onError = { failed = failed + u; url = null },
+            )
+        } else {
+            Text(initials(st.name), color = androidx.compose.ui.graphics.Color.White, fontWeight = FontWeight.Bold)
+        }
+    }
+}
+
 /** Fila de emisora: logo, nombre, país · formato · estilo, y ♥ o aviso de que no responde. */
 @Composable
 fun StationRow(
+    c: AppContainer,
     st: Station,
     isFav: Boolean,
     onClick: () -> Unit,
@@ -106,10 +148,7 @@ fun StationRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Box(Modifier.size(52.dp)) {
-            Artwork(st.favicon, st.id, Modifier.size(52.dp))
-            if (st.favicon == null) Text(initials(st.name), color = androidx.compose.ui.graphics.Color.White, fontWeight = FontWeight.Bold, modifier = Modifier.align(Alignment.Center))
-        }
+        StationArtwork(c, st, Modifier.size(52.dp))
         Column(Modifier.weight(1f)) {
             Text(st.name, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
             val line = listOfNotNull(countryName(st.countryCode) ?: st.country, st.best.label, st.tags.firstOrNull()).joinToString(" · ")

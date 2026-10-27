@@ -75,6 +75,18 @@ class NostrRepository(private val pool: RelayPool) {
             .filter { it.hostPubkey == host }
             .sortedByDescending { it.startsAt ?: it.updatedAt }
 
+    /** Chat (kind 1311) y zaps (kind 9735) de un directo desde [since]. */
+    suspend fun activity(address: String, since: Long, viewer: String?): Pair<List<ChatMessage>, List<ZapReceipt>> {
+        val evs = pool.query(
+            relaysFor(viewer),
+            listOf(Filter(kinds = listOf(Kinds.LIVE_CHAT, Kinds.ZAP_RECEIPT), tags = mapOf("a" to listOf(address)), since = since, limit = 300)),
+            timeoutMs = 5_000,
+        )
+        val chat = evs.mapNotNull(ChatMessage::from).filter { it.streamAddress == address }.sortedBy { it.createdAt }
+        val zaps = evs.mapNotNull(ZapReceipt::from).sortedBy { it.createdAt }
+        return chat to zaps
+    }
+
     fun cachedProfile(pubkey: String): Profile? = profileCache[pubkey]
 
     suspend fun profiles(pubkeys: Collection<String>, viewer: String? = null): Map<String, Profile> {

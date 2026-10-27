@@ -16,7 +16,13 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 
-class RadiostrApp : Application() {
+class RadiostrApp : Application(), coil.ImageLoaderFactory {
+    /** Coil con soporte SVG (muchas webs de radio solo tienen el logo en SVG). */
+    override fun newImageLoader(): coil.ImageLoader = coil.ImageLoader.Builder(this)
+        .components { add(coil.decode.SvgDecoder.Factory()) }
+        .crossfade(true)
+        .build()
+
     lateinit var container: AppContainer
         private set
 
@@ -42,6 +48,9 @@ class AppContainer(app: Application) {
     val nostr = NostrRepository(relays)
     val radio = RadioBrowserClient(http, appScope)
     val library = LibraryRepository(app, appScope)
+    val artwork = io.github.oluengo.radiostr.radio.ArtworkResolver(app, http)
+    val wallet = io.github.oluengo.radiostr.data.WalletRepository(app, relays)
+    val zaps = io.github.oluengo.radiostr.nostr.ZapClient(http)
     val player = PlayerConnection(app, settings, HlsInspector(http), appScope, onStationPlay = radio::countClick)
 }
 

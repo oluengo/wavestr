@@ -89,6 +89,50 @@ data class Library(
     fun addImported(list: List<Station>) = copy(imported = imported + list.distinctBy { it.id }.filter { s -> imported.none { it.id == s.id } })
     fun removeImported(id: String) = copy(imported = imported.filter { it.id != id }, favorites = favorites.filter { it.key != id })
 
+    /**
+     * Combina con otra biblioteca (p. ej. una copia importada): se suman carpetas, favoritos e
+     * importadas; si algo ya existe, gana la versión importada. No se borra nada.
+     */
+    fun merge(other: Library): Library {
+        val fs = (folders.associateBy { it.id } + other.folders.associateBy { it.id }).values.toList()
+        val ids = fs.map { it.id }.toSet()
+        return Library(
+            folders = fs.map { if (it.parentId != null && it.parentId !in ids) it.copy(parentId = null) else it },
+            favorites = (favorites.associateBy { it.key } + other.favorites.associateBy { it.key }).values
+                .map { if (it.folderId != null && it.folderId !in ids) it.copy(folderId = null) else it },
+            imported = (imported.associateBy { it.id } + other.imported.associateBy { it.id }).values.toList(),
+        )
+    }
+
+    /** Copia de seguridad: la biblioteca con una cabecera para reconocerla. */
+    fun toBackup(exportedAt: Long): JsonObject = buildJsonObject {
+        put("app", "radiostr"); put("v", 1); put("exported", exportedAt)
+        put("library", toJson())
+    }
+
+    /**
+     * Las radios favoritas (y las importadas que no lo son) como lista M3U, con la carpeta como grupo
+     * y el logo, para usarlas en cualquier reproductor.
+     */
+    fun toM3u(): String {
+        val sb = StringBuilder("#EXTM3U\n")
+        fun clean(x: String) = x.replace('"', '\'').replace('\n', ' ').replace(',', ' ').trim()
+        val seen = HashSet<String>()
+        favorites.filter { it.kind == FavItem.Kind.STATION && it.station != null }.forEach { f ->
+            val st = f.station!!
+            if (!seen.add(st.id)) return@forEach
+            val group = path(f.folderId).joinToString(" / ") { it.name }
+            sb.append("#EXTINF:-1")
+            if (group.isNotEmpty()) sb.append(" group-title=\"").append(clean(group)).append('"')
+            st.favicon?.let { sb.append(" tvg-logo=\"").append(it).append('"') }
+            sb.append(',').append(clean(st.name)).append('\n').append(st.best.url).append('\n')
+        }
+        imported.filter { seen.add(it.id) }.forEach { st ->
+            sb.append("#EXTINF:-1,").append(clean(st.name)).append('\n').append(st.best.url).append('\n')
+        }
+        return sb.toString()
+    }
+
     // ---------- JSON (formato propio y versionado) ----------
     fun toJson(): JsonObject = buildJsonObject {
         put("v", 1)
@@ -138,6 +182,13 @@ data class Library(
                 votes = o.i("votes") ?: 0, ok = o.b("ok") ?: true, imported = o.b("imported") ?: false,
             )
         }.getOrNull()
+
+        /** Acepta una copia de Radiostr (con cabecera) o una biblioteca a secas; null si no lo es. */
+        fun fromBackup(o: JsonObject?): Library? {
+            if (o == null) return null
+            val lib = (o["library"] as? JsonObject) ?: o.takeIf { it.containsKey("favorites") || it.containsKey("folders") } ?: return null
+            return fromJson(lib)
+        }
 
         /** Tolerante: lo que no se entienda se descarta, nunca se pierde el resto. */
         fun fromJson(o: JsonObject?): Library {

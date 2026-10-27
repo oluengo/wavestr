@@ -7,6 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.oluengo.radiostr.ui.RadiostrRoot
 import io.github.oluengo.radiostr.ui.theme.RadiostrTheme
 
@@ -20,7 +22,8 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         container.player.connect()
         setContent {
-            RadiostrTheme {
+            val s by container.settings.flow.collectAsStateWithLifecycle<io.github.oluengo.radiostr.data.AppSettings?>(initialValue = null)
+            RadiostrTheme(accent = s?.accent ?: io.github.oluengo.radiostr.data.Accent.GREEN) {
                 RadiostrRoot(container)
             }
         }

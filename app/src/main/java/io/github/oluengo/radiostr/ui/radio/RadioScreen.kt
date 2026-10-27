@@ -119,7 +119,7 @@ fun RadioScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenMe: () -> Unit)
                 }
                 if (lib.imported.isEmpty()) item { EmptyNote(stringResource(R.string.import_empty)) }
                 items(lib.imported, key = { it.id }) { s ->
-                    StationRow(s, lib.isFavorite(s.id), onClick = { play(s) }, onToggleFav = { toggle(s) }, trailing = {
+                    StationRow(c, s, lib.isFavorite(s.id), onClick = { play(s) }, onToggleFav = { toggle(s) }, trailing = {
                         IconButton(onClick = { c.library.update { it.removeImported(s.id) } }) {
                             Icon(Icons.Outlined.Delete, stringResource(R.string.import_remove), tint = Rs.colors.muted)
                         }
@@ -155,7 +155,7 @@ fun RadioScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenMe: () -> Unit)
                         )
                     }
                     items(st.stations, key = { it.id }) { s ->
-                        StationRow(s, lib.isFavorite(s.id), onClick = { play(s) }, onToggleFav = { toggle(s) })
+                        StationRow(c, s, lib.isFavorite(s.id), onClick = { play(s) }, onToggleFav = { toggle(s) })
                         HorizontalDivider(color = Rs.colors.line)
                     }
                     item { EmptyNote(stringResource(R.string.radio_source_note)) }
