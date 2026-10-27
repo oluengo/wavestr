@@ -49,7 +49,7 @@
       "owner": "gradle-cause",
       "pattern": [
         {
-          "regexp": "^(?:> |Caused by: )(.*(?:[Kk]eystore|password|alias|[Ss]igning|tampered|key).*)$",
+          "regexp": "^(?:> (?!Task )|Caused by: )(.*(?:[Kk]eystore|password|alias|[Ss]igning|tampered|key).*)$",
           "message": 1
         }
       ]
