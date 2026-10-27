@@ -51,6 +51,8 @@ tasks.named("processResources") { dependsOn(syncI18n, buildInfo) }
 compose.desktop {
     application {
         mainClass = "io.github.oluengo.wavestr.desktop.MainKt"
+        // Solo para la prueba de arranque en CI (WAVESTR_SMOKE=1 ./gradlew :desktop:run).
+        if (System.getenv("WAVESTR_SMOKE") == "1") jvmArgs += listOf("-Dwavestr.smoke=1")
         nativeDistributions {
             targetFormats(TargetFormat.Deb, TargetFormat.Msi)
             packageName = if (beta) "Wavestr-Beta" else "Wavestr"

@@ -123,5 +123,34 @@ private fun ApplicationScope.WavestrApplication(c: DesktopContainer) {
                 }
         }
         WavestrDesktop(c)
+        if (System.getProperty("wavestr.smoke") != null) LaunchedEffect(Unit) { smokeTest(c, window); quit() }
     }
+}
+
+/**
+ * Prueba de arranque para CI (-Dwavestr.smoke=1, con xvfb): abre la ventana, reproduce una radio y un vídeo
+ * HLS unos segundos y deja el resultado como anotaciones de GitHub Actions.
+ */
+private suspend fun smokeTest(c: DesktopContainer, window: java.awt.Window) {
+    fun report(level: String, msg: String) = println("::$level::$msg")
+    kotlinx.coroutines.delay(4_000)
+    report("notice", "Escritorio: ventana ${window.width}x${window.height} · VLC=${c.player.state.value.available} · idioma=${I18n.locale} · «${t("tab_live")}» / «${t("tab_radio")}»")
+    if (!c.player.state.value.available) { report("error", "Escritorio: no se encuentra VLC"); return }
+    c.player.play(NowPlaying("smoke-radio", "https://ice2.somafm.com/groovesalad-128-mp3", "SomaFM", "", null, null, isLive = false))
+    kotlinx.coroutines.delay(12_000)
+    c.player.state.value.let { report(if (it.isPlaying) "notice" else "error", "Escritorio radio: sonando=${it.isPlaying} error=${it.error} canción=${it.icyTitle}") }
+    val before = c.player.video.frame.longValue
+    c.player.play(NowPlaying("smoke-video", "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", "HLS", "", null, null, isLive = true))
+    kotlinx.coroutines.delay(15_000)
+    val frames = c.player.video.frame.longValue - before
+    val bmp = c.player.video.bitmap
+    c.player.state.value.let { report(if (frames > 10) "notice" else "error", "Escritorio vídeo: sonando=${it.isPlaying} fotogramas=$frames tamaño=${bmp?.width}x${bmp?.height}") }
+    runCatching {
+        val r = window.bounds
+        val img = java.awt.Robot().createScreenCapture(r)
+        // Comprobación burda de que se ha pintado algo: número de colores distintos en la captura.
+        val colors = HashSet<Int>()
+        for (y in 0 until img.height step 7) for (x in 0 until img.width step 7) colors += img.getRGB(x, y)
+        report("notice", "Escritorio captura: ${img.width}x${img.height}, ${colors.size} colores distintos")
+    }.onFailure { report("warning", "Escritorio captura: ${it.message}") }
 }
