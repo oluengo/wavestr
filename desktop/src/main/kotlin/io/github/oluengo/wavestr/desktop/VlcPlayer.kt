@@ -60,11 +60,12 @@ data class PlayerState(
  * Reproductor con libVLC (vlcj): radio (MP3/AAC/Ogg/FLAC, PLS/M3U ya resueltos), HLS y vídeo.
  * El vídeo se pinta en Compose fotograma a fotograma ([VideoFrames]); sin ventana aparte de VLC.
  */
-class VlcPlayer(private val scope: CoroutineScope, private val onStationPlay: (String?) -> Unit) {
+class VlcPlayer(private val scope: CoroutineScope, private val http: okhttp3.OkHttpClient, private val onStationPlay: (String?) -> Unit) {
     private val _state = MutableStateFlow(PlayerState())
     val state: StateFlow<PlayerState> = _state.asStateFlow()
     val video = VideoFrames()
     private val variantChoice = HashMap<String, Int?>()
+    private var icyJob: kotlinx.coroutines.Job? = null
 
     private val factory: MediaPlayerFactory? = runCatching {
         if (NativeDiscovery().discover()) MediaPlayerFactory("--no-video-title-show", "--quiet") else null
@@ -107,6 +108,7 @@ class VlcPlayer(private val scope: CoroutineScope, private val onStationPlay: (S
         _state.update { it.copy(nowPlaying = item, error = false, icyTitle = null, isBuffering = true, audioOnly = it.audioOnly && !item.isRadio) }
         // Las llamadas a libVLC, fuera del hilo de la UI y de sus propios eventos.
         scope.launch(Dispatchers.IO) { p.media().play(item.url, *mediaOptions(item.url)) }
+        watchIcy(item)
     }
 
     /** Emisora con la variante elegida o, en Auto, la de más calidad (en el ordenador no hay datos móviles). */
@@ -142,6 +144,7 @@ class VlcPlayer(private val scope: CoroutineScope, private val onStationPlay: (S
     }
 
     fun stop() {
+        icyJob?.cancel()
         val p = mp ?: return
         scope.launch(Dispatchers.IO) { p.controls().stop() }
         video.clear()
@@ -155,6 +158,24 @@ class VlcPlayer(private val scope: CoroutineScope, private val onStationPlay: (S
         val vol = v.coerceIn(0, 150)
         _state.update { it.copy(volume = vol) }
         mp?.let { p -> scope.launch(Dispatchers.IO) { p.audio().setVolume(vol) } }
+    }
+
+    /**
+     * VLC 3 no lee el título ICY de las emisoras por https. Para esas, cada 20 s se abre una conexión corta
+     * con Icy-MetaData, se lee hasta el primer bloque de metadatos (unos 16 KB) y se cierra.
+     */
+    private fun watchIcy(item: NowPlaying) {
+        icyJob?.cancel()
+        if (!item.isRadio || !item.url.startsWith("https://", ignoreCase = true) || item.url.contains(".m3u8", ignoreCase = true)) return
+        icyJob = scope.launch(Dispatchers.IO) {
+            var misses = 0
+            while (misses < 3) {
+                val title = runCatching { IcyReader.streamTitle(http, item.url) }.getOrNull()
+                if (title == null) misses++ else misses = 0
+                if (title != null && _state.value.nowPlaying?.id == item.id && title != _state.value.icyTitle) _state.update { it.copy(icyTitle = title) }
+                delay(20_000)
+            }
+        }
     }
 
     private fun readNowPlaying(p: EmbeddedMediaPlayer) {
@@ -230,4 +251,22 @@ class VideoFrames : BufferFormatCallback, RenderCallback {
         synchronized(lock) { width = 0; height = 0; back = ByteArray(0); fresh = false }
         frame.longValue++
     }
+}
+
+/** Título ICY («StreamTitle='Artista - Tema';») del primer bloque de metadatos de un stream Shoutcast/Icecast. */
+object IcyReader {
+    fun streamTitle(http: okhttp3.OkHttpClient, url: String): String? {
+        val req = okhttp3.Request.Builder().url(url).header("Icy-MetaData", "1").header("User-Agent", "Wavestr").build()
+        http.newCall(req).execute().use { r ->
+            val metaint = r.header("icy-metaint")?.trim()?.toIntOrNull()?.takeIf { it in 1..262_144 } ?: return null
+            val src = r.body?.source() ?: return null
+            src.skip(metaint.toLong())
+            val len = (src.readByte().toInt() and 0xFF) * 16
+            if (len == 0) return null
+            return parse(String(src.readByteArray(len.toLong()), Charsets.UTF_8))
+        }
+    }
+
+    fun parse(meta: String): String? =
+        Regex("StreamTitle='(.*?)';").find(meta)?.groupValues?.get(1)?.trim()?.takeIf { it.isNotEmpty() && it != "-" }
 }

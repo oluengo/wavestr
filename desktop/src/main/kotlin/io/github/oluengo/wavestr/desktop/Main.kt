@@ -50,7 +50,7 @@ class DesktopContainer {
     val radio = RadioBrowserClient(http, scope, "${AppInfo.name.replace(' ', '-')}/${AppInfo.version} (github.com/oluengo/wavestr)")
     val library = LibraryRepository(File(AppInfo.dataDir, "library.json"), scope)
     val artwork = ArtworkResolver(FileStore(File(AppInfo.dataDir, "artwork.properties")), http)
-    val player = VlcPlayer(scope, onStationPlay = radio::countClick)
+    val player = VlcPlayer(scope, http, onStationPlay = radio::countClick)
 
     init {
         RelayPool.DEFAULT = settings.current.appRelays ?: RelayPool.BUILTIN
@@ -154,7 +154,7 @@ private suspend fun smokeTest(c: DesktopContainer, window: java.awt.Window) {
     kotlinx.coroutines.delay(2_000)
     report("notice", "Escritorio paso: radio")
     c.player.play(NowPlaying("smoke-radio", "https://ice2.somafm.com/groovesalad-128-mp3", "SomaFM", "", null, null, isLive = false))
-    kotlinx.coroutines.delay(14_000)
+    kotlinx.coroutines.delay(24_000)
     c.player.state.value.let { report(if (it.isPlaying) "notice" else "error", "Escritorio radio: sonando=${it.isPlaying} error=${it.error} canción=${it.icyTitle}") }
     report("notice", "Escritorio paso: cambiar de emisora sin parar (http)")
     c.player.play(NowPlaying("smoke-radio2", "http://ice1.somafm.com/dronezone-128-mp3", "SomaFM 2", "", null, null, isLive = false))
