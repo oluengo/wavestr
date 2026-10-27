@@ -89,8 +89,14 @@ jobs:
           for v in RADIOSTR_KEYSTORE_PASSWORD RADIOSTR_KEY_ALIAS RADIOSTR_KEY_PASSWORD; do
             if [ -z "${!v}" ]; then echo "::error::Falta el secret de firma correspondiente a $v"; exit 1; fi
           done
-          if ! keytool -list -keystore "$RADIOSTR_KEYSTORE" -storepass "$RADIOSTR_KEYSTORE_PASSWORD" -alias "$RADIOSTR_KEY_ALIAS" > /dev/null 2> "$RUNNER_TEMP/kt.err"; then
-            echo "::error::La clave no abre con esos secrets: $(head -c 300 "$RUNNER_TEMP/kt.err" | tr '\n' ' ')"; exit 1
+          # Diagnóstico sin mostrar secretos: tamaño y tipo del archivo, si abre la contraseña y qué alias contiene.
+          echo "Keystore: $(stat -c %s "$RADIOSTR_KEYSTORE") bytes · $(file -b "$RADIOSTR_KEYSTORE" | cut -c1-60)"
+          if ! keytool -list -keystore "$RADIOSTR_KEYSTORE" -storepass "$RADIOSTR_KEYSTORE_PASSWORD" > "$RUNNER_TEMP/kt.out" 2>&1; then
+            echo "::error::ANDROID_KEYSTORE_PASSWORD no abre el keystore (o ANDROID_KEYSTORE_BASE64 no es un keystore válido): $(grep -i 'error' "$RUNNER_TEMP/kt.out" | head -c 300)"; exit 1
+          fi
+          aliases=$(grep -iE 'PrivateKeyEntry' "$RUNNER_TEMP/kt.out" | cut -d, -f1 | tr '\n' ' ')
+          if ! keytool -list -keystore "$RADIOSTR_KEYSTORE" -storepass "$RADIOSTR_KEYSTORE_PASSWORD" -alias "$RADIOSTR_KEY_ALIAS" > /dev/null 2>&1; then
+            echo "::error::ANDROID_KEY_ALIAS no coincide. Alias en el keystore: $aliases"; exit 1
           fi
           ./gradlew assembleRelease --stacktrace
           mkdir -p dist
