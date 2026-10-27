@@ -52,7 +52,8 @@ compose.desktop {
     application {
         mainClass = "io.github.oluengo.wavestr.desktop.MainKt"
         // Solo para la prueba de arranque en CI (WAVESTR_SMOKE=1 ./gradlew :desktop:run).
-        if (System.getenv("WAVESTR_SMOKE") == "1") jvmArgs += listOf("-Dwavestr.smoke=1")
+        if (System.getenv("WAVESTR_SMOKE") != null) jvmArgs += listOf("-Dwavestr.smoke=" + System.getenv("WAVESTR_SMOKE"), "-XX:ErrorFile=/tmp/wavestr_hs_err.log")
+        System.getenv("WAVESTR_HLS_DEMUX")?.let { jvmArgs += "-Dwavestr.hlsdemux=$it" }
         nativeDistributions {
             targetFormats(TargetFormat.Deb, TargetFormat.Msi)
             packageName = if (beta) "Wavestr-Beta" else "Wavestr"

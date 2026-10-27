@@ -200,15 +200,19 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           ./gradlew :desktop:classes --stacktrace
-          code=0
-          WAVESTR_SMOKE=1 timeout -k 10 240 xvfb-run -a -s "-screen 0 1280x900x24" ./gradlew --no-daemon :desktop:run > "$RUNNER_TEMP/smoke.log" 2>&1 || code=$?
-          grep -E "^::" "$RUNNER_TEMP/smoke.log" || echo "::warning::La prueba de arranque no dejó resultados"
-          grep -nE "Exception|Error|Caused by|^\s+at (io\.github|uk\.co|org\.jetbrains\.skia|androidx)|SIGSEGV|fatal" "$RUNNER_TEMP/smoke.log" | grep -v "^::" | head -30 | sed 's/^/::warning::smoke /' || true
-          grep -A14 "SIGSEGV" "$RUNNER_TEMP/smoke.log" | head -16 | sed 's/^/::notice::crash /' || true
-          f=$(ls hs_err_pid*.log desktop/hs_err_pid*.log 2>/dev/null | head -1 || true)
-          if [ -n "$f" ]; then grep -A8 -E "^Native frames" "$f" | head -12 | sed 's/^/::notice::hs_err /' || true; fi
-          grep -B12 "SIGSEGV" "$RUNNER_TEMP/smoke.log" | grep -vE "^#|^\s*$" | tail -10 | sed 's/^/::notice::antes /' || true
-          [ "$code" = 0 ] || echo "::warning::La prueba de arranque terminó con código $code"
+          for demux in adaptive avformat; do
+            rm -f /tmp/wavestr_hs_err.log
+            code=0
+            if [ "$demux" = avformat ]; then export WAVESTR_HLS_DEMUX=avformat; else unset WAVESTR_HLS_DEMUX; fi
+            WAVESTR_SMOKE=1 timeout -k 10 240 xvfb-run -a -s "-screen 0 1280x900x24" ./gradlew --no-daemon :desktop:run > "$RUNNER_TEMP/smoke.log" 2>&1 || code=$?
+            grep -E "^::" "$RUNNER_TEMP/smoke.log" | sed "s/^::\([a-z]*\)::/::\1::[$demux] /" || echo "::warning::[$demux] La prueba de arranque no dejó resultados"
+            grep -A3 "Problematic frame" "$RUNNER_TEMP/smoke.log" | sed "s/^/::notice::[$demux] crash /" || true
+            if [ -f /tmp/wavestr_hs_err.log ]; then
+              grep -E "^Current thread" /tmp/wavestr_hs_err.log | sed "s/^/::notice::[$demux] hs_err /" || true
+              grep -A22 -E "^Native frames" /tmp/wavestr_hs_err.log | head -23 | sed "s/^/::notice::[$demux] hs_err /" || true
+            fi
+            [ "$code" = 0 ] || echo "::warning::[$demux] La prueba de arranque terminó con código $code"
+          done
 
       - name: Linux (.deb y .tar.gz)
         if: runner.os == 'Linux'

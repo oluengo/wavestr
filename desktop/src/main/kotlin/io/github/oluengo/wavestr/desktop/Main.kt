@@ -136,12 +136,19 @@ private suspend fun smokeTest(c: DesktopContainer, window: java.awt.Window) {
     kotlinx.coroutines.delay(4_000)
     report("notice", "Escritorio: ventana ${window.width}x${window.height} · VLC=${c.player.state.value.available} · idioma=${I18n.locale} · «${t("tab_live")}» / «${t("tab_radio")}»")
     if (!c.player.state.value.available) { report("error", "Escritorio: no se encuentra VLC"); return }
-    // Primero el vídeo (HLS), luego la radio: así se ve qué parte falla si algo revienta.
-    report("notice", "Escritorio paso: vídeo HLS")
-    c.player.play(NowPlaying("smoke-video", "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", "HLS", "", null, null, isLive = true))
-    kotlinx.coroutines.delay(12_000)
-    val frames = c.player.video.frame.longValue
-    c.player.state.value.let { report(if (frames > 10) "notice" else "error", "Escritorio vídeo: sonando=${it.isPlaying} fotogramas=$frames tamaño=${c.player.video.width}x${c.player.video.height}") }
+    // Vídeo por pasos (de lo más simple a HLS) para ver qué parte falla si algo revienta.
+    suspend fun video(name: String, url: String) {
+        report("notice", "Escritorio paso: $name")
+        val before = c.player.video.frame.longValue
+        c.player.play(NowPlaying("smoke-$name", url, name, "", null, null, isLive = true))
+        kotlinx.coroutines.delay(10_000)
+        val frames = c.player.video.frame.longValue - before
+        c.player.state.value.let { report(if (frames > 10) "notice" else "error", "Escritorio $name: sonando=${it.isPlaying} fotogramas=$frames tamaño=${c.player.video.width}x${c.player.video.height}") }
+        c.player.stop()
+        kotlinx.coroutines.delay(1_500)
+    }
+    video("mp4", "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4")
+    video("hls", "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8")
     report("notice", "Escritorio paso: parar")
     c.player.stop()
     kotlinx.coroutines.delay(2_000)

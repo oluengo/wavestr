@@ -108,7 +108,7 @@ class VlcPlayer(private val scope: CoroutineScope, private val onStationPlay: (S
         video.clear()
         _state.update { it.copy(nowPlaying = item, error = false, icyTitle = null, isBuffering = true, audioOnly = it.audioOnly && !item.isRadio) }
         // Las llamadas a libVLC, fuera del hilo de la UI y de sus propios eventos.
-        scope.launch(Dispatchers.IO) { p.media().play(item.url, ":network-caching=1500", ":http-reconnect") }
+        scope.launch(Dispatchers.IO) { p.media().play(item.url, *mediaOptions(item.url)) }
     }
 
     /** Emisora con la variante elegida o, en Auto, la de más calidad (en el ordenador no hay datos móviles). */
@@ -137,7 +137,7 @@ class VlcPlayer(private val scope: CoroutineScope, private val onStationPlay: (S
             when {
                 p.status().isPlaying -> p.controls().pause()
                 // Un directo pausado se retoma desde el punto en vivo, no desde donde se dejó.
-                np.isLive || _state.value.error -> p.media().play(np.url, ":network-caching=1500")
+                np.isLive || _state.value.error -> p.media().play(np.url, *mediaOptions(np.url))
                 else -> p.controls().play()
             }
         }
@@ -157,6 +157,14 @@ class VlcPlayer(private val scope: CoroutineScope, private val onStationPlay: (S
         val vol = v.coerceIn(0, 150)
         _state.update { it.copy(volume = vol) }
         mp?.let { p -> scope.launch(Dispatchers.IO) { p.audio().setVolume(vol) } }
+    }
+
+    /** WAVESTR_HLS_DEMUX=avformat (pruebas): abre HLS con libavformat en vez del módulo «adaptive» de VLC. */
+    private fun mediaOptions(url: String): Array<String> {
+        val opts = mutableListOf(":network-caching=1500")
+        if (!url.contains(".m3u8", ignoreCase = true)) opts += ":http-reconnect"
+        System.getProperty("wavestr.hlsdemux")?.takeIf { url.contains(".m3u8", ignoreCase = true) }?.let { opts += ":demux=$it" }
+        return opts.toTypedArray()
     }
 
     fun release() {
