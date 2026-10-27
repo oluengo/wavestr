@@ -53,6 +53,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
 import io.github.oluengo.radiostr.AppContainer
@@ -69,7 +71,7 @@ fun PlayerScreen(c: AppContainer, onClose: () -> Unit, onOpenProfile: (String) -
     val lib by c.library.library.collectAsStateWithLifecycle()
     val np = st.nowPlaying
     val activity: LiveActivityViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
-        factory = androidx.lifecycle.viewmodel.viewModelFactory { androidx.lifecycle.viewmodel.initializer { LiveActivityViewModel(c) } }
+        factory = viewModelFactory { initializer { LiveActivityViewModel(c) } }
     )
     val liveAddress = np?.takeIf { it.isLive && it.hostPubkey != null }?.id
     androidx.compose.runtime.LaunchedEffect(liveAddress) { activity.watch(liveAddress) }
