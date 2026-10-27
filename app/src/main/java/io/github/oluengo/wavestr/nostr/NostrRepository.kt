@@ -33,6 +33,34 @@ class NostrRepository(private val pool: RelayPool) {
         return ((ev?.writeRelays().orEmpty()).take(5) + RelayPool.DEFAULT).distinct()
     }
 
+    /** Al cambiar los relays de Wavestr hay que olvidar lo calculado con los anteriores. */
+    fun clearRelayCaches() { relayCache.clear(); followCache.clear() }
+
+    /** Lista NIP-65 del usuario como (url, marca): "read", "write" o "" (ambos). */
+    suspend fun relayList(pubkey: String): List<Pair<String, String>> =
+        pool.query(
+            RelayPool.INDEXERS + RelayPool.DEFAULT,
+            listOf(Filter(kinds = listOf(Kinds.RELAY_LIST), authors = listOf(pubkey), limit = 1)),
+        ).maxByOrNull { it.createdAt }?.tagsNamed("r").orEmpty()
+            .filter { it.size > 1 && it[1].startsWith("wss://") }
+            .map { it[1].trimEnd('/') to (it.getOrNull(2) ?: "") }
+            .distinctBy { it.first }
+
+    /** Directos activos ahora de unos anfitriones concretos (p. ej. tus streamers favoritos). */
+    suspend fun liveOf(hosts: Collection<String>, viewer: String?): List<LiveStream> {
+        if (hosts.isEmpty()) return emptyList()
+        val list = hosts.toList()
+        val since = now() - 24 * 3600
+        return pool.query(
+            relaysFor(viewer),
+            listOf(
+                Filter(kinds = listOf(Kinds.LIVE_EVENT), authors = list, since = since),
+                Filter(kinds = listOf(Kinds.LIVE_EVENT), tags = mapOf("p" to list), since = since),
+            ),
+        ).latestByAddress().mapNotNull(LiveStream::from)
+            .filter { it.isLiveNow(now()) && it.hostPubkey in hosts }
+    }
+
     suspend fun follows(pubkey: String, refresh: Boolean = false): List<String> {
         if (!refresh) followCache[pubkey]?.let { return it }
         val ev = pool.query(

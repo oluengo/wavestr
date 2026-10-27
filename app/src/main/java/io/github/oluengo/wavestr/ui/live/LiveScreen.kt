@@ -68,6 +68,7 @@ fun LiveScreen(c: AppContainer, onPlay: (NowPlaying) -> Unit, onSignIn: () -> Un
             IconButton(onClick = { vm.load(refresh = true) }) {
                 Icon(Icons.Outlined.Refresh, contentDescription = stringResource(R.string.refresh))
             }
+            io.github.oluengo.wavestr.ui.common.SurpriseButton(c)
             io.github.oluengo.wavestr.ui.common.MeButton(c, onOpenMe)
         }
         Row(Modifier.padding(horizontal = 20.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {

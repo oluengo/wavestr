@@ -53,6 +53,7 @@ fun WavestrRoot(c: AppContainer) {
     io.github.oluengo.wavestr.ui.favorites.AmberRequestHost(c)
     io.github.oluengo.wavestr.ui.favorites.SyncAskDialog(c)
 
+    androidx.compose.runtime.CompositionLocalProvider(io.github.oluengo.wavestr.ui.common.LocalOpenPlayer provides { nav.navigate("player") { launchSingleTop = true } }) {
     Scaffold(
         bottomBar = {
             if (onTab) Column {
@@ -98,6 +99,7 @@ fun WavestrRoot(c: AppContainer) {
                 )
             }
         }
+    }
     }
 }
 

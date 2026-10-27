@@ -78,7 +78,6 @@
     <string name="account_readonly">Solo lectura</string>
     <string name="logout">Cerrar sesión</string>
     <string name="settings_relays">Relays</string>
-    <string name="relays_note">Tus propios relays (NIP-65) se añaden solos al iniciar sesión.</string>
     <string name="settings_about">Acerca de</string>
     <string name="version">Versión %s</string>
 
@@ -277,4 +276,29 @@
     <string name="fav_sync_offline">No se pudo conectar con los relays</string>
     <string name="fav_sync_too_big">Demasiados favoritos para un solo evento</string>
     <string name="fav_sync_unreadable">No se pudo leer la copia de Nostr</string>
+
+    <!-- Sorpresa y relays -->
+    <string name="surprise">Sorpresa</string>
+    <string name="surprise_radio">Radio</string>
+    <string name="surprise_live">Directos</string>
+    <string name="surprise_both">Ambos</string>
+    <string name="surprise_from_favs">Tus favoritos</string>
+    <string name="surprise_from_all">De todo</string>
+    <string name="surprise_go">Sorpréndeme</string>
+    <string name="surprise_empty_favs">Ahora mismo no hay nada así en tus favoritos. Prueba con «De todo».</string>
+    <string name="surprise_empty_all">No se ha encontrado nada. Revisa la conexión y vuelve a probar.</string>
+    <string name="relays_yours">Tus relays (NIP-65)</string>
+    <string name="relays_yours_none">No tienes ninguna lista de relays publicada.</string>
+    <string name="relays_yours_note">Se cambian en tu cliente de Nostr habitual: los comparten todas tus apps.</string>
+    <string name="relay_read">lectura</string>
+    <string name="relay_write">escritura</string>
+    <string name="relay_both">lectura y escritura</string>
+    <string name="relays_app">Relays de Wavestr</string>
+    <string name="relays_app_sub">Se usan junto a los tuyos para encontrar directos, chat y zaps, y para guardar tus favoritos.</string>
+    <string name="relay_added">añadido</string>
+    <string name="relay_remove">Quitar %1$s</string>
+    <string name="relay_add">Añadir</string>
+    <string name="relay_invalid">Eso no es una dirección de relay (wss://…)</string>
+    <string name="relays_restore">Restaurar los de serie</string>
+    <string name="relays_profiles_note">Los perfiles y las listas de relays también se buscan en %1$s.</string>
 </resources>

@@ -13,6 +13,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.distinctUntilChanged
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 
@@ -30,8 +33,10 @@ class WavestrApp : Application(), coil.ImageLoaderFactory {
         super.onCreate()
         container = AppContainer(this)
         // Aplicar el tema guardado antes de crear la primera Activity (evita un parpadeo).
-        val theme = runBlocking { container.settings.current().theme }
-        SettingsRepository.applyNightMode(theme)
+        val s = runBlocking { container.settings.current() }
+        SettingsRepository.applyNightMode(s.theme)
+        RelayPool.DEFAULT = s.appRelays ?: RelayPool.BUILTIN
+        container.watchRelays()
     }
 }
 
@@ -52,6 +57,18 @@ class AppContainer(app: Application) {
     val artwork = io.github.oluengo.wavestr.radio.ArtworkResolver(app, http)
     val wallet = io.github.oluengo.wavestr.data.WalletRepository(app, relays)
     val zaps = io.github.oluengo.wavestr.nostr.ZapClient(http)
+    val surprise = io.github.oluengo.wavestr.ui.common.SurprisePicker(this)
+
+    /** Aplica al momento los relays que cambie el usuario en Ajustes. */
+    fun watchRelays() {
+        appScope.launch {
+            settings.flow.map { it.appRelays }.distinctUntilChanged().collect { list ->
+                val next = list ?: RelayPool.BUILTIN
+                if (next != RelayPool.DEFAULT) { RelayPool.DEFAULT = next; nostr.clearRelayCaches() }
+            }
+        }
+    }
+
     val player = PlayerConnection(app, settings, HlsInspector(http), appScope, onStationPlay = radio::countClick)
 }
 

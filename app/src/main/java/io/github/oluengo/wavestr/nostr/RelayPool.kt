@@ -136,11 +136,24 @@ class RelayPool(private val http: OkHttpClient) {
 
     companion object {
         /** Relays por defecto: generales + índice de perfiles/listas. */
-        val DEFAULT = listOf(
+        val BUILTIN = listOf(
             "wss://relay.damus.io",
             "wss://nos.lol",
             "wss://relay.primal.net",
         )
+
+        /** Relays de Wavestr: los de serie o los que haya puesto el usuario en Ajustes. */
+        @Volatile
+        var DEFAULT: List<String> = BUILTIN
+
+        /** Normaliza lo que escribe el usuario: añade wss:// si falta; null si no es un relay válido. */
+        fun normalize(input: String): String? {
+            val t = input.trim().trimEnd('/').lowercase()
+            if (t.isEmpty() || t.any { it.isWhitespace() }) return null
+            val u = if ("://" in t) t else "wss://$t"
+            val ok = (u.startsWith("wss://") || u.startsWith("ws://")) && u.substringAfter("://").let { h -> h.contains('.') || h.startsWith("localhost") }
+            return u.takeIf { ok }
+        }
         val INDEXERS = listOf(
             "wss://purplepag.es",
         )

@@ -76,6 +76,7 @@ fun FavoritesScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenProfile: (S
     Column(Modifier.fillMaxSize()) {
         ScreenHeader(stringResource(R.string.tab_favorites), stringResource(R.string.fav_sub)) {
             IconButton(onClick = { dialog = Dialog.NewFolder }) { Icon(Icons.Outlined.CreateNewFolder, stringResource(R.string.fav_new_folder)) }
+            io.github.oluengo.wavestr.ui.common.SurpriseButton(c)
             MeButton(c, onOpenMe)
         }
         // Migas de pan

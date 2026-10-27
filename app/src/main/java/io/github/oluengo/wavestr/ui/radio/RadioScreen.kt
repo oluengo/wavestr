@@ -77,7 +77,7 @@ fun RadioScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenMe: () -> Unit)
     val searching = st.query.trim().length >= 2
 
     Column(Modifier.fillMaxSize()) {
-        ScreenHeader(stringResource(R.string.tab_radio), stringResource(R.string.radio_sub)) { MeButton(c, onOpenMe) }
+        ScreenHeader(stringResource(R.string.tab_radio), stringResource(R.string.radio_sub)) { io.github.oluengo.wavestr.ui.common.SurpriseButton(c); MeButton(c, onOpenMe) }
         OutlinedTextField(
             value = st.query,
             onValueChange = vm::setQuery,

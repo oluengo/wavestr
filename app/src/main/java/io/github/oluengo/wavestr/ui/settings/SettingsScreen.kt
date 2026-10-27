@@ -141,12 +141,7 @@ fun SettingsScreen(c: AppContainer, onOpenMe: () -> Unit) {
             BackupSection(c)
 
             SectionLabel(stringResource(R.string.settings_relays))
-            Group {
-                (RelayPool.DEFAULT + RelayPool.INDEXERS).forEach {
-                    Text(it, fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(vertical = 3.dp))
-                }
-                Text(stringResource(R.string.relays_note), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 6.dp))
-            }
+            RelaysSection(c)
 
             SectionLabel(stringResource(R.string.settings_about))
             AboutSection()

@@ -15,6 +15,8 @@ enum class ThemeMode { SYSTEM, LIGHT, DARK }
 enum class LoginMethod { NONE, AMBER, READ_ONLY }
 
 /** Colores de acento (los mismos que en la demo). */
+enum class SurpriseKind { RADIO, LIVE, BOTH }
+
 enum class Accent { VIOLET, GREEN, CORAL, BLUE, RASPBERRY }
 
 data class AppSettings(
@@ -27,6 +29,10 @@ data class AppSettings(
     val accent: Accent = Accent.VIOLET,
     /** Guardar favoritos en Nostr: null = aún no se ha preguntado. */
     val favSync: Boolean? = null,
+    /** Relays de Wavestr; null = los de serie. */
+    val appRelays: List<String>? = null,
+    val surpriseKind: SurpriseKind = SurpriseKind.BOTH,
+    val surpriseFromFavorites: Boolean = false,
 )
 
 private val Context.dataStore by preferencesDataStore(name = "settings")
@@ -41,6 +47,9 @@ class SettingsRepository(private val context: Context) {
         val signer = stringPreferencesKey("signer_package")
         val accent = stringPreferencesKey("accent")
         val favSync = booleanPreferencesKey("fav_sync")
+        val relays = stringPreferencesKey("app_relays")
+        val surpriseKind = stringPreferencesKey("surprise_kind")
+        val surpriseFav = booleanPreferencesKey("surprise_fav")
     }
 
     val flow: Flow<AppSettings> = context.dataStore.data.map { p ->
@@ -53,6 +62,9 @@ class SettingsRepository(private val context: Context) {
             signerPackage = p[K.signer],
             accent = p[K.accent]?.let { runCatching { Accent.valueOf(it) }.getOrNull() } ?: Accent.VIOLET,
             favSync = p[K.favSync],
+            appRelays = p[K.relays]?.split('\n')?.filter { it.isNotBlank() },
+            surpriseKind = p[K.surpriseKind]?.let { runCatching { SurpriseKind.valueOf(it) }.getOrNull() } ?: SurpriseKind.BOTH,
+            surpriseFromFavorites = p[K.surpriseFav] ?: false,
         )
     }
 
@@ -64,6 +76,13 @@ class SettingsRepository(private val context: Context) {
     }
 
     suspend fun setAccent(a: Accent) = context.dataStore.edit { it[K.accent] = a.name }
+    /** null = volver a los de serie. */
+    suspend fun setAppRelays(list: List<String>?) = context.dataStore.edit {
+        if (list == null) it.remove(K.relays) else it[K.relays] = list.joinToString("\n")
+    }
+    suspend fun setSurprise(kind: SurpriseKind, fromFavorites: Boolean) = context.dataStore.edit {
+        it[K.surpriseKind] = kind.name; it[K.surpriseFav] = fromFavorites
+    }
     suspend fun setFavSync(v: Boolean) = context.dataStore.edit { it[K.favSync] = v }
     suspend fun setAudioOnScreenOff(v: Boolean) = context.dataStore.edit { it[K.audioOff] = v }
     suspend fun setAudioOnCellular(v: Boolean) = context.dataStore.edit { it[K.audioCell] = v }

@@ -79,7 +79,6 @@
     <string name="account_readonly">Read-only</string>
     <string name="logout">Sign out</string>
     <string name="settings_relays">Relays</string>
-    <string name="relays_note">Your own relays (NIP-65) are added automatically when you sign in.</string>
     <string name="settings_about">About</string>
     <string name="version">Version %s</string>
 
@@ -278,4 +277,29 @@
     <string name="fav_sync_offline">Couldn\'t reach the relays</string>
     <string name="fav_sync_too_big">Too many favorites to fit in one event</string>
     <string name="fav_sync_unreadable">The copy on Nostr couldn\'t be read</string>
+
+    <!-- Sorpresa y relays -->
+    <string name="surprise">Surprise</string>
+    <string name="surprise_radio">Radio</string>
+    <string name="surprise_live">Live</string>
+    <string name="surprise_both">Both</string>
+    <string name="surprise_from_favs">Your favorites</string>
+    <string name="surprise_from_all">Everything</string>
+    <string name="surprise_go">Surprise me</string>
+    <string name="surprise_empty_favs">Nothing matches in your favorites right now. Try «Everything».</string>
+    <string name="surprise_empty_all">Nothing found. Check your connection and try again.</string>
+    <string name="relays_yours">Your relays (NIP-65)</string>
+    <string name="relays_yours_none">You have no relay list published.</string>
+    <string name="relays_yours_note">Change them in your usual Nostr client: they are shared by all your apps.</string>
+    <string name="relay_read">read</string>
+    <string name="relay_write">write</string>
+    <string name="relay_both">read and write</string>
+    <string name="relays_app">Wavestr relays</string>
+    <string name="relays_app_sub">Used together with yours to find live streams, chat and zaps, and to save your favorites.</string>
+    <string name="relay_added">added</string>
+    <string name="relay_remove">Remove %1$s</string>
+    <string name="relay_add">Add</string>
+    <string name="relay_invalid">That isn\'t a relay address (wss://…)</string>
+    <string name="relays_restore">Restore defaults</string>
+    <string name="relays_profiles_note">Profiles and relay lists are also looked up in %1$s.</string>
 </resources>

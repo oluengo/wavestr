@@ -66,6 +66,10 @@ class RadioBrowserClient(private val http: OkHttpClient, private val scope: Coro
     suspend fun top(limit: Int = 80) =
         stations("/json/stations/search?order=votes&reverse=true&hidebroken=true&limit=$limit")
 
+    /** Emisoras al azar del directorio (solo las que funcionan). */
+    suspend fun random(limit: Int = 40) =
+        stations("/json/stations/search?order=random&hidebroken=true&limit=$limit")
+
     suspend fun byCountry(code: String) =
         stations("/json/stations/search?countrycode=${enc(code)}&order=votes&reverse=true&hidebroken=true&limit=120")
 

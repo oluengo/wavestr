@@ -93,4 +93,14 @@ class NostrTest {
         val f = Filter(kinds = listOf(30311), tags = mapOf("p" to listOf("abc")), since = 10, limit = 5)
         assertEquals("""{"kinds":[30311],"#p":["abc"],"since":10,"limit":5}""", f.toJson().toString())
     }
+
+    @Test
+    fun relayAddressesAreNormalized() {
+        assertEquals("wss://relay.damus.io", RelayPool.normalize("relay.damus.io"))
+        assertEquals("wss://nos.lol", RelayPool.normalize("  WSS://nos.lol/ "))
+        assertEquals("ws://localhost:7777", RelayPool.normalize("ws://localhost:7777"))
+        assertEquals(null, RelayPool.normalize("https://nos.lol"))
+        assertEquals(null, RelayPool.normalize("relay"))
+        assertEquals(null, RelayPool.normalize("wss://a b.com"))
+    }
 }
