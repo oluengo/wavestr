@@ -192,6 +192,35 @@ input.field{width:100%;border:1px solid var(--line);background:var(--bg);color:v
 .lic{font-family:var(--mono);font-size:10px;line-height:1.35;white-space:pre-wrap;background:var(--bg);border-radius:8px;padding:10px;margin:8px 0 0;max-height:180px;overflow:auto}
 details.lic-d summary{cursor:pointer;color:var(--muted);font-size:13px;margin-top:10px}
 .verb{font-family:var(--mono);font-size:12px;color:var(--muted)}
+button.avatar{cursor:pointer}
+.avatar.out{background:var(--surface);color:var(--muted);border:1px solid var(--line)}
+.avatar svg{width:18px;height:18px}
+.search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0 12px;margin-bottom:10px}
+.search svg{width:18px;height:18px;color:var(--muted);flex:none}
+.search input{flex:1;min-width:0;border:0;background:none;color:var(--fg);font:inherit;padding:11px 0;outline:none}
+.chips button.chip{font:inherit;font-size:13px;color:inherit;cursor:pointer}
+.chips .chip.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.tagcloud{display:flex;flex-wrap:wrap;gap:8px}
+.tagcloud button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13px}
+.tagcloud button small{color:var(--muted);font-family:var(--mono);margin-left:4px}
+.warnb{font-size:11px;padding:2px 7px;border-radius:5px;background:color-mix(in srgb,var(--live) 14%,transparent);color:var(--live);font-weight:600;white-space:nowrap}
+.httpb{font-size:10px;padding:1px 6px;border-radius:5px;border:1px solid var(--line);color:var(--muted);font-family:var(--mono)}
+.imp-tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:3px}
+.imp-tabs button{padding:8px;border-radius:9px;font-size:13px;font-weight:600;color:var(--muted)}
+.imp-tabs button.on{background:var(--fg);color:var(--bg)}
+textarea.field{min-height:110px;resize:vertical;font-family:var(--mono);font-size:12px;line-height:1.4}
+.found{display:grid;gap:4px;max-height:220px;overflow:auto}
+.found label{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);font-size:13px}
+.found label span{flex:1;min-width:0}
+.found label small{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+select.field,textarea.field{width:100%;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:12px;padding:11px 12px;font:inherit;font-size:14px}
+select.field{appearance:none;padding-right:34px;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+textarea.field{font-family:var(--mono);font-size:12px}
+.filebtn{display:grid;place-items:center;gap:4px;border:1.5px dashed var(--line);border-radius:12px;padding:22px;color:var(--muted);font-size:13px;text-align:center;cursor:pointer}
+.filebtn b{color:var(--fg)}
+.me-card{display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:10px 0}
+.me-av{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;flex:none}
+.err-hint{color:var(--live)}
 @media (prefers-reduced-motion:reduce){.bars i{animation:none;height:60%}.sheet{transition:none}}
 </style>
 </head>
@@ -203,7 +232,7 @@ details.lic-d summary{cursor:pointer;color:var(--muted);font-size:13px;margin-to
     <div><h1 id="hTitle">En directo</h1><div class="sub" id="hSub">De la gente que sigues en Nostr</div></div>
     <div style="display:flex;gap:6px;align-items:center">
       <button class="iconbtn" id="dice" aria-label="Emisora sorpresa" title="Sorpresa" data-i18n-aria="Emisora sorpresa" data-i18n-title="Sorpresa"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9" cy="9" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="15" cy="15" r="1.3" fill="currentColor"/></svg></button>
-      <div class="avatar" title="Tu perfil Nostr" data-i18n-title="Tu perfil Nostr">OL</div>
+      <button class="avatar" id="meBtn" title="Tu perfil Nostr" data-i18n-title="Tu perfil Nostr" aria-label="Tu perfil Nostr" data-i18n-aria="Tu perfil Nostr">OL</button>
     </div>
   </header>
   <div class="menu" id="menu" hidden>
@@ -287,9 +316,12 @@ function applyStatic(){
 function setLang(pref){
   LANG_PREF=pref; LANG=pref==="auto"?detectLang():pref;
   try{localStorage.setItem("rn-lang",pref);}catch(_){}
-  applyStatic(); view(); mini(); if($("sheet").classList.contains("open")) player();
+  applyStatic(); renderMeBtn(); view(); mini(); if($("sheet").classList.contains("open")) player();
 }
 
+
+Object.assign(TR.en,{"Cerca de ti": "Near you", "Etiquetas": "Tags", "Importadas": "Imported", "Busca emisora, país o estilo": "Search station, country or style", "Buscar emisoras": "Search stations", "Resultados": "Results", "Nada para «{q}». Prueba con otro nombre, país o estilo, o importa tu propia lista.": "Nothing for «{q}». Try another name, country or style, or import your own list.", "Más escuchadas en el directorio": "Most played in the directory", "Datos de ejemplo. En la app vienen de Radio Browser (directorio libre, sin cuenta).": "Sample data. In the app they come from Radio Browser (free directory, no account).", "País": "Country", "Por defecto, el país de tu dispositivo. Radiostr no usa tu ubicación.": "Defaults to your device’s country. Radiostr doesn’t use your location.", "Elige un estilo para ver sus emisoras.": "Pick a style to see its stations.", "Tus emisoras importadas": "Your imported stations", "Aún no has importado nada. Pega un enlace o una lista PLS/M3U, o elige un archivo del móvil.": "Nothing imported yet. Paste a link or a PLS/M3U list, or pick a file from your phone.", "No responde": "Not responding", "Esta emisora no responde. Reintentamos cada 10 s; también puedes probar otro formato o avisar de que está caída.": "This station isn’t responding. We retry every 10 s; you can also try another format or report it as down.", "Sin cifrar (http): se permite solo para el audio.": "Unencrypted (http): allowed for audio only.", "Importar emisoras": "Import stations", "Pegar enlace o lista": "Paste link or list", "Elegir archivo": "Choose file", "Pega una URL de stream o el contenido de un .pls / .m3u": "Paste a stream URL or the contents of a .pls / .m3u", "Enlace o lista": "Link or list", "Ejemplo PLS": "PLS sample", "Ejemplo M3U": "M3U sample", "Leer lista": "Read list", "Toca para elegir un archivo": "Tap to choose a file", "Encontradas": "Found", "Guardar en": "Save to", "Solo en Importadas": "Imported only", "Favoritos · Sin carpeta": "Favorites · No folder", "Añadir {n} emisoras": "Add {n} stations", "En la app, si pegas el enlace a un .pls o .m3u, Radiostr lo descarga y lo lee. Las emisoras http se permiten solo para el audio.": "In the app, if you paste a link to a .pls or .m3u, Radiostr downloads and reads it. http stations are allowed for audio only.", "Pega una URL o el contenido de una lista.": "Paste a URL or the contents of a list.", "En la demo no se descargan listas. Usa «Ejemplo PLS» o «Ejemplo M3U», o elige un archivo.": "The demo doesn’t download lists. Use «PLS sample» or «M3U sample», or choose a file.", "Stream HLS": "HLS stream", "Esto es un stream HLS, no una lista. Pega su URL para añadirlo como una emisora.": "This is an HLS stream, not a list. Paste its URL to add it as a station.", "No se ha encontrado ninguna emisora. Comprueba que es un archivo PLS o M3U con URLs http(s).": "No stations found. Check that it’s a PLS or M3U file with http(s) URLs.", "Marca al menos una emisora.": "Tick at least one station.", "Importada": "Imported", "Según el stream": "As the stream sends it", "{n} emisoras importadas": "{n} stations imported", "No se ha podido leer el archivo.": "Couldn’t read the file.", "Catalán": "Catalan", "seguidos": "following", "relays": "relays", "firma": "signer", "solo lectura": "read-only", "Tu clave pública": "Your public key", "Radiostr lee tu perfil (kind 0) y tus relays (NIP-65), pero no lo modifica. Para editarlo usa tu cliente de Nostr habitual.": "Radiostr reads your profile (kind 0) and relays (NIP-65) but never changes them. Edit them in your usual Nostr client.", "Cerrar sesión": "Sign out", "Iniciar sesión": "Sign in", "Radiostr nunca ve tu clave privada.": "Radiostr never sees your private key.", "Entrar con Amber": "Sign in with Amber", "o solo lectura": "or read-only", "Tu npub": "Your npub", "Usar mi npub": "Use my npub", "En solo lectura ves a quién sigues. Para enviar zaps necesitarás Amber.": "Read-only shows who you follow. You’ll need Amber to send zaps.", "Sesión iniciada con Amber": "Signed in with Amber", "Sesión iniciada en solo lectura": "Signed in read-only", "Eso no parece un npub. Debe empezar por npub1.": "That doesn’t look like an npub. It should start with npub1.", "Sesión cerrada": "Signed out", "Solo lectura (npub)": "Read-only (npub)", "{n} conectados": "{n} connected", "Sin sesión": "Not signed in", "Conéctate con Amber o pega tu npub para navegar en solo lectura.": "Connect with Amber, or paste your npub to browse read-only.", "Inicia sesión para ver a quién sigues": "Sign in to see who you follow", "Mientras tanto ves los directos de todo Nostr.": "Meanwhile you see live streams from all of Nostr."});
+Object.assign(TR.ca,{"Cerca de ti": "A prop teu", "Etiquetas": "Etiquetes", "Importadas": "Importades", "Busca emisora, país o estilo": "Cerca emissora, país o estil", "Buscar emisoras": "Cerca emissores", "Resultados": "Resultats", "Nada para «{q}». Prueba con otro nombre, país o estilo, o importa tu propia lista.": "Res per a «{q}». Prova amb un altre nom, país o estil, o importa la teva llista.", "Más escuchadas en el directorio": "Les més escoltades del directori", "Datos de ejemplo. En la app vienen de Radio Browser (directorio libre, sin cuenta).": "Dades d’exemple. A l’app venen de Radio Browser (directori lliure, sense compte).", "País": "País", "Por defecto, el país de tu dispositivo. Radiostr no usa tu ubicación.": "Per defecte, el país del dispositiu. Radiostr no fa servir la teva ubicació.", "Elige un estilo para ver sus emisoras.": "Tria un estil per veure’n les emissores.", "Tus emisoras importadas": "Les teves emissores importades", "Aún no has importado nada. Pega un enlace o una lista PLS/M3U, o elige un archivo del móvil.": "Encara no has importat res. Enganxa un enllaç o una llista PLS/M3U, o tria un fitxer del mòbil.", "No responde": "No respon", "Esta emisora no responde. Reintentamos cada 10 s; también puedes probar otro formato o avisar de que está caída.": "Aquesta emissora no respon. Ho tornem a provar cada 10 s; també pots provar un altre format o avisar que ha caigut.", "Sin cifrar (http): se permite solo para el audio.": "Sense xifrar (http): només es permet per a l’àudio.", "Importar emisoras": "Importa emissores", "Pegar enlace o lista": "Enganxa enllaç o llista", "Elegir archivo": "Tria un fitxer", "Pega una URL de stream o el contenido de un .pls / .m3u": "Enganxa una URL de stream o el contingut d’un .pls / .m3u", "Enlace o lista": "Enllaç o llista", "Ejemplo PLS": "Exemple PLS", "Ejemplo M3U": "Exemple M3U", "Leer lista": "Llegeix la llista", "Toca para elegir un archivo": "Toca per triar un fitxer", "Encontradas": "Trobades", "Guardar en": "Desa a", "Solo en Importadas": "Només a Importades", "Favoritos · Sin carpeta": "Preferits · Sense carpeta", "Añadir {n} emisoras": "Afegeix {n} emissores", "En la app, si pegas el enlace a un .pls o .m3u, Radiostr lo descarga y lo lee. Las emisoras http se permiten solo para el audio.": "A l’app, si enganxes l’enllaç a un .pls o .m3u, Radiostr el baixa i el llegeix. Les emissores http només es permeten per a l’àudio.", "Pega una URL o el contenido de una lista.": "Enganxa una URL o el contingut d’una llista.", "En la demo no se descargan listas. Usa «Ejemplo PLS» o «Ejemplo M3U», o elige un archivo.": "La demo no baixa llistes. Fes servir «Exemple PLS» o «Exemple M3U», o tria un fitxer.", "Stream HLS": "Stream HLS", "Esto es un stream HLS, no una lista. Pega su URL para añadirlo como una emisora.": "Això és un stream HLS, no una llista. Enganxa’n la URL per afegir-lo com a emissora.", "No se ha encontrado ninguna emisora. Comprueba que es un archivo PLS o M3U con URLs http(s).": "No s’ha trobat cap emissora. Comprova que és un fitxer PLS o M3U amb URLs http(s).", "Marca al menos una emisora.": "Marca almenys una emissora.", "Importada": "Importada", "Según el stream": "Segons el stream", "{n} emisoras importadas": "{n} emissores importades", "No se ha podido leer el archivo.": "No s’ha pogut llegir el fitxer.", "Catalán": "Català", "seguidos": "seguits", "relays": "relays", "firma": "signatura", "solo lectura": "només lectura", "Tu clave pública": "La teva clau pública", "Radiostr lee tu perfil (kind 0) y tus relays (NIP-65), pero no lo modifica. Para editarlo usa tu cliente de Nostr habitual.": "Radiostr llegeix el teu perfil (kind 0) i els teus relays (NIP-65), però no els modifica. Per editar-los fes servir el teu client de Nostr habitual.", "Cerrar sesión": "Tanca la sessió", "Iniciar sesión": "Inicia la sessió", "Radiostr nunca ve tu clave privada.": "Radiostr mai no veu la teva clau privada.", "Entrar con Amber": "Entra amb Amber", "o solo lectura": "o només lectura", "Tu npub": "El teu npub", "Usar mi npub": "Fes servir el meu npub", "En solo lectura ves a quién sigues. Para enviar zaps necesitarás Amber.": "En només lectura veus qui segueixes. Per enviar zaps necessitaràs Amber.", "Sesión iniciada con Amber": "Sessió iniciada amb Amber", "Sesión iniciada en solo lectura": "Sessió iniciada en només lectura", "Eso no parece un npub. Debe empezar por npub1.": "Això no sembla un npub. Ha de començar per npub1.", "Sesión cerrada": "Sessió tancada", "Solo lectura (npub)": "Només lectura (npub)", "{n} conectados": "{n} connectats", "Sin sesión": "Sense sessió", "Conéctate con Amber o pega tu npub para navegar en solo lectura.": "Connecta’t amb Amber o enganxa el teu npub per navegar en només lectura.", "Inicia sesión para ver a quién sigues": "Inicia la sessió per veure qui segueixes", "Mientras tanto ves los directos de todo Nostr.": "Mentrestant veus els directes de tot Nostr."});
 /* ---- Acerca de y apoyo (mismos textos y direcciones que Usus) ---- */
 Object.assign(TR.en,{"Acerca de": "About", "versión": "version", "Hecha con IA · probada por humanos.": "Built with AI · tested by humans.", "Licencia MIT y garantías": "MIT licence and warranty", "Software libre bajo licencia MIT: puedes usarlo, copiarlo, modificarlo y distribuirlo, también con fines comerciales, manteniendo el aviso de copyright y de licencia.": "Free software under the MIT license: you may use, copy, modify and distribute it, including commercially, as long as the copyright and license notice is kept.", "Sin garantías. Los autores no responden de pérdidas de datos, pagos fallidos ni ningún otro daño derivado de su uso. Los zaps van directamente de tu cartera al destinatario; Radiostr nunca guarda tu dinero.": "No warranty. The authors are not liable for data loss, failed payments or any other damage arising from its use. Zaps go straight from your wallet to the recipient; Radiostr never holds your money.", "El texto legal válido es el original en inglés.": "The legally binding text is the English original.", "Código fuente": "Source code", "Informar de un problema": "Report a problem", "Algo no funciona como debería": "Something isn’t working as it should", "Proponer una mejora": "Suggest an improvement", "Ideas y peticiones": "Ideas and requests", "Apoyar el proyecto": "Support the project", "Si te resulta útil, puedes apoyar el proyecto. Toca para copiar:": "If you find it useful, you can support the project. Tap to copy:", "Copiar dirección {x}": "Copy {x} address", "Se abre en GitHub (demo)": "Opens on GitHub (demo)"});
 Object.assign(TR.ca,{"Acerca de": "Quant a", "versión": "versió", "Hecha con IA · probada por humanos.": "Feta amb IA · provada per humans.", "Licencia MIT y garantías": "Llicència MIT i garanties", "Software libre bajo licencia MIT: puedes usarlo, copiarlo, modificarlo y distribuirlo, también con fines comerciales, manteniendo el aviso de copyright y de licencia.": "Programari lliure amb llicència MIT: pots fer-lo servir, copiar-lo, modificar-lo i distribuir-lo, també amb finalitats comercials, mantenint l’avís de copyright i de llicència.", "Sin garantías. Los autores no responden de pérdidas de datos, pagos fallidos ni ningún otro daño derivado de su uso. Los zaps van directamente de tu cartera al destinatario; Radiostr nunca guarda tu dinero.": "Sense garanties. Els autors no responen de pèrdues de dades, pagaments fallits ni cap altre dany derivat del seu ús. Els zaps van directament de la teva cartera al destinatari; Radiostr mai no guarda els teus diners.", "El texto legal válido es el original en inglés.": "El text legal vàlid és l’original en anglès.", "Código fuente": "Codi font", "Informar de un problema": "Informar d’un problema", "Algo no funciona como debería": "Alguna cosa no funciona com hauria", "Proponer una mejora": "Proposar una millora", "Ideas y peticiones": "Idees i peticions", "Apoyar el proyecto": "Dona suport al projecte", "Si te resulta útil, puedes apoyar el proyecto. Toca para copiar:": "Si et resulta útil, pots donar suport al projecte. Toca per copiar:", "Copiar dirección {x}": "Copia l’adreça {x}", "Se abre en GitHub (demo)": "S’obre a GitHub (demo)"});
@@ -340,6 +372,12 @@ const radios=[
  R("r3","SomaFM Groove Salad","Shoutcast · MP3 128k","#166534","#86efac","PLS","EE. UU.","Inglés",["ambient","downtempo"],"https://example.net/groovesalad.pls","Bonobo · Kerala",["Tycho · Awake","Boards of Canada · Roygbiv","Emancipator · Soon It Will Be Cold"],"somafm.com"),
  R("r4","Radio 3","HLS · AAC","#0f172a","#64748b","M3U8","España","Español",["indie","alternativa"],"https://example.net/radio3/master.m3u8","Rigoberta Bandini · Ay mamá",["Vetusta Morla · Copenhague","Love of Lesbian · Club de fans de John Boy","Zahara · Merichane"],"rtve.es/radio/radio3")
 ];
+radios.push(
+ R("e1","Catalunya Música","CCMA · AAC 128k","#7f1d1d","#fca5a5","M3U8","España","Catalán",["clásica","catalán"],"https://example.net/catmusica/master.m3u8","Pau Casals · El cant dels ocells",["Mompou · Música callada","Granados · Andaluza"],"ccma.cat/catradio/catalunya-musica"),
+ R("e2","Cadena SER","Prisa · AAC 64k","#1d4ed8","#93c5fd","PLS","España","Español",["noticias","charla"],"https://example.net/ser.pls","Hoy por Hoy",["Hora 14","La Ventana"],"cadenaser.com"),
+ R("b1","Radio Nómada","Icecast · MP3 128k","#3f3f46","#a1a1aa","M3U","España","Español",["indie","alternativa"],"http://example.net:8000/nomada.m3u","—",[],"radionomada.example")
+);
+radios.find(r=>r.id==="b1").broken=true;
 const globalRadios=[
  R("g1","FIP","Radio France · AAC 192k","#be185d","#fda4af","M3U","Francia","Francés",["ecléctica","jazz"],"https://example.net/fip.m3u","Khruangbin · Maria También",["Nubya Garcia · Pace","Air · La femme d'argent"],"radiofrance.fr/fip"),
  R("g2","KEXP 90.3","Seattle · AAC 128k","#1e3a8a","#93c5fd","PLS","EE. UU.","Inglés",["indie","rock"],"https://example.net/kexp.pls","Fleet Foxes · Mykonos",["Big Thief · Not","Khruangbin · Time (You and I)"],"kexp.org"),
@@ -348,14 +386,18 @@ const globalRadios=[
  R("g5","Rádio Comercial","Lisboa · AAC 64k","#4c1d95","#c4b5fd","M3U8","Portugal","Portugués",["pop","éxitos"],"https://example.net/comercial/master.m3u8","Bárbara Tinoco · Antes dela dizer que sim",["Diogo Piçarra · Volta","Carolina Deslandes · A Vida Toda"],"radiocomercial.pt")
 ];
 const allRadios=[...radios,...globalRadios];
-const VARS={r1:[["MP3",128],["AAC",64],["AAC",192]],r2:[["AAC",96],["MP3",128]],r3:[["AAC",32],["MP3",128],["MP3",256]],r4:[["AAC",64],["AAC",128],["AAC",256]],
+const VARS={e1:[["AAC",128],["AAC",64]],e2:[["AAC",64],["MP3",128]],b1:[["MP3",128]],r1:[["MP3",128],["AAC",64],["AAC",192]],r2:[["AAC",96],["MP3",128]],r3:[["AAC",32],["MP3",128],["MP3",256]],r4:[["AAC",64],["AAC",128],["AAC",256]],
  g1:[["AAC",64],["MP3",128],["AAC",192]],g2:[["AAC",64],["AAC",128]],g3:[["AAC",128],["AAC",320],["FLAC",900]],g4:[["MP3",128]],g5:[["AAC",64]]};
+const VOTES={r1:8400,r2:5100,r3:12900,r4:9800,e1:3100,e2:15200,b1:120,g1:21000,g2:14800,g3:17300,g4:4200,g5:6900};
+allRadios.forEach(r=>r.votes=VOTES[r.id]||0);
 allRadios.forEach(r=>r.vars=VARS[r.id].map(([codec,kbps])=>({get label(){return codec==="FLAC"?t("FLAC · sin pérdida"):`${codec} · ${kbps} kbps`},kbps})));
 const VIDEO_VARS=[{label:"1080p",kbps:4500},{label:"720p",kbps:2500},{label:"480p",kbps:1200},{label:"360p",kbps:700}];
 const AUDIO_VAR=[{label:"AAC · 128 kbps",kbps:128}];
 const chatSeed=[
  {u:"@ana",t:"qué buen tema hoy"},{u:"@pepe",z:2100,t:"gracias por el directo"},{u:"@jordi",t:"se oye perfecto en modo audio"}];
-let S={tab:"live",cur:streams[0],playing:true,mode:"video",autoAudioOff:true,cellAudio:true,net:"wifi",favs:["r1","r3",1,2,"r2","g1","g3"],
+let S={logged:true,me:{display:"Oscar Luengo",name:"oscar",nip05:"oscar@ejemplo.com",npub:"npub1oscar…8k2q",about:"Radio, Nostr y japonés. Datos de ejemplo.",lud16:"oluengo@rizful.com",follows:312,relays:4,method:"amber"},
+  rtab:"pop",rq:"",rtag:null,rcountry:"España",imported:[],impMode:"paste",impFound:null,
+  tab:"live",cur:streams[0],playing:true,mode:"video",autoAudioOff:true,cellAudio:true,net:"wifi",favs:["r1","r3",1,2,"r2","g1","g3"],
   folders:[{id:"f1",name:"Para trabajar",parent:null},{id:"f2",name:"Lo-fi",parent:"f1"},{id:"f3",name:"Noches de jazz",parent:null}],
   loc:{"r3":"f1","2":"f2","r2":"f3","g1":"f3"},favPath:null,q:{},
   nwc:null,zapAmt:100,budget:10000,theme:"auto",following:new Set([1,2,3,4]),chat:{1:[...chatSeed],2:[...chatSeed],3:[...chatSeed],4:[...chatSeed]}};
@@ -383,7 +425,7 @@ function view(){
   $("hTitle").textContent=heads[tab][0]; $("hSub").textContent=heads[tab][1];
   if(tab==="live"){
     const f=streams[0];
-    v.innerHTML=`<div class="chips"><span class="chip on">${t("Seguidos")}</span><span class="chip">${t("Global")}</span><span class="chip">${t("Música")}</span><span class="chip">${t("Charla")}</span></div>
+    v.innerHTML=`${S.logged?"":`<div class="set" style="padding:14px;margin-bottom:12px;display:grid;gap:8px"><div class="title">${t("Inicia sesión para ver a quién sigues")}</div><div class="sub">${t("Mientras tanto ves los directos de todo Nostr.")}</div><button class="cta alt" data-login>${t("Iniciar sesión")}</button></div>`}<div class="chips"><span class="chip ${S.logged?"on":""}">${t("Seguidos")}</span><span class="chip ${S.logged?"":"on"}">${t("Global")}</span><span class="chip">${t("Música")}</span><span class="chip">${t("Charla")}</span></div>
     <div class="label"><span>${t("Destacado")}</span></div>
     <button class="feature" data-s="${f.id}"><div class="thumb" style="background:${f.g}"><span class="badge">${t("EN DIRECTO")}</span><span class="viewers">${f.viewers} 👁</span></div>
     <div class="meta"><div class="title">${f.title}</div><div class="sub">${f.host}</div><div class="sats">⚡ ${fmt(f.sats)} sats</div></div></button>
@@ -392,10 +434,10 @@ function view(){
     <div class="empty-note">${t("Datos de ejemplo. En la app real salen de eventos kind 30311 con status=live; los sats, de los recibos kind 9735.")}</div>`;
   }
   if(tab==="radio"){
-    v.innerHTML=`<div class="chips"><span class="chip on">${t("Buscar")}</span><span class="chip">${t("España")}</span><span class="chip">${t("Jazz")}</span><span class="chip">${t("+ Importar PLS/M3U")}</span></div>
-    <div class="label"><span>${t("Populares")}</span></div>
-    ${radios.map(r=>`<button class="row" data-r="${r.id}"><div class="cover" style="background:${r.g}"></div><div class="txt"><div class="title">${r.title}</div><div class="sub">${r.host}</div></div><span class="kind">${r.kind}</span></button>`).join("")}
-    <div class="empty-note">${t("Fase 3 del plan. Directorio: Radio Browser.")}</div>`;
+    const tabs=[["pop",t("Populares")],["near",t("Cerca de ti")],["tags",t("Etiquetas")],["imp",t("Importadas")+(S.imported.length?` · ${S.imported.length}`:"")]];
+    v.innerHTML=`<label class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="rSearch" type="search" placeholder="${t("Busca emisora, país o estilo")}" aria-label="${t("Buscar emisoras")}" value="${esc(S.rq)}" autocomplete="off"></label>
+    <div class="chips" role="tablist">${tabs.map(([k,l])=>`<button class="chip ${S.rtab===k&&!S.rq?"on":""}" role="tab" aria-selected="${S.rtab===k&&!S.rq}" data-rtab="${k}">${l}</button>`).join("")}</div>
+    <div id="rList">${radioList()}</div>`;
   }
   if(tab==="fav"){
     const cur=S.favPath, crumbs=[]; let f=cur;
@@ -432,8 +474,10 @@ function view(){
       <div class="lst"><div>${t("📡 En directo (seguidos)")}</div><div>${t("❤ Favoritos")}</div><div>${t("📻 Radios")}</div></div></div>
     <div class="empty-note">${t("En el coche no hay vídeo ni zaps: solo audio.")}</div>
     <div class="label"><span>${t("Cuenta")}</span></div>
-    <div class="set"><div class="row"><div class="txt"><div class="title">npub1oscar…8k2q</div><div class="sub">${t("Firmado con Amber (NIP-55)")}</div></div></div>
-    <div class="row"><div class="txt"><div class="title">${t("Relays")}</div><div class="sub">${t("4 conectados")}</div></div></div></div>
+    <div class="set">${S.logged?`<button class="me-card" data-me>${meAvatar(46)}<div class="txt" style="min-width:0;flex:1"><div class="title">${esc(S.me.display)}</div><div class="sub">${S.me.method==="amber"?t("Firmado con Amber (NIP-55)"):t("Solo lectura (npub)")}</div></div><span class="kind">›</span></button>
+      <div class="row"><div class="txt"><div class="title">${t("Relays")}</div><div class="sub">${t("{n} conectados",{n:S.me.relays})}</div></div></div>
+      <div class="row"><button class="link" data-logout>${t("Cerrar sesión")}</button></div>`
+      :`<div style="padding:12px 0;display:grid;gap:8px"><div class="title">${t("Sin sesión")}</div><div class="sub">${t("Conéctate con Amber o pega tu npub para navegar en solo lectura.")}</div><button class="cta alt" data-login>${t("Iniciar sesión")}</button></div>`}</div>
     ${aboutBlock()}`;
   }
 }
@@ -456,7 +500,8 @@ function player(){
   $("mVideo").disabled=isRadio; $("mVideo").style.opacity=isRadio?.4:1;
   $("mAudio").setAttribute("aria-checked",mode==="audio"); $("mVideo").setAttribute("aria-checked",mode==="video");
   let h;
-  if(isRadio) h=`<span>📻</span><span>${t("Emisora de radio: solo audio. Fuente <b>{k}</b>.",{k:s.kind})}</span>`;
+  if(isRadio&&s.broken) h=`<span>⚠️</span><span class="err-hint">${t("Esta emisora no responde. Reintentamos cada 10 s; también puedes probar otro formato o avisar de que está caída.")}</span>`;
+  else if(isRadio) h=`<span>📻</span><span>${t("Emisora de radio: solo audio. Fuente <b>{k}</b>.",{k:s.kind})}${s.url&&s.url.startsWith("http://")?" "+t("Sin cifrar (http): se permite solo para el audio."):""}</span>`;
   else if(S.cellAudio&&S.net==="cell") h=`<span>📶</span><span>${t("Estás con <b>datos móviles</b>: solo audio por ajuste. Cámbialo en Ajustes.")}</span>`;
   else if(mode==="audio") h=s.sep?`<span>✅</span><span>${t("Este directo tiene <b>pista de audio separada</b>: ahorras batería y datos.")}</span>`:`<span>🔋</span><span>${t("Ahorras <b>batería</b>. Este directo mezcla audio y vídeo, así que los datos no bajan.")}</span>`;
   else h=`<span>📺</span><span>${t("Vídeo HD · cambia a <b>solo audio</b> sin cortar el directo.")}</span>`;
@@ -585,6 +630,164 @@ function randomPick(scope){
   tick();
 }
 
+
+/* ---- Mi perfil Nostr (básico) ---- */
+function meAvatar(px){ return `<span class="me-av" style="width:${px}px;height:${px}px;background:${grad("#0e7c6b","#3b4fd1")};font-size:${Math.round(px/2.6)}px">${initials(S.me.display)}</span>`; }
+function renderMeBtn(){
+  const b=$("meBtn");
+  if(S.logged){ b.className="avatar"; b.innerHTML=initials(S.me.display); }
+  else { b.className="avatar out"; b.innerHTML='<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>'; }
+}
+function mePage(){
+  const m=S.me, pg=$("page"); pg.hidden=false; pg.scrollTop=0;
+  pg.innerHTML=`<div class="pbanner" style="background:${grad("#0e7c6b","#3b4fd1")}"><button class="iconbtn back" data-back aria-label="${t("Volver")}"><svg viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg></button></div>
+  <div class="pbody">
+    <div class="pav" style="background:${grad("#0e7c6b","#3b4fd1")}">${initials(m.display)}</div>
+    <div><h2 class="pname">${esc(m.display)}</h2><div class="sub">@${esc(m.name)} · <span class="ok">✓ ${esc(m.nip05)}</span></div></div>
+    <p class="about">${esc(m.about)}</p>
+    <div class="stats"><div><b>${fmt(m.follows)}</b><span>${t("seguidos")}</span></div><div><b>${m.relays}</b><span>${t("relays")}</span></div><div><b>${m.method==="amber"?"Amber":"npub"}</b><span>${m.method==="amber"?t("firma"):t("solo lectura")}</span></div></div>
+    <div class="label"><span>${t("Tu clave pública")}</span></div>
+    <div class="urlbox"><code>${esc(m.npub)}</code><button class="link" data-copy="${esc(m.npub)}">${t("Copiar")}</button></div>
+    <div class="label"><span>${t("Cartera Lightning")}</span></div>
+    <div class="urlbox"><code>⚡ ${esc(m.lud16)}</code><button class="link" data-copy="${esc(m.lud16)}">${t("Copiar")}</button></div>
+    <div class="empty-note">${t("Radiostr lee tu perfil (kind 0) y tus relays (NIP-65), pero no lo modifica. Para editarlo usa tu cliente de Nostr habitual.")}</div>
+    <button class="cta alt" data-logout style="margin-top:4px">${t("Cerrar sesión")}</button>
+  </div>`;
+}
+function loginPanel(){
+  panel(`${phead(t("Iniciar sesión"))}
+    <div class="sub" style="margin-top:-6px">${t("Radiostr nunca ve tu clave privada.")}</div>
+    <button class="cta" data-amber>${t("Entrar con Amber")}</button>
+    <div class="label" style="margin:4px 0 0"><span>${t("o solo lectura")}</span></div>
+    <input class="field" id="npubIn" placeholder="npub1…" aria-label="${t("Tu npub")}" autocomplete="off" spellcheck="false">
+    <div class="err" id="npubErr" hidden></div>
+    <button class="cta alt" data-npub>${t("Usar mi npub")}</button>
+    <div class="sub" style="font-size:11px">${t("En solo lectura ves a quién sigues. Para enviar zaps necesitarás Amber.")}</div>`,t("Iniciar sesión"));
+}
+function doLogin(method){
+  S.logged=true; S.me.method=method; closeOv(); renderMeBtn(); view();
+  toast(method==="amber"?t("Sesión iniciada con Amber"):t("Sesión iniciada en solo lectura"));
+}
+
+/* ---- Radios: búsqueda, explorar e importar ---- */
+const norm=x=>String(x||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+function stationRow(r){
+  const fav=S.favs.includes(r.id);
+  return `<button class="row" data-r="${r.id}"><div class="cover" style="background:${r.g}"></div><div class="txt"><div class="title">${esc(r.title)}${fav?" ♥":""}</div><div class="sub">${esc(t(r.country))} · ${esc(r.vars[0].label)}${r.tags[0]?" · "+esc(r.tags[0]):""}</div></div>${r.broken?`<span class="warnb">${t("No responde")}</span>`:`<span class="kind">${r.kind}</span>`}</button>`;
+}
+function radioList(){
+  const q=norm(S.rq);
+  if(q){
+    const res=allRadios.filter(r=>[r.title,r.host,r.country,t(r.country),r.lang,t(r.lang),...r.tags].some(x=>norm(x).includes(q)));
+    return `<div class="label"><span>${t("Resultados")}</span><span>${res.length}</span></div>${res.map(stationRow).join("")||`<div class="empty-note">${t("Nada para «{q}». Prueba con otro nombre, país o estilo, o importa tu propia lista.",{q:esc(S.rq)})}</div><button class="cta alt" data-import>${t("+ Importar PLS/M3U")}</button>`}`;
+  }
+  if(S.rtab==="pop"){
+    const list=[...allRadios].sort((a,b)=>b.votes-a.votes);
+    return `<div class="label"><span>${t("Más escuchadas en el directorio")}</span></div>${list.map(stationRow).join("")}<div class="empty-note">${t("Datos de ejemplo. En la app vienen de Radio Browser (directorio libre, sin cuenta).")}</div>`;
+  }
+  if(S.rtab==="near"){
+    const countries=[...new Set(allRadios.map(r=>r.country))];
+    const list=allRadios.filter(r=>r.country===S.rcountry);
+    return `<div class="label"><span>${t("País")}</span></div><select class="field" id="rCountry" aria-label="${t("País")}">${countries.map(c=>`<option value="${esc(c)}" ${c===S.rcountry?"selected":""}>${esc(t(c))}</option>`).join("")}</select>
+      <div class="label"><span>${esc(t(S.rcountry))}</span><span>${list.length}</span></div>${list.map(stationRow).join("")}
+      <div class="empty-note">${t("Por defecto, el país de tu dispositivo. Radiostr no usa tu ubicación.")}</div>`;
+  }
+  if(S.rtab==="tags"){
+    const count={}; allRadios.forEach(r=>r.tags.forEach(g=>count[g]=(count[g]||0)+1));
+    const tags=Object.entries(count).sort((a,b)=>b[1]-a[1]);
+    const list=S.rtag?allRadios.filter(r=>r.tags.includes(S.rtag)):[];
+    return `<div class="tagcloud" style="margin-top:4px">${tags.map(([g,n])=>`<button data-rtag="${esc(g)}" class="${S.rtag===g?"chip on":""}">${esc(g)}<small>${n}</small></button>`).join("")}</div>
+      ${S.rtag?`<div class="label"><span>${esc(S.rtag)}</span><span>${list.length}</span></div>${list.map(stationRow).join("")}`:`<div class="empty-note">${t("Elige un estilo para ver sus emisoras.")}</div>`}`;
+  }
+  // importadas
+  return `<button class="cta alt" data-import style="margin-top:4px">${t("+ Importar PLS/M3U")}</button>
+    ${S.imported.length?`<div class="label"><span>${t("Tus emisoras importadas")}</span><span>${S.imported.length}</span></div>${S.imported.map(id=>stationRow(allRadios.find(r=>r.id===id))).join("")}`
+    :`<div class="empty-note">${t("Aún no has importado nada. Pega un enlace o una lista PLS/M3U, o elige un archivo del móvil.")}</div>`}`;
+}
+function hostOf(u){ try{ return new URL(u).hostname.replace(/^www\./,""); }catch(_){ return u.slice(0,40); } }
+/* Lector de listas: PLS ([playlist] FileN/TitleN), M3U/M3U8 (#EXTINF + URL) o una URL suelta. */
+function parsePlaylist(txt){
+  const lines=String(txt).replace(/\r/g,"").split("\n").map(l=>l.trim()).filter(Boolean);
+  const out=[]; let kind="M3U";
+  if(/^\[playlist\]$/i.test(lines[0]||"")){
+    kind="PLS"; const files={}, titles={};
+    lines.forEach(l=>{ let m=l.match(/^File(\d+)=(.+)$/i); if(m) files[m[1]]=m[2].trim(); m=l.match(/^Title(\d+)=(.*)$/i); if(m) titles[m[1]]=m[2].trim(); });
+    Object.keys(files).sort((a,b)=>a-b).forEach(k=>out.push({title:titles[k]||hostOf(files[k]),url:files[k]}));
+  } else {
+    if(lines.some(l=>l.startsWith("#EXT-X-"))) kind="M3U8";
+    let pending=null;
+    lines.forEach(l=>{
+      if(l.toUpperCase().startsWith("#EXTINF")){ const c=l.indexOf(","); pending=c>=0?l.slice(c+1).trim():null; }
+      else if(!l.startsWith("#")&&/^https?:\/\//i.test(l)){ out.push({title:pending||hostOf(l),url:l}); pending=null; }
+    });
+    if(kind==="M3U8"&&lines.some(l=>l.startsWith("#EXT-X-STREAM-INF")||l.startsWith("#EXT-X-TARGETDURATION"))) return {kind,items:[],hls:true};
+  }
+  const seen=new Set();
+  return {kind,items:out.filter(x=>!seen.has(x.url)&&seen.add(x.url))};
+}
+const SAMPLE_PLS=`[playlist]
+NumberOfEntries=2
+File1=https://example.net/clasica-128.mp3
+Title1=Clásica 24h
+Length1=-1
+File2=http://example.net:8000/jazz
+Title2=Jazz Nocturno
+Length2=-1
+Version=2`;
+const SAMPLE_M3U=`#EXTM3U
+#EXTINF:-1 tvg-logo="logo.png",Lo-fi Barcelona
+https://example.net/lofi-bcn.aac
+#EXTINF:-1,Rock Clàssic
+https://example.net/rock.mp3
+#EXTINF:-1,Notícies 24h
+https://example.net/noticies.m3u8`;
+function importPanel(){
+  const f=S.impFound;
+  panel(`${phead(t("Importar emisoras"))}
+    <div class="imp-tabs" role="tablist"><button class="${S.impMode==="paste"?"on":""}" data-impmode="paste">${t("Pegar enlace o lista")}</button><button class="${S.impMode==="file"?"on":""}" data-impmode="file">${t("Elegir archivo")}</button></div>
+    ${S.impMode==="paste"?`<textarea class="field" id="impText" placeholder="${t("Pega una URL de stream o el contenido de un .pls / .m3u")}" aria-label="${t("Enlace o lista")}">${esc(S.impText||"")}</textarea>
+      <div style="display:flex;gap:12px;flex-wrap:wrap"><button class="link" data-sample="pls">${t("Ejemplo PLS")}</button><button class="link" data-sample="m3u">${t("Ejemplo M3U")}</button></div>
+      <button class="cta alt" data-parse>${t("Leer lista")}</button>`
+    :`<label class="filebtn" for="impFile"><b>${t("Toca para elegir un archivo")}</b>.pls · .m3u · .m3u8</label><input type="file" id="impFile" accept=".pls,.m3u,.m3u8,audio/x-scpls,audio/x-mpegurl,application/vnd.apple.mpegurl,text/plain" hidden>`}
+    <div class="err" id="impErr" hidden></div>
+    ${f?`<div class="label" style="margin:2px 0 0"><span>${t("Encontradas")} · ${f.kind}</span><span>${f.items.length}</span></div>
+      <div class="found">${f.items.map((x,k)=>`<label><input type="checkbox" checked data-pick="${k}"><span>${esc(x.title)}<small>${esc(x.url)}</small></span>${x.url.startsWith("http://")?`<span class="httpb">http</span>`:""}</label>`).join("")}</div>
+      <select class="field" id="impFolder" aria-label="${t("Guardar en")}"><option value="">${t("Solo en Importadas")}</option><option value="__fav">${t("Favoritos · Sin carpeta")}</option>${tree().map(({f:fo,d})=>`<option value="${fo.id}">${"— ".repeat(d)}${t("Favoritos")} › ${esc(fo.name)}</option>`).join("")}</select>
+      <button class="cta" data-impadd>${t("Añadir {n} emisoras",{n:f.items.length})}</button>`:""}
+    <div class="sub" style="font-size:11px">${t("En la app, si pegas el enlace a un .pls o .m3u, Radiostr lo descarga y lo lee. Las emisoras http se permiten solo para el audio.")}</div>`,t("Importar emisoras"));
+}
+function impShowErr(m){ const e=$("impErr"); if(e){ e.textContent=m; e.hidden=false; } }
+function impParse(txt){
+  S.impText=txt;
+  const trimmed=String(txt||"").trim();
+  if(!trimmed){ S.impFound=null; importPanel(); impShowErr(t("Pega una URL o el contenido de una lista.")); return; }
+  if(/^https?:\/\/\S+$/i.test(trimmed)&&!/\.(pls|m3u8?)(\?|$)/i.test(trimmed)){ S.impFound={kind:"URL",items:[{title:hostOf(trimmed),url:trimmed}]}; importPanel(); return; }
+  if(/^https?:\/\/\S+\.(pls|m3u8?)(\?|$)/i.test(trimmed)){ S.impFound=null; importPanel(); impShowErr(t("En la demo no se descargan listas. Usa «Ejemplo PLS» o «Ejemplo M3U», o elige un archivo.")); return; }
+  const r=parsePlaylist(trimmed);
+  if(r.hls){ S.impFound={kind:"M3U8",items:[{title:t("Stream HLS"),url:"(m3u8)"}]}; importPanel(); impShowErr(t("Esto es un stream HLS, no una lista. Pega su URL para añadirlo como una emisora.")); S.impFound=null; return; }
+  if(!r.items.length){ S.impFound=null; importPanel(); impShowErr(t("No se ha encontrado ninguna emisora. Comprueba que es un archivo PLS o M3U con URLs http(s).")); return; }
+  S.impFound=r; importPanel();
+}
+let impSeq=0;
+function impAdd(){
+  const f=S.impFound; if(!f) return;
+  const picks=[...document.querySelectorAll("[data-pick]")].filter(c=>c.checked).map(c=>f.items[+c.dataset.pick]);
+  if(!picks.length){ impShowErr(t("Marca al menos una emisora.")); return; }
+  const dest=$("impFolder").value;
+  const palette=[["#0e7c6b","#7cc6b5"],["#9d174d","#f9a8d4"],["#1d4ed8","#93c5fd"],["#854d0e","#fcd34d"],["#4c1d95","#c4b5fd"]];
+  picks.forEach(x=>{
+    if(allRadios.some(r=>r.url===x.url)) return;
+    const id="i"+(++impSeq), [a,b]=palette[impSeq%palette.length];
+    const kind=f.kind==="URL"?(/\.m3u8(\?|$)/i.test(x.url)?"M3U8":"URL"):f.kind;
+    const r=R(id,x.title,t("Importada")+" · "+hostOf(x.url),a,b,kind,"—","—",["importada"],x.url,"—",[],hostOf(x.url));
+    r.vars=[{get label(){return t("Según el stream")},kbps:128}]; r.votes=0;
+    allRadios.push(r); S.imported.push(id);
+    if(dest){ S.favs.push(id); if(dest!=="__fav") S.loc[id]=dest; }
+  });
+  const n=picks.length; S.impFound=null; S.impText=""; closeOv(); S.tab="radio"; S.rtab="imp"; S.rq="";
+  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t==="radio")); view();
+  toast(t("{n} emisoras importadas",{n}));
+}
 /* ---- Perfil del streamer ---- */
 function initials(n){return n.split(" ").map(w=>w[0]).slice(0,2).join("").toUpperCase();}
 function profilePage(s){
@@ -680,6 +883,19 @@ document.addEventListener("click",e=>{
   if(!menu.hidden && !e.target.closest("#menu") && !e.target.closest("#dice")) menu.hidden=true;
   if(e.target.closest("#dice")){ menu.hidden=!menu.hidden; return; }
   const rnd=e.target.closest("[data-rand]"); if(rnd){ randomPick(rnd.dataset.rand); return; }
+  if(e.target.closest("#meBtn")){ if(S.logged) mePage(); else loginPanel(); return; }
+  if(e.target.closest("[data-me]")){ mePage(); return; }
+  if(e.target.closest("[data-login]")){ loginPanel(); return; }
+  if(e.target.closest("[data-amber]")){ doLogin("amber"); return; }
+  if(e.target.closest("[data-npub]")){ const v=($("npubIn").value||"").trim(); if(!/^npub1[02-9ac-hj-np-z]{20,}$/.test(v)){ const x=$("npubErr"); x.textContent=t("Eso no parece un npub. Debe empezar por npub1."); x.hidden=false; return; } S.me.npub=v.slice(0,10)+"…"+v.slice(-4); doLogin("npub"); return; }
+  if(e.target.closest("[data-logout]")){ S.logged=false; closePage(); renderMeBtn(); view(); toast(t("Sesión cerrada")); return; }
+  const rt=e.target.closest("[data-rtab]"); if(rt){ S.rtab=rt.dataset.rtab; S.rq=""; view(); return; }
+  const rg=e.target.closest("[data-rtag]"); if(rg){ S.rtag=S.rtag===rg.dataset.rtag?null:rg.dataset.rtag; $("rList").innerHTML=radioList(); return; }
+  if(e.target.closest("[data-import]")){ S.impFound=null; importPanel(); return; }
+  const im=e.target.closest("[data-impmode]"); if(im){ S.impMode=im.dataset.impmode; S.impText=$("impText")?.value??S.impText; importPanel(); return; }
+  const sm=e.target.closest("[data-sample]"); if(sm){ impParse(sm.dataset.sample==="pls"?SAMPLE_PLS:SAMPLE_M3U); return; }
+  if(e.target.closest("[data-parse]")){ impParse($("impText").value); return; }
+  if(e.target.closest("[data-impadd]")){ impAdd(); return; }
   if(e.target.closest("[data-ext]")){ toast(t("Se abre en GitHub (demo)")); return; }
   const lg=e.target.closest("[data-lang]"); if(lg){ setLang(lg.dataset.lang); return; }
   const th=e.target.closest("[data-th]"); if(th){ S.theme=th.dataset.th; applyTheme(); view(); return; }
@@ -737,7 +953,13 @@ document.addEventListener("click",e=>{
   if(e.target.closest("#miniPlay")||e.target.closest("#lockPlay")){e.stopPropagation();S.playing=!S.playing;player();return;}
   if(e.target.closest("#mini")){open();return;}
 });
+document.addEventListener("change",e=>{
+  if(e.target.id==="rCountry"){ S.rcountry=e.target.value; $("rList").innerHTML=radioList(); }
+  if(e.target.id==="impFile"){ const file=e.target.files&&e.target.files[0]; if(!file) return;
+    const rd=new FileReader(); rd.onload=()=>{ S.impMode="paste"; impParse(String(rd.result).slice(0,200000)); }; rd.onerror=()=>impShowErr(t("No se ha podido leer el archivo.")); rd.readAsText(file); }
+});
 document.addEventListener("input",e=>{
+  if(e.target.id==="rSearch"){ S.rq=e.target.value; $("rList").innerHTML=radioList(); document.querySelectorAll("[data-rtab]").forEach(b=>b.classList.toggle("on",!S.rq&&b.dataset.rtab===S.rtab)); return; }
   if(e.target.id==="zCustom"){ const v=parseInt(e.target.value.replace(/\D/g,""))||0; e.target.value=v||""; if(v){setAmt(v);} else {setAmt(100);} $("zErr").hidden=true; }
 });
 $("closeSheet").onclick=()=>$("sheet").classList.remove("open");
@@ -747,7 +969,7 @@ $("mVideo").onclick=()=>{if(S.cellAudio&&S.net==="cell"){S.net="wifi";} S.mode="
 let before;
 $("lockBtn").onclick=()=>{before=S.mode; if(S.autoAudioOff) S.mode="audio"; player(); $("lock").hidden=false;};
 $("unlock").onclick=()=>{$("lock").hidden=true; S.mode=before; player();};
-applyTheme(); applyStatic(); view(); mini();
+applyTheme(); applyStatic(); renderMeBtn(); view(); mini();
 </script>
 
 </body>
