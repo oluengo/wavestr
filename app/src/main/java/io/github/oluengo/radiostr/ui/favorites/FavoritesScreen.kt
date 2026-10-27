@@ -89,6 +89,7 @@ fun FavoritesScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenProfile: (S
                 TextButton(onClick = { current = f.id }) { Text(f.name, fontWeight = if (current == f.id) FontWeight.Bold else FontWeight.Normal) }
             }
         }
+        SyncBanner(c, Modifier.padding(horizontal = 20.dp))
 
         LazyColumn(Modifier.fillMaxSize().padding(horizontal = 20.dp)) {
             if (subs.isNotEmpty()) {

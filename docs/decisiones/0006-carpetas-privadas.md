@@ -1,6 +1,6 @@
 # 0006 · Carpetas de favoritos privadas por defecto
 
-*Estado: aceptada · 27 oct 2026*
+*Estado: sustituida por la [0008](0008-favoritos-en-nostr.md) en el formato · 27 oct 2026*
 
 ## Decisión
 

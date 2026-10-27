@@ -100,6 +100,11 @@ fun Event.readRelays(): List<String> =
     tagsNamed("r").filter { it.size > 1 && (it.size == 2 || it[2] == "read") }.map { it[1].trimEnd('/') }
         .filter { it.startsWith("wss://") }
 
+/** Relays de escritura de una lista NIP-65: donde el usuario publica (y donde se guardan sus datos). */
+fun Event.writeRelays(): List<String> =
+    tagsNamed("r").filter { it.size > 1 && (it.size == 2 || it[2] == "write") }.map { it[1].trimEnd('/') }
+        .filter { it.startsWith("wss://") }
+
 /** Pubkeys seguidas de una lista kind 3. */
 fun Event.followedPubkeys(): List<String> =
     tagValues("p").map { it.lowercase() }.filter { it.length == 64 }.distinct()

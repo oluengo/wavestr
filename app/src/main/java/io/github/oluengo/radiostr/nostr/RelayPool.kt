@@ -22,7 +22,7 @@ import java.util.UUID
 
 /**
  * Cliente de relays mínimo (NIP-01): abre un WebSocket por consulta, recoge eventos hasta EOSE
- * o hasta el tiempo límite, y cierra. Suficiente para lecturas; las publicaciones llegarán en F2.
+ * o hasta el tiempo límite, y cierra. También publica (EVENT → OK).
  */
 class RelayPool(private val http: OkHttpClient) {
 
@@ -112,6 +112,27 @@ class RelayPool(private val http: OkHttpClient) {
                 sockets.forEach { ws -> runCatching { ws.send(buildJsonArray { add("CLOSE"); add(subId) }.toString()); ws.close(1000, null) } }
             }
         }
+
+    /** Publica en cada relay y devuelve cuántos lo aceptaron (mensaje OK con true). */
+    suspend fun publish(relays: Collection<String>, event: Event, timeoutMs: Long = 8_000): Int = coroutineScope {
+        relays.distinct().map { url -> async(Dispatchers.IO) { publishOne(url, event, timeoutMs) } }.awaitAll().count { it }
+    }
+
+    private suspend fun publishOne(url: String, event: Event, timeoutMs: Long): Boolean = withContext(Dispatchers.IO) {
+        val ok = CompletableDeferred<Boolean>()
+        val msg = buildJsonArray { add("EVENT"); add(event.toJson()) }.toString()
+        val ws = http.newWebSocket(Request.Builder().url(url).build(), object : WebSocketListener() {
+            override fun onOpen(webSocket: WebSocket, response: Response) { webSocket.send(msg) }
+            override fun onMessage(webSocket: WebSocket, text: String) {
+                val arr = runCatching { NostrJson.parseToJsonElement(text) as JsonArray }.getOrNull() ?: return
+                if ((arr.getOrNull(0) as? JsonPrimitive)?.contentOrNull == "OK" && (arr.getOrNull(1) as? JsonPrimitive)?.contentOrNull == event.id) {
+                    ok.complete((arr.getOrNull(2) as? JsonPrimitive)?.contentOrNull == "true")
+                }
+            }
+            override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) { ok.complete(false) }
+        })
+        try { withTimeoutOrNull(timeoutMs) { ok.await() } ?: false } finally { runCatching { ws.close(1000, null) } }
+    }
 
     companion object {
         /** Relays por defecto: generales + índice de perfiles/listas. */

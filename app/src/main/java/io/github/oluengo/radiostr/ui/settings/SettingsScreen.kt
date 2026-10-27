@@ -134,6 +134,9 @@ fun SettingsScreen(c: AppContainer, onOpenMe: () -> Unit) {
             SectionLabel(stringResource(R.string.wallet_title))
             WalletSection(c)
 
+            SectionLabel(stringResource(R.string.fav_sync_title))
+            io.github.oluengo.radiostr.ui.favorites.FavSyncSection(c)
+
             SectionLabel(stringResource(R.string.backup_title))
             BackupSection(c)
 
@@ -211,8 +214,8 @@ internal fun Group(content: @Composable ColumnScope.() -> Unit) {
 @Composable
 private fun AccentPicker(current: io.github.oluengo.radiostr.data.Accent, onPick: (io.github.oluengo.radiostr.data.Accent) -> Unit) {
     val swatches = listOf(
-        io.github.oluengo.radiostr.data.Accent.GREEN to (androidx.compose.ui.graphics.Color(0xFF0E7C6B) to R.string.accent_green),
         io.github.oluengo.radiostr.data.Accent.VIOLET to (androidx.compose.ui.graphics.Color(0xFF6D28D9) to R.string.accent_violet),
+        io.github.oluengo.radiostr.data.Accent.GREEN to (androidx.compose.ui.graphics.Color(0xFF0E7C6B) to R.string.accent_green),
         io.github.oluengo.radiostr.data.Accent.CORAL to (androidx.compose.ui.graphics.Color(0xFFD9480F) to R.string.accent_coral),
         io.github.oluengo.radiostr.data.Accent.BLUE to (androidx.compose.ui.graphics.Color(0xFF1D4ED8) to R.string.accent_blue),
         io.github.oluengo.radiostr.data.Accent.RASPBERRY to (androidx.compose.ui.graphics.Color(0xFFBE185D) to R.string.accent_raspberry),

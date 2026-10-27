@@ -71,7 +71,7 @@ private val RsTypography = Typography().run {
 private data class AccentColors(val light: Color, val lightSoft: Color, val lightOn: Color, val dark: Color, val darkSoft: Color, val darkOn: Color)
 
 private fun accentColors(a: Accent) = when (a) {
-    Accent.GREEN -> AccentColors(Color(0xFF0E7C6B), Color(0xFFDCEFEA), Color(0xFF0B5E52), Color(0xFF3FBFA6), Color(0xFF1D332E), Color(0xFF9DE3D3))
+    Accent.VIOLET -> AccentColors(Color(0xFF0E7C6B), Color(0xFFDCEFEA), Color(0xFF0B5E52), Color(0xFF3FBFA6), Color(0xFF1D332E), Color(0xFF9DE3D3))
     Accent.VIOLET -> AccentColors(Color(0xFF6D28D9), Color(0xFFEDE6FB), Color(0xFF4C1D95), Color(0xFFA78BFA), Color(0xFF2A2142), Color(0xFFDDD0FF))
     Accent.CORAL -> AccentColors(Color(0xFFD9480F), Color(0xFFFDE9DF), Color(0xFF9A3412), Color(0xFFFF8A5B), Color(0xFF3A2318), Color(0xFFFFCDB8))
     Accent.BLUE -> AccentColors(Color(0xFF1D4ED8), Color(0xFFE1E9FC), Color(0xFF1E3A8A), Color(0xFF7EA6FF), Color(0xFF1B2542), Color(0xFFCCDAFF))
@@ -80,7 +80,7 @@ private fun accentColors(a: Accent) = when (a) {
 
 /** El modo claro/oscuro lo fija AppCompat (setDefaultNightMode) según el ajuste; aquí solo se lee. */
 @Composable
-fun RadiostrTheme(accent: Accent = Accent.GREEN, content: @Composable () -> Unit) {
+fun RadiostrTheme(accent: Accent = Accent.VIOLET, content: @Composable () -> Unit) {
     val dark = isSystemInDarkTheme()
     val a = accentColors(accent)
     val scheme = if (dark) {

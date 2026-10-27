@@ -8,7 +8,9 @@ import android.os.Build
 
 /**
  * Firma externa con Amber (NIP-55). La app nunca ve la clave privada.
- * F0: solo get_public_key. F2 añadirá sign_event (zaps) y nip44 (listas privadas).
+ * Login, firma (zaps, favoritos) y cifrado NIP-44 (favoritos privados).
+ * Primero se intenta en segundo plano (content provider, si el usuario dio permiso «siempre»);
+ * si no, con un intent que abre Amber.
  */
 object Amber {
     private val probe get() = Intent(Intent.ACTION_VIEW, Uri.parse("nostrsigner:"))
@@ -26,7 +28,7 @@ object Amber {
 
     /** Permisos que pediremos por adelantado para no molestar en cada zap. */
     private const val PERMISSIONS =
-        """[{"type":"sign_event","kind":9734},{"type":"sign_event","kind":30003},{"type":"nip44_encrypt"},{"type":"nip44_decrypt"}]"""
+        """[{"type":"sign_event","kind":9734},{"type":"sign_event","kind":30078},{"type":"nip44_encrypt"},{"type":"nip44_decrypt"}]"""
 
     fun loginIntent(): Intent = probe.apply {
         putExtra("type", "get_public_key")
@@ -51,6 +53,48 @@ object Amber {
         val full = data.getStringExtra("event")?.let(Event::fromJson)
         val candidate = full ?: (data.getStringExtra("result") ?: data.getStringExtra("signature"))
             ?.takeIf { it.length == 128 }?.let { unsigned.copy(sig = it) }
+        return candidate?.takeIf { EventSigning.verify(it) && it.pubkey == unsigned.pubkey && it.kind == unsigned.kind }
+    }
+
+    const val DEFAULT_PACKAGE = "com.greenart7c3.nostrsigner"
+
+    fun nip44EncryptIntent(plaintext: String, toPubkey: String, userPubkey: String, signerPackage: String?): Intent =
+        Intent(Intent.ACTION_VIEW, Uri.parse("nostrsigner:$plaintext")).apply {
+            signerPackage?.let { `package` = it }
+            putExtra("type", "nip44_encrypt")
+            putExtra("pubkey", toPubkey)
+            putExtra("current_user", Nip19.hexToNpub(userPubkey))
+        }
+
+    fun nip44DecryptIntent(ciphertext: String, fromPubkey: String, userPubkey: String, signerPackage: String?): Intent =
+        Intent(Intent.ACTION_VIEW, Uri.parse("nostrsigner:$ciphertext")).apply {
+            signerPackage?.let { `package` = it }
+            putExtra("type", "nip44_decrypt")
+            putExtra("pubkey", fromPubkey)
+            putExtra("current_user", Nip19.hexToNpub(userPubkey))
+        }
+
+    /** Consulta silenciosa al content provider de Amber. null = no autorizado o no disponible. */
+    private fun provider(context: Context, pkg: String?, op: String, args: Array<String>): Map<String, String>? = runCatching {
+        val uri = Uri.parse("content://${pkg ?: DEFAULT_PACKAGE}.$op")
+        context.contentResolver.query(uri, args, null, null, null)?.use { c ->
+            if (c.getColumnIndex("rejected") >= 0 || !c.moveToFirst()) return@use null
+            c.columnNames.associateWith { name -> c.getString(c.getColumnIndex(name)).orEmpty() }
+        }
+    }.getOrNull()
+
+    fun encryptSilently(context: Context, pkg: String?, plaintext: String, toPubkey: String, userPubkey: String): String? =
+        provider(context, pkg, "NIP44_ENCRYPT", arrayOf(plaintext, toPubkey, Nip19.hexToNpub(userPubkey)))
+            ?.let { it["result"] ?: it["signature"] }?.takeIf { it.isNotEmpty() }
+
+    fun decryptSilently(context: Context, pkg: String?, ciphertext: String, fromPubkey: String, userPubkey: String): String? =
+        provider(context, pkg, "NIP44_DECRYPT", arrayOf(ciphertext, fromPubkey, Nip19.hexToNpub(userPubkey)))
+            ?.let { it["result"] ?: it["signature"] }?.takeIf { it.isNotEmpty() }
+
+    fun signSilently(context: Context, pkg: String?, unsigned: Event, userPubkey: String): Event? {
+        val r = provider(context, pkg, "SIGN_EVENT", arrayOf(unsigned.toJson().toString(), "", Nip19.hexToNpub(userPubkey))) ?: return null
+        val candidate = r["event"]?.takeIf { it.isNotEmpty() }?.let(Event::fromJson)
+            ?: (r["result"] ?: r["signature"])?.takeIf { it.length == 128 }?.let { unsigned.copy(sig = it) }
         return candidate?.takeIf { EventSigning.verify(it) && it.pubkey == unsigned.pubkey && it.kind == unsigned.kind }
     }
 

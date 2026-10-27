@@ -9,3 +9,4 @@ Una nota por decisión: qué se decidió, por qué y qué la haría cambiar.
 - [0005 · Distribución: GitHub Releases, Obtainium y Zapstore](0005-distribucion.md)
 - [0006 · Carpetas de favoritos privadas por defecto](0006-carpetas-privadas.md)
 - [0007 · Licencia MIT](0007-licencia.md)
+- [0008 · Favoritos en Nostr: un solo evento cifrado (NIP-78)](0008-favoritos-en-nostr.md)

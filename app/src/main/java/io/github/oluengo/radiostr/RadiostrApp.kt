@@ -48,6 +48,7 @@ class AppContainer(app: Application) {
     val nostr = NostrRepository(relays)
     val radio = RadioBrowserClient(http, appScope)
     val library = LibraryRepository(app, appScope)
+    val favSync = io.github.oluengo.radiostr.data.FavoritesSync(app, settings, library, nostr, relays, appScope).also { it.start() }
     val artwork = io.github.oluengo.radiostr.radio.ArtworkResolver(app, http)
     val wallet = io.github.oluengo.radiostr.data.WalletRepository(app, relays)
     val zaps = io.github.oluengo.radiostr.nostr.ZapClient(http)

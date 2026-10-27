@@ -50,6 +50,8 @@ fun RadiostrRoot(c: AppContainer) {
     val route = entry?.destination?.route
     val player by c.player.state.collectAsStateWithLifecycle()
     val onTab = Tab.entries.any { it.route == route }
+    io.github.oluengo.radiostr.ui.favorites.AmberRequestHost(c)
+    io.github.oluengo.radiostr.ui.favorites.SyncAskDialog(c)
 
     Scaffold(
         bottomBar = {

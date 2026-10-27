@@ -1,5 +1,10 @@
 # Cambios
 
+## Próxima versión
+
+- **Favoritos en Nostr:** tras entrar con Amber, la app pregunta si guardarlos en Nostr, cifrados para que solo tú los leas. Se sincronizan solos y se recuperan en otro móvil con tu cuenta (Ajustes → Favoritos en Nostr).
+- **Violeta** como color de acento por defecto (también en el icono).
+
 ## 0.3.0
 
 - **Zaps con NWC:** conecta tu cartera (Nostr Wallet Connect) en Ajustes → Zaps y envía zaps a los directos desde el reproductor. Con Amber, el zap va firmado por ti; sin sesión, es anónimo. Sin cartera conectada, se abre tu app Lightning o se copia la factura.

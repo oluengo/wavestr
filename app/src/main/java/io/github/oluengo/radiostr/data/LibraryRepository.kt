@@ -34,19 +34,24 @@ class LibraryRepository(context: Context, private val scope: CoroutineScope) {
         }
     }
 
+    suspend fun ready() = loaded.await()
+
     fun update(change: (Library) -> Library) {
-        scope.launch {
-            loaded.await()
-            mutex.withLock {
-                val next = change(_library.value)
-                if (next == _library.value) return@withLock
-                _library.value = next
-                withContext(Dispatchers.IO) {
-                    // Escritura atómica: si se corta a medias, el archivo anterior sigue intacto.
-                    val tmp = File(file.parentFile, file.name + ".tmp")
-                    tmp.writeText(next.toJson().toString())
-                    if (!tmp.renameTo(file)) { file.delete(); tmp.renameTo(file) }
-                }
+        scope.launch { commit(change) }
+    }
+
+    /** Como [update], pero espera a que el cambio quede guardado. */
+    suspend fun commit(change: (Library) -> Library) {
+        loaded.await()
+        mutex.withLock {
+            val next = change(_library.value)
+            if (next == _library.value) return@withLock
+            _library.value = next
+            withContext(Dispatchers.IO) {
+                // Escritura atómica: si se corta a medias, el archivo anterior sigue intacto.
+                val tmp = File(file.parentFile, file.name + ".tmp")
+                tmp.writeText(next.toJson().toString())
+                if (!tmp.renameTo(file)) { file.delete(); tmp.renameTo(file) }
             }
         }
     }

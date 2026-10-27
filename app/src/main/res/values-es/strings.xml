@@ -259,4 +259,22 @@
     <string name="live_chat_title">Chat y zaps</string>
     <string name="live_chat_empty">Aún no hay mensajes.</string>
     <string name="live_chat_readonly">Escribir en el chat llegará en una próxima versión.</string>
+
+    <!-- Favoritos en Nostr -->
+    <string name="fav_sync_title">Favoritos en Nostr</string>
+    <string name="fav_sync_ask_title">¿Guardar tus favoritos en Nostr?</string>
+    <string name="fav_sync_ask_body">Se guardan cifrados: solo tú puedes leerlos, y los recuperas en cualquier móvil con tu cuenta. Amber te pedirá permiso para cifrar y firmar.</string>
+    <string name="fav_sync_yes">Sí, guardar</string>
+    <string name="fav_sync_no">Ahora no</string>
+    <string name="fav_sync_toggle">Guardar favoritos en Nostr</string>
+    <string name="fav_sync_toggle_sub">Cifrados con tu clave (NIP-44). Se actualizan solos.</string>
+    <string name="fav_sync_needs_login">Inicia sesión con Amber para guardarlos en Nostr.</string>
+    <string name="fav_sync_now">Sincronizar ahora</string>
+    <string name="fav_sync_done">Sincronizado %1$s</string>
+    <string name="fav_sync_never">Aún sin sincronizar</string>
+    <string name="fav_sync_working">Sincronizando…</string>
+    <string name="fav_sync_needs_amber">Pendiente de Amber: toca para autorizar</string>
+    <string name="fav_sync_offline">No se pudo conectar con los relays</string>
+    <string name="fav_sync_too_big">Demasiados favoritos para un solo evento</string>
+    <string name="fav_sync_unreadable">No se pudo leer la copia de Nostr</string>
 </resources>

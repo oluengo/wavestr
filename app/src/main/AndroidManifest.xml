@@ -10,6 +10,8 @@
 
     <!-- Para detectar Amber (NIP-55) y carteras Lightning en Android 11+ -->
     <queries>
+        <!-- Amber: firma y cifrado en segundo plano (content provider). -->
+        <package android:name="com.greenart7c3.nostrsigner" />
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.BROWSABLE" />

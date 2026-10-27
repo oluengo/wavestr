@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         container.player.connect()
         setContent {
             val s by container.settings.flow.collectAsStateWithLifecycle<io.github.oluengo.radiostr.data.AppSettings?>(initialValue = null)
-            RadiostrTheme(accent = s?.accent ?: io.github.oluengo.radiostr.data.Accent.GREEN) {
+            RadiostrTheme(accent = s?.accent ?: io.github.oluengo.radiostr.data.Accent.VIOLET) {
                 RadiostrRoot(container)
             }
         }

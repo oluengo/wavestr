@@ -94,6 +94,7 @@ object Kinds {
     const val ZAP_RECEIPT = 9735
     const val RELAY_LIST = 10002
     const val BOOKMARK_SET = 30003
+    const val APP_DATA = 30078
     const val LIVE_EVENT = 30311
     const val LIVE_CHAT = 1311
 }

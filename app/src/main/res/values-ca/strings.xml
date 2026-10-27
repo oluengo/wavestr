@@ -259,4 +259,22 @@
     <string name="live_chat_title">Xat i zaps</string>
     <string name="live_chat_empty">Encara no hi ha missatges.</string>
     <string name="live_chat_readonly">Escriure al xat arribarà en una propera versió.</string>
+
+    <!-- Favoritos en Nostr -->
+    <string name="fav_sync_title">Preferits a Nostr</string>
+    <string name="fav_sync_ask_title">Vols desar els preferits a Nostr?</string>
+    <string name="fav_sync_ask_body">Es desen xifrats: només tu els pots llegir, i els recuperes a qualsevol mòbil amb el teu compte. Amber et demanarà permís per xifrar i signar.</string>
+    <string name="fav_sync_yes">Sí, desa\'ls</string>
+    <string name="fav_sync_no">Ara no</string>
+    <string name="fav_sync_toggle">Desar els preferits a Nostr</string>
+    <string name="fav_sync_toggle_sub">Xifrats amb la teva clau (NIP-44). S\'actualitzen sols.</string>
+    <string name="fav_sync_needs_login">Inicia sessió amb Amber per desar-los a Nostr.</string>
+    <string name="fav_sync_now">Sincronitza ara</string>
+    <string name="fav_sync_done">Sincronitzat %1$s</string>
+    <string name="fav_sync_never">Encara sense sincronitzar</string>
+    <string name="fav_sync_working">Sincronitzant…</string>
+    <string name="fav_sync_needs_amber">Pendent d\'Amber: toca per autoritzar</string>
+    <string name="fav_sync_offline">No s\'ha pogut connectar amb els relays</string>
+    <string name="fav_sync_too_big">Massa preferits per a un sol esdeveniment</string>
+    <string name="fav_sync_unreadable">No s\'ha pogut llegir la còpia de Nostr</string>
 </resources>

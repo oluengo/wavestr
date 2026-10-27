@@ -260,4 +260,22 @@
     <string name="live_chat_title">Chat and zaps</string>
     <string name="live_chat_empty">No messages yet.</string>
     <string name="live_chat_readonly">Writing in the chat comes in a later version.</string>
+
+    <!-- Favoritos en Nostr -->
+    <string name="fav_sync_title">Favorites on Nostr</string>
+    <string name="fav_sync_ask_title">Save your favorites on Nostr?</string>
+    <string name="fav_sync_ask_body">They are stored encrypted, so only you can read them, and you get them back on any phone with your account. Amber will ask permission to encrypt and sign.</string>
+    <string name="fav_sync_yes">Yes, save</string>
+    <string name="fav_sync_no">Not now</string>
+    <string name="fav_sync_toggle">Save favorites on Nostr</string>
+    <string name="fav_sync_toggle_sub">Encrypted with your key (NIP-44). Updated automatically.</string>
+    <string name="fav_sync_needs_login">Sign in with Amber to save them on Nostr.</string>
+    <string name="fav_sync_now">Sync now</string>
+    <string name="fav_sync_done">Synced %1$s</string>
+    <string name="fav_sync_never">Not synced yet</string>
+    <string name="fav_sync_working">Syncing…</string>
+    <string name="fav_sync_needs_amber">Waiting for Amber: tap to authorize</string>
+    <string name="fav_sync_offline">Couldn\'t reach the relays</string>
+    <string name="fav_sync_too_big">Too many favorites to fit in one event</string>
+    <string name="fav_sync_unreadable">The copy on Nostr couldn\'t be read</string>
 </resources>

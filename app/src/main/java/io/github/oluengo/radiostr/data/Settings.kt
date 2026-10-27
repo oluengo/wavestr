@@ -15,7 +15,7 @@ enum class ThemeMode { SYSTEM, LIGHT, DARK }
 enum class LoginMethod { NONE, AMBER, READ_ONLY }
 
 /** Colores de acento (los mismos que en la demo). */
-enum class Accent { GREEN, VIOLET, CORAL, BLUE, RASPBERRY }
+enum class Accent { VIOLET, GREEN, CORAL, BLUE, RASPBERRY }
 
 data class AppSettings(
     val theme: ThemeMode = ThemeMode.SYSTEM,
@@ -24,7 +24,9 @@ data class AppSettings(
     val pubkey: String? = null,
     val loginMethod: LoginMethod = LoginMethod.NONE,
     val signerPackage: String? = null,
-    val accent: Accent = Accent.GREEN,
+    val accent: Accent = Accent.VIOLET,
+    /** Guardar favoritos en Nostr: null = aún no se ha preguntado. */
+    val favSync: Boolean? = null,
 )
 
 private val Context.dataStore by preferencesDataStore(name = "settings")
@@ -38,6 +40,7 @@ class SettingsRepository(private val context: Context) {
         val login = stringPreferencesKey("login_method")
         val signer = stringPreferencesKey("signer_package")
         val accent = stringPreferencesKey("accent")
+        val favSync = booleanPreferencesKey("fav_sync")
     }
 
     val flow: Flow<AppSettings> = context.dataStore.data.map { p ->
@@ -48,7 +51,8 @@ class SettingsRepository(private val context: Context) {
             pubkey = p[K.pubkey],
             loginMethod = p[K.login]?.let { runCatching { LoginMethod.valueOf(it) }.getOrNull() } ?: LoginMethod.NONE,
             signerPackage = p[K.signer],
-            accent = p[K.accent]?.let { runCatching { Accent.valueOf(it) }.getOrNull() } ?: Accent.GREEN,
+            accent = p[K.accent]?.let { runCatching { Accent.valueOf(it) }.getOrNull() } ?: Accent.VIOLET,
+            favSync = p[K.favSync],
         )
     }
 
@@ -60,6 +64,7 @@ class SettingsRepository(private val context: Context) {
     }
 
     suspend fun setAccent(a: Accent) = context.dataStore.edit { it[K.accent] = a.name }
+    suspend fun setFavSync(v: Boolean) = context.dataStore.edit { it[K.favSync] = v }
     suspend fun setAudioOnScreenOff(v: Boolean) = context.dataStore.edit { it[K.audioOff] = v }
     suspend fun setAudioOnCellular(v: Boolean) = context.dataStore.edit { it[K.audioCell] = v }
 
@@ -71,7 +76,7 @@ class SettingsRepository(private val context: Context) {
         }
 
     suspend fun logout() = context.dataStore.edit {
-        it.remove(K.pubkey); it.remove(K.login); it.remove(K.signer)
+        it.remove(K.pubkey); it.remove(K.login); it.remove(K.signer); it.remove(K.favSync)
     }
 
     companion object {

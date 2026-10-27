@@ -24,6 +24,15 @@ class NostrRepository(private val pool: RelayPool) {
         return merged
     }
 
+    /** Relays para los datos propios: los de escritura del usuario + los de por defecto. */
+    suspend fun ownRelays(pubkey: String): List<String> {
+        val ev = pool.query(
+            RelayPool.INDEXERS + RelayPool.DEFAULT,
+            listOf(Filter(kinds = listOf(Kinds.RELAY_LIST), authors = listOf(pubkey), limit = 1)),
+        ).maxByOrNull { it.createdAt }
+        return ((ev?.writeRelays().orEmpty()).take(5) + RelayPool.DEFAULT).distinct()
+    }
+
     suspend fun follows(pubkey: String, refresh: Boolean = false): List<String> {
         if (!refresh) followCache[pubkey]?.let { return it }
         val ev = pool.query(
