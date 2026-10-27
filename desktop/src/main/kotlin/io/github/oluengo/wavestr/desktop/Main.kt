@@ -132,7 +132,7 @@ private fun ApplicationScope.WavestrApplication(c: DesktopContainer) {
  * HLS unos segundos y deja el resultado como anotaciones de GitHub Actions.
  */
 private suspend fun smokeTest(c: DesktopContainer, window: java.awt.Window) {
-    fun report(level: String, msg: String) = println("::$level::$msg")
+    fun report(level: String, msg: String) { System.out.flush(); System.err.flush(); println("\n::$level::$msg") }
     kotlinx.coroutines.delay(4_000)
     report("notice", "Escritorio: ventana ${window.width}x${window.height} · VLC=${c.player.state.value.available} · idioma=${I18n.locale} · «${t("tab_live")}» / «${t("tab_radio")}»")
     if (!c.player.state.value.available) { report("error", "Escritorio: no se encuentra VLC"); return }
