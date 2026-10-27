@@ -137,11 +137,11 @@ private suspend fun smokeTest(c: DesktopContainer, window: java.awt.Window) {
     report("notice", "Escritorio: ventana ${window.width}x${window.height} · VLC=${c.player.state.value.available} · idioma=${I18n.locale} · «${t("tab_live")}» / «${t("tab_radio")}»")
     if (!c.player.state.value.available) { report("error", "Escritorio: no se encuentra VLC"); return }
     c.player.play(NowPlaying("smoke-radio", "https://ice2.somafm.com/groovesalad-128-mp3", "SomaFM", "", null, null, isLive = false))
-    kotlinx.coroutines.delay(12_000)
+    kotlinx.coroutines.delay(14_000)
     c.player.state.value.let { report(if (it.isPlaying) "notice" else "error", "Escritorio radio: sonando=${it.isPlaying} error=${it.error} canción=${it.icyTitle}") }
     val before = c.player.video.frame.longValue
     c.player.play(NowPlaying("smoke-video", "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", "HLS", "", null, null, isLive = true))
-    kotlinx.coroutines.delay(15_000)
+    kotlinx.coroutines.delay(12_000)
     val frames = c.player.video.frame.longValue - before
     val bmp = c.player.video.bitmap
     c.player.state.value.let { report(if (frames > 10) "notice" else "error", "Escritorio vídeo: sonando=${it.isPlaying} fotogramas=$frames tamaño=${bmp?.width}x${bmp?.height}") }

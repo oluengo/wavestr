@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jetbrains.skia.Bitmap
@@ -90,6 +91,15 @@ class VlcPlayer(private val scope: CoroutineScope, private val onStationPlay: (S
                 }
             })
             p.audio().setVolume(_state.value.volume)
+            // Respaldo del título ICY: no todas las emisoras disparan el evento de metadatos; se consulta cada 4 s.
+            scope.launch(Dispatchers.IO) {
+                while (true) {
+                    delay(4_000)
+                    if (!_state.value.isPlaying) continue
+                    val now = runCatching { p.media().meta().get(Meta.NOW_PLAYING) }.getOrNull()?.trim()?.takeIf { it.isNotEmpty() }
+                    if (now != null && now != _state.value.icyTitle) _state.update { it.copy(icyTitle = now) }
+                }
+            }
         }
     }
 

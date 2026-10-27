@@ -1,4 +1,4 @@
-# Wavestr · Plan técnico v0.5
+# Wavestr · Plan técnico v0.6
 
 *27 oct 2026 · v0.1 → v0.2: idiomas, decisiones abiertas cerradas, estado de las fases. Ver «Cambios» al final.*
 
@@ -42,7 +42,7 @@ Radio online (PLS/M3U) y directos de Nostr en una sola app Android. **Nostr firs
 
 ## 3. Arquitectura
 
-Por ahora **un único módulo `:app`** con paquetes por capa; se separará en módulos cuando crezca (ADR 0002). La estructura objetivo sigue siendo esta:
+**Hoy:** `:core` (lógica común en Kotlin/JVM), `:app` (Android) y `:desktop` (Linux y Windows, Compose Desktop + VLC). Ver ADR 0009. La estructura objetivo a largo plazo:
 
 ```
 :app                 → navegación, tema, pantallas
@@ -240,6 +240,7 @@ wavestr/
 
 ## Cambios
 
+- **v0.6 (27 oct):** versión de escritorio (Linux y Windows) y módulo `:core` (ADR 0009); diseño adaptable en Android; botón sorpresa; relays editables.
 - **v0.5 (27 oct):** el proyecto pasa de Radiostr a **Wavestr** (el nombre estaba cogido), con nuevo logo (anillo y onda) y violeta como acento. Favoritos en Nostr con NIP-78 cifrado (ADR 0008).
 - **v0.4 (27 oct):** F2 en marcha: NWC y zaps con criptografía propia en Kotlin en vez de `secp256k1-kmp` (sin dependencias nativas); carátulas desde la web de la emisora; copia de favoritos JSON/M3U; color de acento (§10, §11).
 - **v0.3 (27 oct):** canal beta y sección «Acerca de» con apoyo al proyecto, como en Usus (§1).

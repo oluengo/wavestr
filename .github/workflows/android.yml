@@ -192,12 +192,19 @@ jobs:
             echo "version=$v" >> "$GITHUB_OUTPUT"; echo "file=wavestr" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Instalar VLC y xvfb
+        if: runner.os == 'Linux'
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends vlc-bin vlc-plugin-base vlc-plugin-video-output xvfb > /dev/null
+
       - name: Prueba de arranque (xvfb + VLC)
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq vlc xvfb > /dev/null
-          WAVESTR_SMOKE=1 timeout 180 xvfb-run -a -s "-screen 0 1280x900x24" ./gradlew :desktop:run --stacktrace 2>&1 | tee "$RUNNER_TEMP/smoke.log" | grep -E "^::|Exception|Error" || true
-          if grep -q "Exception in thread" "$RUNNER_TEMP/smoke.log"; then grep -A5 "Exception in thread" "$RUNNER_TEMP/smoke.log" | head -20 | sed 's/^/::error::/'; fi
+          ./gradlew :desktop:classes --stacktrace
+          code=0
+          WAVESTR_SMOKE=1 timeout -k 10 240 xvfb-run -a -s "-screen 0 1280x900x24" ./gradlew --no-daemon :desktop:run > "$RUNNER_TEMP/smoke.log" 2>&1 || code=$?
+          grep -E "^::" "$RUNNER_TEMP/smoke.log" || echo "::warning::La prueba de arranque no dejó resultados"
+          if grep -q "Exception in thread" "$RUNNER_TEMP/smoke.log"; then grep -A6 "Exception in thread" "$RUNNER_TEMP/smoke.log" | head -24 | sed 's/^/::error::/'; fi
+          [ "$code" = 0 ] || echo "::warning::La prueba de arranque terminó con código $code"
 
       - name: Linux (.deb y .tar.gz)
         if: runner.os == 'Linux'
