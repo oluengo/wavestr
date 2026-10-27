@@ -1,6 +1,5 @@
 package io.github.oluengo.wavestr.radio
 
-import io.github.oluengo.wavestr.BuildConfig
 import io.github.oluengo.wavestr.nostr.NostrJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,10 +22,10 @@ import java.net.URLEncoder
  * Cliente de Radio Browser (https://www.radio-browser.info): directorio libre y sin cuenta.
  * Elige un servidor de la lista oficial y, si falla, prueba otro.
  */
-class RadioBrowserClient(private val http: OkHttpClient, private val scope: CoroutineScope) {
+/** [userAgent]: Radio Browser pide identificar la app, p. ej. "Wavestr/0.5.0 (github.com/oluengo/wavestr)". */
+class RadioBrowserClient(private val http: OkHttpClient, private val scope: CoroutineScope, private val userAgent: String) {
     private val mutex = Mutex()
     private var base: String? = null
-    private val userAgent = "Wavestr/${BuildConfig.VERSION_NAME} (github.com/oluengo/wavestr)"
 
     private fun get(url: String): String {
         val req = Request.Builder().url(url).header("User-Agent", userAgent).build()

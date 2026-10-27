@@ -1,6 +1,6 @@
 package io.github.oluengo.wavestr.radio
 
-import android.content.Context
+import io.github.oluengo.wavestr.data.KeyValueStore
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Semaphore
@@ -16,15 +16,14 @@ import java.util.concurrent.TimeUnit
  * (apple-touch-icon, og:image, iconos) y las rutas habituales, y comprueba que de verdad es una imagen.
  * El resultado (o «no hay») se guarda para no repetir la búsqueda.
  */
-class ArtworkResolver(context: Context, http: OkHttpClient) {
+class ArtworkResolver(private val prefs: KeyValueStore, http: OkHttpClient) {
     private val http = http.newBuilder().connectTimeout(5, TimeUnit.SECONDS).readTimeout(6, TimeUnit.SECONDS).build()
-    private val prefs = context.getSharedPreferences("artwork", Context.MODE_PRIVATE)
     private val memory = ConcurrentHashMap<String, String>()
     private val inFlight = ConcurrentHashMap<String, CompletableDeferred<String?>>()
     private val parallel = Semaphore(4)
 
     /** Lo que ya sabemos sin red: url, "" (no hay) o null (no se ha buscado). */
-    fun cached(st: Station): String? = memory[st.id] ?: prefs.getString(st.id, null)?.also { memory[st.id] = it }
+    fun cached(st: Station): String? = memory[st.id] ?: prefs.get(st.id)?.also { memory[st.id] = it }
 
     /** [skip]: URLs que ya han fallado al cargarse (p. ej. el favicon del directorio). */
     suspend fun resolve(st: Station, skip: Set<String> = emptySet()): String? {
@@ -39,7 +38,7 @@ class ArtworkResolver(context: Context, http: OkHttpClient) {
         }
         val value = found.orEmpty()
         memory[st.id] = value
-        prefs.edit().putString(st.id, value).apply()
+        prefs.put(st.id, value)
         inFlight.remove(st.id)
         mine.complete(found)
         return found
@@ -77,6 +76,6 @@ class ArtworkResolver(context: Context, http: OkHttpClient) {
     }.getOrDefault(false)
 
     companion object {
-        private const val UA = "Mozilla/5.0 (Android) Wavestr"
+        private const val UA = "Mozilla/5.0 (compatible; Wavestr)"
     }
 }

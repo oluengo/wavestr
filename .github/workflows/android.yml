@@ -46,7 +46,7 @@ jobs:
         run: python3 scripts/check_strings.py
 
       - name: Tests unitarios
-        run: ./gradlew testDebugUnitTest --stacktrace
+        run: ./gradlew :core:test testDebugUnitTest --stacktrace
 
       - name: Versión
         id: v

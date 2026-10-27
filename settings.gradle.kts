@@ -15,4 +15,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "wavestr"
+include(":core")
 include(":app")

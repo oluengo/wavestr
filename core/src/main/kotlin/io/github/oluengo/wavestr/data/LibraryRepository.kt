@@ -1,6 +1,5 @@
 package io.github.oluengo.wavestr.data
 
-import android.content.Context
 import io.github.oluengo.wavestr.nostr.NostrJson
 import io.github.oluengo.wavestr.radio.Station
 import kotlinx.coroutines.CompletableDeferred
@@ -18,8 +17,8 @@ import java.io.File
 import java.util.UUID
 
 /** Guarda la biblioteca (favoritos, carpetas, importadas) en un JSON privado de la app. */
-class LibraryRepository(context: Context, private val scope: CoroutineScope) {
-    private val file = File(context.filesDir, "library.json")
+/** [file]: p. ej. library.json en la carpeta privada de la app. */
+class LibraryRepository(private val file: File, private val scope: CoroutineScope) {
     private val mutex = Mutex()
     private val loaded = CompletableDeferred<Unit>()
     private val _library = MutableStateFlow(Library())

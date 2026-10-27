@@ -51,10 +51,10 @@ class AppContainer(app: Application) {
     val settings = SettingsRepository(app)
     val relays = RelayPool(http)
     val nostr = NostrRepository(relays)
-    val radio = RadioBrowserClient(http, appScope)
-    val library = LibraryRepository(app, appScope)
+    val radio = RadioBrowserClient(http, appScope, "Wavestr/${BuildConfig.VERSION_NAME} (github.com/oluengo/wavestr)")
+    val library = LibraryRepository(java.io.File(app.filesDir, "library.json"), appScope)
     val favSync = io.github.oluengo.wavestr.data.FavoritesSync(app, settings, library, nostr, relays, appScope).also { it.start() }
-    val artwork = io.github.oluengo.wavestr.radio.ArtworkResolver(app, http)
+    val artwork = io.github.oluengo.wavestr.radio.ArtworkResolver(io.github.oluengo.wavestr.data.PrefsStore(app, "artwork"), http)
     val wallet = io.github.oluengo.wavestr.data.WalletRepository(app, relays)
     val zaps = io.github.oluengo.wavestr.nostr.ZapClient(http)
     val surprise = io.github.oluengo.wavestr.ui.common.SurprisePicker(this)
