@@ -4,6 +4,12 @@ import android.app.PendingIntent
 import android.content.Intent
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Metadata
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.extractor.metadata.icy.IcyInfo
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
@@ -30,6 +36,25 @@ class PlaybackService : MediaSessionService() {
             .setHandleAudioBecomingNoisy(true)
             .setWakeMode(C.WAKE_MODE_NETWORK)
             .build()
+
+        // Radio: el título de la canción llega en los metadatos ICY. Lo publicamos como metadatos de la
+        // lista para que la UI (MediaController) lo reciba; la notificación sigue mostrando la emisora.
+        player.addListener(object : Player.Listener {
+            @androidx.annotation.OptIn(UnstableApi::class)
+            override fun onMetadata(metadata: Metadata) {
+                for (i in 0 until metadata.length()) {
+                    val entry = metadata.get(i)
+                    if (entry is IcyInfo) {
+                        val title = entry.title?.trim()?.takeIf { it.isNotEmpty() && it != "-" } ?: continue
+                        player.playlistMetadata = MediaMetadata.Builder().setTitle(title).build()
+                    }
+                }
+            }
+
+            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                player.playlistMetadata = MediaMetadata.EMPTY
+            }
+        })
 
         val open = PendingIntent.getActivity(
             this, 0,

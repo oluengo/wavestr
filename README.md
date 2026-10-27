@@ -3,7 +3,7 @@
 Radio online y directos de Nostr en una sola app Android.
 *Online radio and Nostr live streams in one Android app. Català · Español · English.*
 
-> Estado: **beta pública** ([Radiostr Beta 0.1.0](https://github.com/oluengo/radiostr/releases/tag/radiostr-beta)). Aún sin versión estable.
+> Estado: **beta pública** ([Radiostr Beta](https://github.com/oluengo/radiostr/releases/tag/radiostr-beta)). Aún sin versión estable.
 
 ## Instalar la beta
 
@@ -27,7 +27,12 @@ Comprueba que la huella del certificado coincide (también está en Ajustes → 
 - **Tema** claro, oscuro o automático.
 - Inicio de sesión con **Amber** (NIP-55) o con tu **npub** en solo lectura. La app nunca ve tu clave privada.
 
-**Próximamente:** zaps con NWC, chat del directo, radios PLS/M3U con directorio mundial, favoritos en carpetas sincronizadas por Nostr, botón sorpresa y Android Auto. El orden está en el [plan técnico](docs/plan-tecnico.md).
+- **Radio online** con el directorio libre Radio Browser: populares, por país, por estilo y búsqueda; calidad seleccionable y canción que suena.
+- **Importar listas PLS/M3U** (enlace, contenido o archivo).
+- **Favoritos en carpetas y subcarpetas**, para radios y streamers de Nostr.
+- **Tu perfil de Nostr** (solo lectura).
+
+**Próximamente:** zaps con NWC, chat del directo, favoritos sincronizados por Nostr (NIP-51), botón sorpresa y Android Auto. El orden está en el [plan técnico](docs/plan-tecnico.md).
 
 ## Demo de la interfaz
 

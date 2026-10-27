@@ -11,11 +11,16 @@ PH = re.compile(r"%(\d+\$)?[ds]")
 
 def load(folder):
     root = ET.parse(RES / folder / "strings.xml").getroot()
-    return {
+    out = {
         s.get("name"): "".join(s.itertext())
         for s in root.findall("string")
         if s.get("translatable") != "false"
     }
+    # Plurales: se comparan por su forma «other».
+    for p in root.findall("plurals"):
+        other = next((i for i in p.findall("item") if i.get("quantity") == "other"), None)
+        out["plurals:" + p.get("name")] = "".join(other.itertext()) if other is not None else ""
+    return out
 
 
 base = load("values")

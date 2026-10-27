@@ -2,6 +2,7 @@ package io.github.oluengo.radiostr.ui.settings
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -52,12 +53,12 @@ import io.github.oluengo.radiostr.ui.theme.Rs
 import kotlinx.coroutines.launch
 
 @Composable
-fun SettingsScreen(c: AppContainer) {
+fun SettingsScreen(c: AppContainer, onOpenMe: () -> Unit) {
     val s by c.settings.flow.collectAsStateWithLifecycle(initialValue = AppSettings())
     val scope = rememberCoroutineScope()
 
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        ScreenHeader(stringResource(R.string.tab_settings), null)
+        ScreenHeader(stringResource(R.string.tab_settings), null) { io.github.oluengo.radiostr.ui.common.MeButton(c, onOpenMe) }
         Column(Modifier.padding(horizontal = 20.dp)) {
 
             SectionLabel(stringResource(R.string.settings_appearance))
@@ -101,11 +102,22 @@ fun SettingsScreen(c: AppContainer) {
                     Text(stringResource(R.string.login_prompt_body), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
                     LoginButtons(c, Modifier.padding(top = 10.dp))
                 } else {
-                    Text(Nip19.shortNpub(pk), fontFamily = FontFamily.Monospace, fontWeight = FontWeight.SemiBold)
-                    Text(
-                        stringResource(if (s.loginMethod == LoginMethod.AMBER) R.string.account_amber else R.string.account_readonly),
-                        color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall,
-                    )
+                    val profile = io.github.oluengo.radiostr.ui.common.rememberMyProfile(c).second
+                    Row(
+                        Modifier.fillMaxWidth().clickable(onClick = onOpenMe).padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        io.github.oluengo.radiostr.ui.common.MeButton(c, onOpenMe)
+                        Column(Modifier.weight(1f)) {
+                            Text(profile?.bestName ?: Nip19.shortNpub(pk), fontWeight = FontWeight.SemiBold)
+                            Text(
+                                stringResource(if (s.loginMethod == LoginMethod.AMBER) R.string.account_amber else R.string.account_readonly),
+                                color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall,
+                            )
+                        }
+                        Text("›", color = Rs.colors.muted)
+                    }
                     OutlinedButton(onClick = { scope.launch { c.settings.logout() } }, modifier = Modifier.padding(top = 8.dp)) {
                         Text(stringResource(R.string.logout))
                     }

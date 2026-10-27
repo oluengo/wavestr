@@ -59,11 +59,6 @@
     <string name="copy">Copiar</string>
     <string name="copied">Copiado</string>
 
-    <string name="radio_soon_title">Las radios están en camino</string>
-    <string name="radio_soon_body">La radio online, con importación PLS/M3U y un directorio mundial, llega en una próxima versión.</string>
-    <string name="fav_soon_title">Los favoritos están en camino</string>
-    <string name="fav_soon_body">Las carpetas y subcarpetas sincronizadas por Nostr llegan en una próxima versión.</string>
-
     <string name="settings_appearance">Apariencia</string>
     <string name="settings_theme">Tema</string>
     <string name="theme_light">Claro</string>
@@ -107,4 +102,92 @@
     <string name="issue_what_you_want">Qué te gustaría</string>
     <string name="issue_what_for">Para qué lo usarías</string>
     <string name="about_fingerprint">Certificado de firma del APK (SHA-256). Las versiones y betas de GitHub, Obtainium y Zapstore deben coincidir:</string>
+
+    <!-- Perfil propio, radio online y favoritos -->
+    <string name="clear">Borrar</string>
+    <string name="delete">Eliminar</string>
+    <string name="retry">Reintentar</string>
+    <string name="fav_add">Añadir a favoritos</string>
+    <string name="fav_remove">Quitar de favoritos</string>
+    <string name="fav_sub">Tus radios y streamers, en carpetas</string>
+    <string name="fav_new_folder">Nueva carpeta</string>
+    <string name="fav_inside">Dentro de «%s»</string>
+    <string name="fav_folders">Carpetas</string>
+    <string name="fav_subfolders">Subcarpetas</string>
+    <string name="fav_no_folder">Sin carpeta</string>
+    <string name="fav_in_folder">En esta carpeta</string>
+    <string name="fav_empty_all">Aún no tienes favoritos. Toca ♥ en una radio o en el reproductor para guardarla.</string>
+    <string name="fav_empty_folder">Vacía. Usa ⋮ en un favorito para moverlo aquí.</string>
+    <string name="fav_empty_short">Vacía</string>
+    <string name="fav_folder_options">Opciones de %s</string>
+    <string name="fav_item_options">Opciones de %s</string>
+    <string name="fav_folder_name">Nombre de la carpeta</string>
+    <string name="fav_name_hint">Nombre, p. ej. «Para correr»</string>
+    <string name="fav_name_required">Escribe un nombre para la carpeta.</string>
+    <string name="fav_delete_folder">Eliminar carpeta</string>
+    <string name="fav_delete_title">¿Eliminar «%s»?</string>
+    <string name="fav_delete_body">Su contenido pasa a «%s». No se borra ningún favorito. No se puede deshacer.</string>
+    <string name="fav_move_to">Mover a…</string>
+    <string name="fav_kind_station">Radio</string>
+    <string name="fav_kind_streamer">Streamer de Nostr</string>
+    <string name="fav_sync_note">Se guardan en este móvil. La sincronización de carpetas por Nostr (NIP-51) llegará más adelante.</string>
+    <string name="radio_sub">Directorio mundial + tus listas PLS/M3U</string>
+    <string name="radio_search_hint">Busca emisora, país o estilo</string>
+    <string name="radio_popular">Populares</string>
+    <string name="radio_near">Cerca de ti</string>
+    <string name="radio_tags">Etiquetas</string>
+    <string name="radio_imported">Importadas</string>
+    <string name="radio_popular_label">Más escuchadas</string>
+    <string name="radio_results">Resultados</string>
+    <string name="radio_no_results">Nada para «%s». Prueba con otro nombre, país o estilo, o importa tu propia lista.</string>
+    <string name="radio_pick_tag">Elige un estilo para ver sus emisoras.</string>
+    <string name="radio_error">No se ha podido conectar con el directorio de radios. Revisa la conexión y vuelve a intentarlo.</string>
+    <string name="radio_source_note">Directorio: Radio Browser (libre, sin cuenta). Al escuchar una emisora se le suma una escucha.</string>
+    <string name="radio_country_note">Por defecto, el país de tu dispositivo. Radiostr no usa tu ubicación.</string>
+    <string name="radio_down">No responde</string>
+    <string name="radio_play_error">Esta emisora no responde. Prueba otro formato o elige otra emisora.</string>
+    <string name="radio_try_other">Probar otro formato</string>
+    <string name="radio_format_unknown">Formato según el stream</string>
+    <string name="radio_single_format">%s · único formato</string>
+    <string name="radio_quality_auto">Auto (la mejor con wifi, la más ligera con datos)</string>
+    <string name="quality_audio">Calidad de audio</string>
+    <string name="hint_radio">Emisora de radio: solo audio. Sigue sonando con la pantalla apagada.</string>
+    <string name="hint_radio_http">Emisora de radio por http sin cifrar: se permite solo para el audio.</string>
+    <string name="import_button">+ Importar PLS/M3U</string>
+    <string name="import_title">Importar emisoras</string>
+    <string name="import_hint">Pega una URL de stream, un enlace a un .pls/.m3u o su contenido</string>
+    <string name="import_read">Leer</string>
+    <string name="import_file">Elegir archivo</string>
+    <string name="import_found">Encontradas · %1$s · %2$d</string>
+    <string name="import_dest">Guardar en: %s</string>
+    <string name="import_dest_only">Solo en Importadas</string>
+    <string name="import_done">%d emisoras importadas</string>
+    <string name="import_empty">Aún no has importado nada. Pega un enlace o una lista PLS/M3U, o elige un archivo del móvil.</string>
+    <string name="import_remove">Quitar emisora importada</string>
+    <string name="import_note">Las emisoras http se permiten solo para el audio. Las importadas se guardan en este móvil.</string>
+    <string name="import_err_empty">Pega una URL o el contenido de una lista.</string>
+    <string name="import_err_none">No se ha encontrado ninguna emisora. Comprueba que es una lista PLS o M3U con URLs http(s).</string>
+    <string name="import_err_hls">Esto es un stream HLS, no una lista. Pega su URL para añadirlo como una emisora.</string>
+    <string name="import_err_download">No se ha podido descargar la lista. Revisa el enlace o pega su contenido.</string>
+    <string name="import_err_pick">Marca al menos una emisora.</string>
+    <string name="import_err_file">No se ha podido leer el archivo.</string>
+    <string name="me_title">Tu perfil</string>
+    <string name="me_following">seguidos</string>
+    <string name="me_relays">relays</string>
+    <string name="me_signer">firma</string>
+    <string name="me_pubkey">Tu clave pública</string>
+    <string name="me_lightning">Cartera Lightning</string>
+    <string name="me_readonly_note">Radiostr lee tu perfil (kind 0) y tus relays (NIP-65), pero no los modifica. Para editarlos usa tu cliente de Nostr habitual.</string>
+    <plurals name="fav_count">
+        <item quantity="one">%d favorito</item>
+        <item quantity="other">%d favoritos</item>
+    </plurals>
+    <plurals name="subfolder_count">
+        <item quantity="one">%d subcarpeta</item>
+        <item quantity="other">%d subcarpetas</item>
+    </plurals>
+    <plurals name="import_add">
+        <item quantity="one">Añadir %d emisora</item>
+        <item quantity="other">Añadir %d emisoras</item>
+    </plurals>
 </resources>

@@ -54,7 +54,7 @@ import io.github.oluengo.radiostr.ui.theme.Rs
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LiveScreen(c: AppContainer, onPlay: (NowPlaying) -> Unit, onSignIn: () -> Unit) {
+fun LiveScreen(c: AppContainer, onPlay: (NowPlaying) -> Unit, onSignIn: () -> Unit, onOpenMe: () -> Unit) {
     val vm: LiveViewModel = viewModel(factory = viewModelFactory { initializer { LiveViewModel(c) } })
     val st by vm.state.collectAsStateWithLifecycle()
     val untitled = stringResource(R.string.untitled_stream)
@@ -68,6 +68,7 @@ fun LiveScreen(c: AppContainer, onPlay: (NowPlaying) -> Unit, onSignIn: () -> Un
             IconButton(onClick = { vm.load(refresh = true) }) {
                 Icon(Icons.Outlined.Refresh, contentDescription = stringResource(R.string.refresh))
             }
+            io.github.oluengo.radiostr.ui.common.MeButton(c, onOpenMe)
         }
         Row(Modifier.padding(horizontal = 20.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FilterChip(

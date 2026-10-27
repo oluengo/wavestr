@@ -1,7 +1,7 @@
 // Beta (RADIOSTR_BETA=1, rama beta en CI): otra app, «Radiostr Beta» (io.github.oluengo.radiostr.beta),
 // versión X.Y.Z-beta.N y código versionCode·1000 + N. Se instala junto a la normal, con sus propios datos.
-val radiostrVersion = "0.1.0"
-val radiostrCode = 1
+val radiostrVersion = "0.2.0"
+val radiostrCode = 2
 val beta = System.getenv("RADIOSTR_BETA") == "1"
 val betaN = (System.getenv("RADIOSTR_BETA_N") ?: "0").toInt()
 
@@ -97,6 +97,7 @@ dependencies {
     implementation(libs.media3.exoplayer.hls)
     implementation(libs.media3.session)
     implementation(libs.media3.ui)
+    implementation(libs.media3.extractor)
 
     implementation(libs.okhttp)
     implementation(libs.kotlinx.serialization.json)

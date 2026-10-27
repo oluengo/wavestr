@@ -19,6 +19,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.Headphones
 import androidx.compose.material.icons.outlined.Pause
@@ -63,6 +65,7 @@ import io.github.oluengo.radiostr.ui.theme.Rs
 @Composable
 fun PlayerScreen(c: AppContainer, onClose: () -> Unit, onOpenProfile: (String) -> Unit) {
     val st by c.player.state.collectAsStateWithLifecycle()
+    val lib by c.library.library.collectAsStateWithLifecycle()
     val np = st.nowPlaying
 
     Column(Modifier.fillMaxSize().statusBarsPadding().verticalScroll(rememberScrollState())) {
@@ -100,8 +103,8 @@ fun PlayerScreen(c: AppContainer, onClose: () -> Unit, onOpenProfile: (String) -
             if (st.isBuffering) CircularProgressIndicator(Modifier.align(Alignment.Center))
         }
 
-        // Selector audio / vídeo
-        SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 16.dp)) {
+        // Selector audio / vídeo (la radio es solo audio)
+        if (!np.isRadio) SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 16.dp)) {
             SegmentedButton(
                 selected = st.audioOnly,
                 onClick = { c.player.setWantsVideo(false) },
@@ -117,12 +120,15 @@ fun PlayerScreen(c: AppContainer, onClose: () -> Unit, onOpenProfile: (String) -
             ) { Text(stringResource(R.string.player_video)) }
         }
 
+        if (np.isRadio) Box(Modifier.size(16.dp))
         Text(hintFor(st), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(horizontal = 18.dp))
 
         if (!st.audioOnly && st.videoHeights.size > 1) QualityChip(c, st)
+        np.station?.let { RadioQuality(c, it, np.variantIndex, np.url) }
 
         Column(Modifier.padding(horizontal = 18.dp, vertical = 14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(np.title, style = MaterialTheme.typography.titleLarge)
+            st.icyTitle?.let { Text("♪ $it", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold) }
             val host = np.hostPubkey
             Text(
                 if (host != null) "${np.subtitle} · " + stringResource(R.string.view_profile) else np.subtitle,
@@ -133,10 +139,28 @@ fun PlayerScreen(c: AppContainer, onClose: () -> Unit, onOpenProfile: (String) -
         }
 
         if (st.error) {
-            Text(stringResource(R.string.player_error), color = Rs.colors.live, modifier = Modifier.padding(horizontal = 18.dp))
+            Column(Modifier.padding(horizontal = 18.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text(stringResource(if (np.isRadio) R.string.radio_play_error else R.string.player_error), color = Rs.colors.live)
+                val station = np.station
+                if (station != null && station.variants.size > 1) {
+                    androidx.compose.material3.OutlinedButton(onClick = {
+                        val cur = station.variants.indexOfFirst { it.url == np.url }
+                        c.player.selectVariant((cur + 1) % station.variants.size)
+                    }) { Text(stringResource(R.string.radio_try_other)) }
+                }
+            }
         }
 
-        Row(Modifier.fillMaxWidth().padding(vertical = 12.dp), horizontalArrangement = Arrangement.Center) {
+        Row(
+            Modifier.fillMaxWidth().padding(vertical = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            val station = np.station
+            val host = np.hostPubkey
+            val favKey = station?.id ?: host?.let { "npub:$it" }
+            val isFav = favKey != null && lib.isFavorite(favKey)
+            Box(Modifier.size(48.dp))
             FilledIconButton(
                 onClick = c.player::togglePlay,
                 modifier = Modifier.size(64.dp),
@@ -150,6 +174,43 @@ fun PlayerScreen(c: AppContainer, onClose: () -> Unit, onOpenProfile: (String) -
                     stringResource(if (st.isPlaying) R.string.pause else R.string.play),
                     Modifier.size(30.dp),
                 )
+            }
+            IconButton(onClick = {
+                when {
+                    station != null -> c.library.toggleStation(station)
+                    host != null -> c.library.toggleStreamer(host, np.subtitle, np.artworkUrl)
+                }
+            }, enabled = favKey != null, modifier = Modifier.size(48.dp)) {
+                Icon(
+                    if (isFav) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                    stringResource(if (isFav) R.string.fav_remove else R.string.fav_add),
+                    tint = if (isFav) Rs.colors.live else Rs.colors.muted,
+                )
+            }
+        }
+    }
+}
+
+/** Calidad de una emisora: las variantes que emite (cada una es una URL) o «único formato». */
+@Composable
+private fun RadioQuality(c: AppContainer, station: io.github.oluengo.radiostr.radio.Station, chosen: Int?, currentUrl: String) {
+    var open by remember { mutableStateOf(false) }
+    val current = station.variants.firstOrNull { it.url == currentUrl } ?: station.best
+    val unknown = stringResource(R.string.radio_format_unknown)
+    Row(Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(stringResource(R.string.quality_audio), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
+        if (station.variants.size == 1) {
+            Text(stringResource(R.string.radio_single_format, current.label ?: unknown), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
+        } else Box {
+            AssistChip(onClick = { open = true }, label = {
+                Text((if (chosen == null) stringResource(R.string.quality_auto) + " · " else "") + (current.label ?: unknown) + " ▾")
+            })
+            DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+                DropdownMenuItem(text = { Text(stringResource(R.string.radio_quality_auto)) }, onClick = { open = false; c.player.selectVariant(null) })
+                station.variants.forEachIndexed { i, v ->
+                    val mbH = if (v.bitrate > 0) " · ≈ " + (v.bitrate * 0.45).toInt() + " MB/h" else ""
+                    DropdownMenuItem(text = { Text((v.label ?: unknown) + mbH) }, onClick = { open = false; c.player.selectVariant(i) })
+                }
             }
         }
     }
@@ -169,6 +230,7 @@ private fun VideoSurface(c: AppContainer) {
 @Composable
 private fun hintFor(st: PlayerUiState): String = stringResource(
     when {
+        st.nowPlaying?.isRadio == true -> if (st.nowPlaying?.url?.startsWith("http://", true) == true) R.string.hint_radio_http else R.string.hint_radio
         st.forcedByCellular && st.audioOnly -> R.string.hint_cellular
         !st.audioOnly -> R.string.hint_video
         st.audioLayout == Hls.AudioLayout.SEPARATE -> R.string.hint_audio_separate

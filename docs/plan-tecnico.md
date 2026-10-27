@@ -156,12 +156,12 @@ Cada fase termina con un APK usable.
 - Totales en sats.
 - *Hecho cuando:* un zap aparece en el chat tras detectarse el recibo 9735.
 
-**F3 · Radios**
+**F3 · Radios** 🟡 *en la beta 0.2: directorio, búsqueda, país, estilos, variantes de calidad, ICY e importación PLS/M3U*
 - Radio Browser, importación PLS/M3U, ficha de emisora.
 - Calidad seleccionable con modo Auto, metadatos ICY.
 - *Hecho cuando:* cambias de formato una emisora con varias variantes y se recuerda la elección.
 
-**F4 · Favoritos y sorpresa**
+**F4 · Favoritos y sorpresa** 🟡 *carpetas locales en la beta 0.2; falta la sincronización NIP-51 y el botón sorpresa*
 - Carpetas y subcarpetas, mover, renombrar, eliminar.
 - Sincronización NIP-51 privada.
 - Botón sorpresa y "Otra parecida".

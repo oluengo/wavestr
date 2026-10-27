@@ -27,7 +27,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import io.github.oluengo.radiostr.AppContainer
 import io.github.oluengo.radiostr.R
-import io.github.oluengo.radiostr.ui.common.ComingSoon
+import io.github.oluengo.radiostr.ui.favorites.FavoritesScreen
+import io.github.oluengo.radiostr.ui.profile.MeScreen
+import io.github.oluengo.radiostr.ui.radio.RadioScreen
 import io.github.oluengo.radiostr.ui.live.LiveScreen
 import io.github.oluengo.radiostr.ui.player.MiniPlayer
 import io.github.oluengo.radiostr.ui.player.PlayerScreen
@@ -70,15 +72,19 @@ fun RadiostrRoot(c: AppContainer) {
     ) { pad ->
         NavHost(nav, startDestination = Tab.LIVE.route, modifier = Modifier.padding(pad)) {
             composable(Tab.LIVE.route) {
-                LiveScreen(c, onPlay = { c.player.play(it); nav.navigate("player") }, onSignIn = { nav.goTab(Tab.SETTINGS.route) })
+                LiveScreen(c, onPlay = { c.player.play(it); nav.navigate("player") }, onSignIn = { nav.navigate("me") }, onOpenMe = { nav.navigate("me") })
             }
             composable(Tab.RADIO.route) {
-                ComingSoon(R.string.tab_radio, R.string.radio_soon_title, R.string.radio_soon_body, Icons.Outlined.Radio)
+                RadioScreen(c, onOpenPlayer = { nav.navigate("player") }, onOpenMe = { nav.navigate("me") })
             }
             composable(Tab.FAVORITES.route) {
-                ComingSoon(R.string.tab_favorites, R.string.fav_soon_title, R.string.fav_soon_body, Icons.Outlined.FavoriteBorder)
+                FavoritesScreen(
+                    c, onOpenPlayer = { nav.navigate("player") },
+                    onOpenProfile = { nav.navigate("profile/$it") }, onOpenMe = { nav.navigate("me") },
+                )
             }
-            composable(Tab.SETTINGS.route) { SettingsScreen(c) }
+            composable(Tab.SETTINGS.route) { SettingsScreen(c, onOpenMe = { nav.navigate("me") }) }
+            composable("me") { MeScreen(c, onBack = { nav.popBackStack() }) }
             composable("player") {
                 PlayerScreen(c, onClose = { nav.popBackStack() }, onOpenProfile = { nav.navigate("profile/$it") })
             }

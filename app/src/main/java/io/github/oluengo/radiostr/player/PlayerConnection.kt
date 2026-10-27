@@ -19,6 +19,8 @@ import androidx.media3.common.Tracks
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import io.github.oluengo.radiostr.data.SettingsRepository
+import io.github.oluengo.radiostr.radio.Station
+import io.github.oluengo.radiostr.radio.Stations
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -29,7 +31,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
 
-/** Lo que suena ahora (directo Nostr; en F3 también emisoras de radio). */
+/** Lo que suena ahora: un directo de Nostr, una grabación o una emisora de radio. */
 data class NowPlaying(
     val id: String,
     val url: String,
@@ -39,7 +41,12 @@ data class NowPlaying(
     val hostPubkey: String?,
     val hasVideo: Boolean = true,
     val isLive: Boolean = true,
-)
+    /** Solo en radio: la emisora y la variante elegida (null = Auto). */
+    val station: Station? = null,
+    val variantIndex: Int? = null,
+) {
+    val isRadio: Boolean get() = station != null
+}
 
 data class PlayerUiState(
     val nowPlaying: NowPlaying? = null,
@@ -57,6 +64,8 @@ data class PlayerUiState(
     val selectedHeight: Int? = null,
     val currentHeight: Int? = null,
     val error: Boolean = false,
+    /** Título de la canción según los metadatos ICY de la emisora. */
+    val icyTitle: String? = null,
 )
 
 /**
@@ -68,7 +77,11 @@ class PlayerConnection(
     private val settings: SettingsRepository,
     private val hls: HlsInspector,
     private val scope: CoroutineScope,
+    /** Se llama con el id del directorio al reproducir una emisora (contador de escuchas). */
+    private val onStationPlay: (String?) -> Unit = {},
 ) {
+    /** Calidad elegida por emisora (índice de variante); sin entrada = Auto. */
+    private val variantChoice = mutableMapOf<String, Int>()
     private val _state = MutableStateFlow(PlayerUiState())
     val state: StateFlow<PlayerUiState> = _state.asStateFlow()
 
@@ -118,7 +131,7 @@ class PlayerConnection(
             val cellular = s.audioOnCellular && isCellular()
             _state.update {
                 it.copy(
-                    nowPlaying = item, error = false, forcedByCellular = cellular,
+                    nowPlaying = item, error = false, forcedByCellular = cellular && item.hasVideo, icyTitle = null,
                     audioLayout = Hls.AudioLayout.UNKNOWN, videoHeights = emptyList(),
                     selectedHeight = null, currentHeight = null,
                 )
@@ -142,10 +155,34 @@ class PlayerConnection(
             applyVideoNow()
             c.prepare()
             c.play()
+            if (!item.hasVideo) return@launch
             val layout = hls.audioLayout(item.url)
             _state.update { if (it.nowPlaying?.id == item.id) it.copy(audioLayout = layout) else it }
         }
     }
+
+    /** Reproduce una emisora con la variante elegida o, en Auto, según la red. */
+    fun playStation(st: Station, chosen: Int? = variantChoice[st.id]) {
+        val v = Stations.pick(st, chosen, isCellular())
+        play(
+            NowPlaying(
+                id = st.id, url = v.url, title = st.name,
+                subtitle = listOfNotNull(st.country, v.label).joinToString(" · "),
+                artworkUrl = st.favicon, hostPubkey = null, hasVideo = false, isLive = false,
+                station = st, variantIndex = chosen,
+            )
+        )
+        onStationPlay(v.uuid)
+    }
+
+    /** index = null → Auto. Se recuerda por emisora mientras la app está abierta. */
+    fun selectVariant(index: Int?) {
+        val st = _state.value.nowPlaying?.station ?: return
+        if (index == null) variantChoice.remove(st.id) else variantChoice[st.id] = index
+        playStation(st, index)
+    }
+
+    fun currentVariantUrl(): String? = _state.value.nowPlaying?.url
 
     fun setWantsVideo(wants: Boolean) {
         _state.update { it.copy(userWantsVideo = wants, forcedByCellular = if (wants) false else it.forcedByCellular) }
@@ -248,6 +285,10 @@ class PlayerConnection(
         }
 
         override fun onTracksChanged(tracks: Tracks) = updateTracks(tracks)
+
+        override fun onPlaylistMetadataChanged(mediaMetadata: MediaMetadata) {
+            _state.update { it.copy(icyTitle = mediaMetadata.title?.toString()?.takeIf { t -> t.isNotBlank() }) }
+        }
 
         override fun onPlayerError(error: PlaybackException) {
             _state.update { it.copy(error = true, isPlaying = false) }
