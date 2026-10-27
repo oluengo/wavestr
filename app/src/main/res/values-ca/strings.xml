@@ -302,4 +302,16 @@
     <string name="relays_restore">Restaura els de sèrie</string>
     <string name="relays_profiles_note">Els perfils i les llistes de relays també es busquen a %1$s.</string>
     <string name="similar_stations">Emissores semblants</string>
+
+    <!-- Escritorio (Linux y Windows): los usa el módulo desktop -->
+    <string name="desk_vlc_missing">Wavestr reprodueix amb VLC i no s\'ha trobat. Instal·la VLC i torna a obrir Wavestr.</string>
+    <string name="desk_tray_show">Mostra Wavestr</string>
+    <string name="desk_tray_quit">Surt</string>
+    <string name="desk_window">Finestra</string>
+    <string name="desk_keep_in_tray">Continuar sonant a la safata en tancar</string>
+    <string name="desk_keep_in_tray_sub">Si tanques la finestra mentre sona alguna cosa, la icona queda a la safata del sistema.</string>
+    <string name="desk_login_npub_only">A l\'ordinador, de moment, s\'entra amb el teu npub (només lectura). L\'inici de sessió amb un signant remot (NIP-46) arribarà aviat.</string>
+    <string name="desk_zaps_soon">Els zaps des de l\'ordinador arribaran amb l\'inici de sessió NIP-46.</string>
+    <string name="desk_favs_note">A l\'ordinador, els preferits es desen en aquest equip. Per portar els del mòbil, exporta-hi una còpia i importa-la a Configuració → Dades i còpies.</string>
+    <string name="desk_streamer_offline">%1$s no està en directe ara.</string>
 </resources>

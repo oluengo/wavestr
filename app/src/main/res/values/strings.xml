@@ -303,4 +303,16 @@
     <string name="relays_restore">Restore defaults</string>
     <string name="relays_profiles_note">Profiles and relay lists are also looked up in %1$s.</string>
     <string name="similar_stations">Similar stations</string>
+
+    <!-- Escritorio (Linux y Windows): los usa el módulo desktop -->
+    <string name="desk_vlc_missing">Wavestr plays through VLC and it wasn\'t found. Install VLC and open Wavestr again.</string>
+    <string name="desk_tray_show">Show Wavestr</string>
+    <string name="desk_tray_quit">Quit</string>
+    <string name="desk_window">Window</string>
+    <string name="desk_keep_in_tray">Keep playing in the tray when closed</string>
+    <string name="desk_keep_in_tray_sub">Closing the window while something is playing leaves the icon in the system tray.</string>
+    <string name="desk_login_npub_only">On the computer you sign in with your npub for now (read-only). Signing in with a remote signer (NIP-46) is coming.</string>
+    <string name="desk_zaps_soon">Zaps from the computer will arrive with NIP-46 sign-in.</string>
+    <string name="desk_favs_note">On the computer, favorites are saved on this machine. To bring over your phone\'s, export a copy there and import it in Settings → Data and backups.</string>
+    <string name="desk_streamer_offline">%1$s isn\'t live right now.</string>
 </resources>

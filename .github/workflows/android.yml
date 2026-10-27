@@ -1,4 +1,4 @@
-# Compila Wavestr (Android).
+# Compila Wavestr: Android (APK) y escritorio (Linux .deb y .tar.gz, Windows .msi).
 # - Push a main / pull request: tests, traducciones y APK en «Artifacts».
 # - Push a la rama beta: «Wavestr Beta», otra app (io.github.oluengo.wavestr.beta) con sus propios datos,
 #   versión X.Y.Z-beta.N. Se publica como pre-release «Wavestr Beta» (etiqueta wavestr-beta, se rehace en cada push).
@@ -6,7 +6,7 @@
 #   De ahí lo recogen Obtainium y Zapstore.
 # Firma: secretos ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD
 # (los mismos nombres que en Usus). Sin ellos se genera un APK de depuración y no se publica nada.
-name: Android
+name: Build
 
 on:
   push:
@@ -151,5 +151,82 @@ jobs:
         run: |
           gh release delete wavestr-beta --cleanup-tag --yes || true
           printf '%s\n\n%s\n' "**Versión de pruebas** ${{ steps.v.outputs.version }} · $(git log -1 --format=%s)" \
-            "Se instala como otra app, «Wavestr Beta», con sus propios datos: no toca la Wavestr normal. Puede tener fallos." > "$RUNNER_TEMP/beta.md"
+            "Se instala como otra app, «Wavestr Beta», con sus propios datos: no toca la Wavestr normal. Puede tener fallos. Los instaladores de Linux y Windows se añaden unos minutos después del APK." > "$RUNNER_TEMP/beta.md"
           gh release create wavestr-beta dist/*.apk --prerelease --target "$GITHUB_SHA" --title "Wavestr Beta ${{ steps.v.outputs.version }}" --notes-file "$RUNNER_TEMP/beta.md"
+
+  # Escritorio: Compose Desktop + VLC. Cada sistema compila su instalador.
+  desktop:
+    name: Escritorio (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    env:
+      WAVESTR_BETA: ${{ github.ref == 'refs/heads/beta' && '1' || '' }}
+      WAVESTR_BETA_N: ${{ github.run_number }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Errores de compilación como anotaciones
+        run: echo "::add-matcher::.github/kotlin-matcher.json"
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Versión
+        id: v
+        run: |
+          v="$(sed -n 's/^val wavestrVersion = "\(.*\)"/\1/p' app/build.gradle.kts)"
+          if [ "$WAVESTR_BETA" = "1" ]; then
+            echo "version=$v-beta.$WAVESTR_BETA_N" >> "$GITHUB_OUTPUT"; echo "file=wavestr-beta" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=$v" >> "$GITHUB_OUTPUT"; echo "file=wavestr" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Linux (.deb y .tar.gz)
+        if: runner.os == 'Linux'
+        run: |
+          ./gradlew :desktop:packageDeb :desktop:createDistributable --stacktrace
+          mkdir -p dist
+          cp desktop/build/compose/binaries/main/deb/*.deb "dist/${{ steps.v.outputs.file }}-${{ steps.v.outputs.version }}-linux-amd64.deb"
+          tar -C desktop/build/compose/binaries/main/app -czf "dist/${{ steps.v.outputs.file }}-${{ steps.v.outputs.version }}-linux-x64.tar.gz" .
+
+      - name: Windows (.msi)
+        if: runner.os == 'Windows'
+        run: |
+          ./gradlew :desktop:packageMsi --stacktrace
+          mkdir -p dist
+          cp desktop/build/compose/binaries/main/msi/*.msi "dist/${{ steps.v.outputs.file }}-${{ steps.v.outputs.version }}-windows-x64.msi"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: desktop-${{ runner.os }}
+          path: dist/
+          if-no-files-found: error
+
+  # Añade los instaladores de escritorio a la release (o a la pre-release beta) que acaba de crear el job de Android.
+  publish-desktop:
+    needs: [build, desktop]
+    if: github.ref == 'refs/heads/beta' || startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          pattern: desktop-*
+          merge-multiple: true
+          path: dist
+      - name: Subir a la release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'wavestr-beta' }}"
+          gh release upload "$tag" dist/* --clobber -R "${{ github.repository }}"

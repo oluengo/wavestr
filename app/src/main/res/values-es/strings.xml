@@ -302,4 +302,16 @@
     <string name="relays_restore">Restaurar los de serie</string>
     <string name="relays_profiles_note">Los perfiles y las listas de relays también se buscan en %1$s.</string>
     <string name="similar_stations">Emisoras parecidas</string>
+
+    <!-- Escritorio (Linux y Windows): los usa el módulo desktop -->
+    <string name="desk_vlc_missing">Wavestr reproduce con VLC y no se ha encontrado. Instala VLC y vuelve a abrir Wavestr.</string>
+    <string name="desk_tray_show">Mostrar Wavestr</string>
+    <string name="desk_tray_quit">Salir</string>
+    <string name="desk_window">Ventana</string>
+    <string name="desk_keep_in_tray">Seguir sonando en la bandeja al cerrar</string>
+    <string name="desk_keep_in_tray_sub">Si cierras la ventana mientras suena algo, queda el icono en la bandeja del sistema.</string>
+    <string name="desk_login_npub_only">En el ordenador, de momento, se entra con tu npub (solo lectura). El inicio de sesión con un firmante remoto (NIP-46) llegará pronto.</string>
+    <string name="desk_zaps_soon">Los zaps desde el ordenador llegarán con el inicio de sesión NIP-46.</string>
+    <string name="desk_favs_note">En el ordenador, los favoritos se guardan en este equipo. Para traer los del móvil, exporta una copia allí e impórtala en Ajustes → Datos y copias.</string>
+    <string name="desk_streamer_offline">%1$s no está en directo ahora.</string>
 </resources>
