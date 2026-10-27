@@ -83,11 +83,11 @@ class VlcPlayer(private val scope: CoroutineScope, private val onStationPlay: (S
                 override fun error(mediaPlayer: MediaPlayer) = _state.update { it.copy(isPlaying = false, isBuffering = false, error = true) }
                 override fun buffering(mediaPlayer: MediaPlayer, newCache: Float) = _state.update { it.copy(isBuffering = newCache < 100f) }
             })
+            // Los eventos de vlcj llegan en un hilo de libVLC: no se puede volver a llamar a libVLC desde ahí
+            // (con HLS revienta el proceso). Solo se avisa, y la lectura del título se hace en otro hilo.
             p.events().addMediaEventListener(object : MediaEventAdapter() {
                 override fun mediaMetaChanged(media: Media, metaType: Meta) {
-                    if (metaType != Meta.NOW_PLAYING) return
-                    val now = runCatching { media.meta().get(Meta.NOW_PLAYING) }.getOrNull()?.trim()?.takeIf { it.isNotEmpty() }
-                    _state.update { it.copy(icyTitle = now) }
+                    if (metaType == Meta.NOW_PLAYING) scope.launch(Dispatchers.IO) { readNowPlaying(p) }
                 }
             })
             p.audio().setVolume(_state.value.volume)
@@ -95,9 +95,7 @@ class VlcPlayer(private val scope: CoroutineScope, private val onStationPlay: (S
             scope.launch(Dispatchers.IO) {
                 while (true) {
                     delay(4_000)
-                    if (!_state.value.isPlaying) continue
-                    val now = runCatching { p.media().meta().get(Meta.NOW_PLAYING) }.getOrNull()?.trim()?.takeIf { it.isNotEmpty() }
-                    if (now != null && now != _state.value.icyTitle) _state.update { it.copy(icyTitle = now) }
+                    if (_state.value.isPlaying) readNowPlaying(p)
                 }
             }
         }
@@ -157,6 +155,11 @@ class VlcPlayer(private val scope: CoroutineScope, private val onStationPlay: (S
         val vol = v.coerceIn(0, 150)
         _state.update { it.copy(volume = vol) }
         mp?.let { p -> scope.launch(Dispatchers.IO) { p.audio().setVolume(vol) } }
+    }
+
+    private fun readNowPlaying(p: EmbeddedMediaPlayer) {
+        val now = runCatching { p.media().meta().get(Meta.NOW_PLAYING) }.getOrNull()?.trim()?.takeIf { it.isNotEmpty() }
+        if (now != null && now != _state.value.icyTitle) _state.update { it.copy(icyTitle = now) }
     }
 
     /** WAVESTR_HLS_DEMUX=avformat (pruebas): abre HLS con libavformat en vez del módulo «adaptive» de VLC. */
