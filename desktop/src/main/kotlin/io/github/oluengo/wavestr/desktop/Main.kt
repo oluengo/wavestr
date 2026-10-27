@@ -156,8 +156,8 @@ private suspend fun smokeTest(c: DesktopContainer, window: java.awt.Window) {
     c.player.play(NowPlaying("smoke-radio", "https://ice2.somafm.com/groovesalad-128-mp3", "SomaFM", "", null, null, isLive = false))
     kotlinx.coroutines.delay(14_000)
     c.player.state.value.let { report(if (it.isPlaying) "notice" else "error", "Escritorio radio: sonando=${it.isPlaying} error=${it.error} canción=${it.icyTitle}") }
-    report("notice", "Escritorio paso: cambiar de emisora sin parar")
-    c.player.play(NowPlaying("smoke-radio2", "https://ice2.somafm.com/dronezone-128-mp3", "SomaFM 2", "", null, null, isLive = false))
+    report("notice", "Escritorio paso: cambiar de emisora sin parar (http)")
+    c.player.play(NowPlaying("smoke-radio2", "http://ice1.somafm.com/dronezone-128-mp3", "SomaFM 2", "", null, null, isLive = false))
     kotlinx.coroutines.delay(8_000)
     c.player.state.value.let { report(if (it.isPlaying) "notice" else "error", "Escritorio cambio: sonando=${it.isPlaying} canción=${it.icyTitle}") }
     runCatching {

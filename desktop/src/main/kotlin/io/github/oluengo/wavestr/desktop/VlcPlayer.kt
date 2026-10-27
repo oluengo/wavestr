@@ -162,11 +162,16 @@ class VlcPlayer(private val scope: CoroutineScope, private val onStationPlay: (S
         if (now != null && now != _state.value.icyTitle) _state.update { it.copy(icyTitle = now) }
     }
 
-    /** WAVESTR_HLS_DEMUX=avformat (pruebas): abre HLS con libavformat en vez del módulo «adaptive» de VLC. */
+    /**
+     * HLS se abre con libavformat: el módulo «adaptive» de VLC tumba el proceso dentro de la JVM en Linux
+     * (comprobado en CI). Se puede volver a él con -Dwavestr.hlsdemux=adaptive.
+     */
     private fun mediaOptions(url: String): Array<String> {
         val opts = mutableListOf(":network-caching=1500")
-        if (!url.contains(".m3u8", ignoreCase = true)) opts += ":http-reconnect"
-        System.getProperty("wavestr.hlsdemux")?.takeIf { url.contains(".m3u8", ignoreCase = true) }?.let { opts += ":demux=$it" }
+        if (url.contains(".m3u8", ignoreCase = true)) {
+            val demux = System.getProperty("wavestr.hlsdemux") ?: "avformat"
+            if (demux != "adaptive") opts += ":demux=$demux"
+        } else opts += ":http-reconnect"
         return opts.toTypedArray()
     }
 
