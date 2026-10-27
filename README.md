@@ -37,7 +37,9 @@ GitHub Actions ([`android.yml`](.github/workflows/android.yml)):
 - **Etiqueta `v*`** (igual que `radiostrVersion` en `app/build.gradle.kts`): Release con el APK firmado y las notas de [CHANGELOG.md](CHANGELOG.md). De ahí lo recogen Obtainium y Zapstore.
 - **Versión de pruebas (beta):** cada push a la rama `beta` publica la pre-release **Radiostr Beta** (`X.Y.Z-beta.N`). Se instala como otra app (`io.github.oluengo.radiostr.beta`), junto a la normal y con sus propios datos. En Obtainium se añade aparte activando «incluir pre-releases». Cuando la beta está bien, se pasa a `main` y se publica la versión normal.
 
-Firma: secrets `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` y `ANDROID_KEY_PASSWORD` (mismos nombres que en Usus). Sin ellos se genera un APK de depuración y no se publica nada.
+Huella SHA-256 del certificado de firma: `06:23:37:6B:0C:75:09:50:D7:E5:F1:4E:ED:06:C3:B3:C4:86:8B:B2:64:8B:8F:34:34:76:E2:DE:90:70:0F:89`.
+
+Firma: secrets `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` y `ANDROID_KEY_PASSWORD` (mismos nombres que en Usus; la clave es propia de Radiostr, alias `radiostr`). Sin ellos se genera un APK de depuración y no se publica nada.
 
 ## Traducir
 

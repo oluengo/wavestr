@@ -62,6 +62,9 @@ private val DONATIONS = listOf(
 )
 
 /** Texto legal válido: el original en inglés (igual que LICENSE). */
+/** Huella SHA-256 del certificado con el que se firman las versiones publicadas (beta y normal). */
+const val SIGN_FP = "06:23:37:6B:0C:75:09:50:D7:E5:F1:4E:ED:06:C3:B3:C4:86:8B:B2:64:8B:8F:34:34:76:E2:DE:90:70:0F:89"
+
 private const val MIT_TEXT = """MIT License
 
 Copyright (c) 2026 Oscar Luengo
@@ -121,6 +124,8 @@ fun AboutSection() {
                         .background(MaterialTheme.colorScheme.background, RoundedCornerShape(8.dp))
                         .horizontalScroll(rememberScrollState()).padding(10.dp),
                 )
+                Text(stringResource(R.string.about_fingerprint), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
+                Text(SIGN_FP, fontFamily = FontFamily.Monospace, fontSize = 10.sp, lineHeight = 13.sp, color = Rs.colors.muted)
                 if (ctx.resources.configuration.locales[0].language != "en") {
                     Text(stringResource(R.string.about_legal_english), color = Rs.colors.muted, fontSize = 11.sp)
                 }

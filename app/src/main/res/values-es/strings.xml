@@ -106,4 +106,5 @@
     <string name="issue_expected">Qué esperabas</string>
     <string name="issue_what_you_want">Qué te gustaría</string>
     <string name="issue_what_for">Para qué lo usarías</string>
+    <string name="about_fingerprint">Certificado de firma del APK (SHA-256). Las versiones y betas de GitHub, Obtainium y Zapstore deben coincidir:</string>
 </resources>
