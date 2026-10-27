@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -66,7 +67,8 @@ import io.github.oluengo.wavestr.ui.common.LiveBadge
 import io.github.oluengo.wavestr.ui.theme.Rs
 
 @Composable
-fun PlayerScreen(c: AppContainer, onClose: () -> Unit, onOpenProfile: (String) -> Unit) {
+/** [onClose] null = reproductor fijo en el panel lateral (pantallas anchas): sin botón de minimizar. */
+fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String) -> Unit) {
     val st by c.player.state.collectAsStateWithLifecycle()
     val lib by c.library.library.collectAsStateWithLifecycle()
     val np = st.nowPlaying
@@ -79,11 +81,12 @@ fun PlayerScreen(c: AppContainer, onClose: () -> Unit, onOpenProfile: (String) -
 
     Column(Modifier.fillMaxSize().statusBarsPadding().verticalScroll(rememberScrollState())) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onClose) { Icon(Icons.Outlined.ExpandMore, stringResource(R.string.minimize)) }
+            if (onClose != null) IconButton(onClick = onClose) { Icon(Icons.Outlined.ExpandMore, stringResource(R.string.minimize)) }
+            else Box(Modifier.size(48.dp))
             Spacer(Modifier.weight(1f))
             if (np?.isLive == true) LiveBadge()
             Spacer(Modifier.weight(1f))
-            IconButton(onClick = { c.player.stop(); onClose() }, enabled = np != null) {
+            IconButton(onClick = { c.player.stop(); onClose?.invoke() }, enabled = np != null) {
                 Icon(Icons.Outlined.Close, stringResource(R.string.stop))
             }
         }
@@ -206,6 +209,7 @@ fun PlayerScreen(c: AppContainer, onClose: () -> Unit, onOpenProfile: (String) -
         }
 
         if (liveAddress != null) LiveChat(activity)
+        np.station?.let { SimilarStations(c, it) }
     }
 
     val host = np?.hostPubkey
@@ -216,6 +220,35 @@ fun PlayerScreen(c: AppContainer, onClose: () -> Unit, onOpenProfile: (String) -
             onDismiss = { zapOpen = false },
             onZapped = { activity.refreshNow() },
         )
+    }
+}
+
+/** Emisoras que comparten estilo con la que suena (Radio Browser), para saltar a otra parecida. */
+@Composable
+private fun SimilarStations(c: AppContainer, current: io.github.oluengo.wavestr.radio.Station) {
+    val lib by c.library.library.collectAsStateWithLifecycle()
+    var similar by remember(current.id) { mutableStateOf<List<io.github.oluengo.wavestr.radio.Station>>(emptyList()) }
+    androidx.compose.runtime.LaunchedEffect(current.id) {
+        similar = runCatching {
+            current.tags.take(2).flatMap { c.radio.byTag(it) }
+                .filter { it.id != current.id && it.ok && it.name != current.name }
+                .distinctBy { it.id }.shuffled().take(5)
+        }.getOrDefault(emptyList())
+    }
+    if (similar.isEmpty()) return
+    Column(Modifier.fillMaxWidth().padding(horizontal = 18.dp).padding(bottom = 16.dp)) {
+        HorizontalDivider(color = Rs.colors.line)
+        Text(
+            stringResource(R.string.similar_stations), color = Rs.colors.muted, style = MaterialTheme.typography.labelSmall,
+            modifier = Modifier.padding(top = 10.dp, bottom = 2.dp),
+        )
+        similar.forEach { s ->
+            io.github.oluengo.wavestr.ui.common.StationRow(
+                c, s, isFav = lib.isFavorite(s.id),
+                onClick = { c.player.playStation(s) },
+                onToggleFav = { c.library.toggleStation(s) },
+            )
+        }
     }
 }
 

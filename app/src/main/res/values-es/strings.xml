@@ -301,4 +301,5 @@
     <string name="relay_invalid">Eso no es una dirección de relay (wss://…)</string>
     <string name="relays_restore">Restaurar los de serie</string>
     <string name="relays_profiles_note">Los perfiles y las listas de relays también se buscan en %1$s.</string>
+    <string name="similar_stations">Emisoras parecidas</string>
 </resources>

@@ -1,7 +1,9 @@
 # Cambios
 
-## Próxima versión
+## 0.5.0
 
+- **Tablets y móvil en horizontal:** navegación lateral; en pantallas anchas, el reproductor queda fijo a la derecha con el chat y los zaps.
+- **Emisoras parecidas** debajo del reproductor de radio, por estilo.
 - **Botón sorpresa** (el dado, arriba en Directos, Radios y Favoritos): radio, directo o ambos; de tus favoritos o de todo. Recuerda tu elección.
 - **Relays de Wavestr editables** en Ajustes → Relays: añade los que quieras (p. ej. los de una plataforma de directos), quítalos o vuelve a los de serie. Tu lista NIP-65 se muestra pero no se toca.
 
