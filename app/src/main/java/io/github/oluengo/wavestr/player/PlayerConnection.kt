@@ -85,6 +85,9 @@ class PlayerConnection(
     private val _state = MutableStateFlow(PlayerUiState())
     val state: StateFlow<PlayerUiState> = _state.asStateFlow()
 
+    /** Temporizador de apagado: por tiempo (todo) o al terminar el stream (solo Nostr). */
+    val sleep = io.github.oluengo.wavestr.player.SleepTimer(scope, setVolume = { v -> controller?.volume = v }, stop = { stop() })
+
     private var controllerFuture: Deferred<MediaController>? = null
     var controller: MediaController? = null
         private set
@@ -125,6 +128,8 @@ class PlayerConnection(
     }
 
     fun play(item: NowPlaying) {
+        // «Al terminar el stream» no tiene sentido con una radio.
+        if (item.isRadio && sleep.mode.value == io.github.oluengo.wavestr.player.SleepTimer.Mode.StreamEnd) sleep.cancel()
         scope.launch {
             val c = ensureController()
             val s = settings.current()
@@ -200,6 +205,7 @@ class PlayerConnection(
     }
 
     fun stop() {
+        if (sleep.mode.value != null) sleep.cancel()
         controller?.run { stop(); clearMediaItems() }
         _state.update { PlayerUiState(userWantsVideo = it.userWantsVideo) }
     }
@@ -282,6 +288,7 @@ class PlayerConnection(
 
         override fun onPlaybackStateChanged(playbackState: Int) {
             _state.update { it.copy(isBuffering = playbackState == Player.STATE_BUFFERING) }
+            if (playbackState == Player.STATE_ENDED && _state.value.nowPlaying?.isRadio == false) sleep.onStreamEnded()
         }
 
         override fun onTracksChanged(tracks: Tracks) = updateTracks(tracks)
@@ -292,6 +299,7 @@ class PlayerConnection(
 
         override fun onPlayerError(error: PlaybackException) {
             _state.update { it.copy(error = true, isPlaying = false) }
+            if (_state.value.nowPlaying?.let { it.isLive && !it.isRadio } == true) sleep.onStreamEnded()
         }
     }
 }

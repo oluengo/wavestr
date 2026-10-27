@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- English: default language. Devices in any language other than ca/es fall back here. -->
 <resources>
-    <string name="tab_live">Live</string>
+    <string name="tab_live">Streams</string>
     <string name="tab_radio">Radios</string>
     <string name="tab_favorites">Favorites</string>
     <string name="tab_settings">Settings</string>
 
-    <string name="live_title">Live now</string>
+    <string name="live_title">Nostr streams</string>
     <string name="live_sub_following">From people you follow on Nostr</string>
     <string name="live_sub_global">Across Nostr</string>
     <string name="chip_following">Following</string>
     <string name="chip_global">Global</string>
     <string name="featured">Featured</string>
-    <string name="also_live_count">Also live · %d</string>
+    <string name="also_live_count">Also streaming · %d</string>
     <string name="live_badge">LIVE</string>
     <string name="listeners">%d listening</string>
     <string name="untitled_stream">Untitled stream</string>
-    <string name="live_empty_following">Nobody you follow is live right now. Pull down to refresh or check Global.</string>
-    <string name="live_empty_global">No live streams found on these relays right now. Pull down to refresh.</string>
+    <string name="live_empty_following">Nobody you follow is streaming right now. Pull down to refresh or check Global.</string>
+    <string name="live_empty_global">No streams on these relays right now. Pull down to refresh.</string>
     <string name="live_error">Couldn’t reach the relays. Check your connection and pull down to try again.</string>
     <string name="refresh">Refresh</string>
 
@@ -53,7 +53,7 @@
     <string name="player_error">Couldn’t play this stream. It may have ended.</string>
     <string name="nothing_playing">Nothing is playing.</string>
 
-    <string name="profile_live_now">Live now</string>
+    <string name="profile_live_now">Streaming now</string>
     <string name="profile_past">Past streams</string>
     <string name="profile_no_past">No recordings yet.</string>
     <string name="recording">recording</string>
@@ -281,7 +281,7 @@
     <!-- Sorpresa y relays -->
     <string name="surprise">Surprise</string>
     <string name="surprise_radio">Radio</string>
-    <string name="surprise_live">Live</string>
+    <string name="surprise_live">Streams</string>
     <string name="surprise_both">Both</string>
     <string name="surprise_from_favs">Your favorites</string>
     <string name="surprise_from_all">Everything</string>
@@ -314,5 +314,14 @@
     <string name="desk_login_npub_only">On the computer you sign in with your npub for now (read-only). Signing in with a remote signer (NIP-46) is coming.</string>
     <string name="desk_zaps_soon">Zaps from the computer will arrive with NIP-46 sign-in.</string>
     <string name="desk_favs_note">On the computer, favorites are saved on this machine. To bring over your phone\'s, export a copy there and import it in Settings → Data and backups.</string>
-    <string name="desk_streamer_offline">%1$s isn\'t live right now.</string>
+    <string name="desk_streamer_offline">%1$s isn\'t streaming right now.</string>
+
+    <!-- Temporizador de apagado -->
+    <string name="sleep_timer">Sleep timer</string>
+    <string name="sleep_in">Stops in %1$s</string>
+    <string name="sleep_minutes">%1$d min</string>
+    <string name="sleep_stream_end">When the stream ends</string>
+    <string name="sleep_until_stream_end">Stops when the stream ends</string>
+    <string name="sleep_extend">+10 min</string>
+    <string name="sleep_cancel">Cancel timer</string>
 </resources>

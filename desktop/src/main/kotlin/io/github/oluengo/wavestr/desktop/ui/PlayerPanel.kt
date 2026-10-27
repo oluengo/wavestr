@@ -152,6 +152,10 @@ fun PlayerPanel(c: DesktopContainer, onClose: (() -> Unit)?) {
             Slider(st.volume.toFloat(), { c.player.setVolume(it.toInt()) }, valueRange = 0f..150f, modifier = Modifier.weight(1f).padding(start = 8.dp))
         }
 
+        Box(Modifier.fillMaxWidth().padding(vertical = 8.dp), contentAlignment = Alignment.Center) {
+            SleepTimerChip(c.player.sleep, isNostr = np.hostPubkey != null)
+        }
+
         if (np.isLive && np.hostPubkey != null) LiveChat(c, np.id)
         np.station?.let { SimilarStations(c, it) }
     }

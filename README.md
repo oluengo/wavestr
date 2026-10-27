@@ -1,6 +1,6 @@
 # Wavestr
 
-Radio online y directos de Nostr en una sola app, para Android, Linux y Windows.
+Radio online y streams de Nostr en una sola app, para Android, Linux y Windows.
 *Online radio and Nostr live streams in one app for Android, Linux and Windows. Català · Español · English.*
 
 > Estado: **beta pública** ([Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta)). Aún sin versión estable.
@@ -21,8 +21,8 @@ Comprueba que la huella del certificado coincide (también está en Ajustes → 
 
 ## Qué hace
 
-- **Directos de Nostr (NIP-53)** de la gente que sigues, o de todo Nostr.
-- **Solo audio o vídeo**, sin cortar el directo. Pasa a audio sola al apagar la pantalla y vuelve al vídeo cuando regresas.
+- **Streams de Nostr (NIP-53)** de la gente que sigues, o de todo Nostr.
+- **Solo audio o vídeo**, sin cortar el stream. Pasa a audio sola al apagar la pantalla y vuelve al vídeo cuando regresas.
 - **Solo audio con datos móviles** (opcional) y calidad de vídeo seleccionable.
 - **Perfil del streamer** con sus grabaciones.
 - **Tres idiomas:** català, castellano e inglés. Usa el del dispositivo; si no es ninguno de ellos, inglés.
@@ -33,14 +33,15 @@ Comprueba que la huella del certificado coincide (también está en Ajustes → 
 - **Importar listas PLS/M3U** (enlace, contenido o archivo).
 - **Favoritos en carpetas y subcarpetas**, para radios y streamers de Nostr.
 - **Tu perfil de Nostr** (solo lectura).
-- **Zaps con NWC** a los directos, con límite mensual; chat y zaps del directo en el reproductor.
+- **Zaps con NWC** a los streams, con límite mensual; chat y zaps del stream en el reproductor.
 - **Carátulas** de las radios buscadas en su web.
 - **Exportar e importar favoritos** (JSON con carpetas o M3U).
 - **Color de acento** a elegir.
 - **Favoritos en Nostr**, cifrados (NIP-78 + NIP-44, con Amber).
-- **Botón sorpresa:** radio, directo o ambos; de tus favoritos o de todo.
+- **Botón sorpresa:** radio, stream o ambos; de tus favoritos o de todo.
 - **Relays de Wavestr** editables, además de tu lista NIP-65.
 - **Tablets y pantallas anchas:** navegación lateral y reproductor fijo con chat.
+- **Temporizador de apagado:** 15 a 90 minutos con bajada de volumen al final, o al terminar el stream de Nostr.
 - **Escritorio (Linux y Windows):** la misma app en una ventana que se adapta del formato móvil a tres columnas, con icono en la bandeja.
 
 **Próximamente:** escribir en el chat, inicio de sesión NIP-46 y zaps en el escritorio, y Android Auto. El orden está en el [plan técnico](docs/plan-tecnico.md).

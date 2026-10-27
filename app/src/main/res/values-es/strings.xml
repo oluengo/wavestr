@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="tab_live">Directos</string>
+    <string name="tab_live">Streams</string>
     <string name="tab_radio">Radios</string>
     <string name="tab_favorites">Favoritos</string>
     <string name="tab_settings">Ajustes</string>
 
-    <string name="live_title">En directo</string>
+    <string name="live_title">Streams de Nostr</string>
     <string name="live_sub_following">De la gente que sigues en Nostr</string>
     <string name="live_sub_global">En todo Nostr</string>
     <string name="chip_following">Seguidos</string>
     <string name="chip_global">Global</string>
     <string name="featured">Destacado</string>
-    <string name="also_live_count">También en directo · %d</string>
+    <string name="also_live_count">También emitiendo · %d</string>
     <string name="live_badge">EN DIRECTO</string>
     <string name="listeners">%d escuchando</string>
-    <string name="untitled_stream">Directo sin título</string>
-    <string name="live_empty_following">Nadie de los que sigues está en directo ahora. Desliza hacia abajo para actualizar o mira Global.</string>
-    <string name="live_empty_global">No hay directos en estos relays ahora mismo. Desliza hacia abajo para actualizar.</string>
+    <string name="untitled_stream">Stream sin título</string>
+    <string name="live_empty_following">Nadie de los que sigues está emitiendo ahora. Desliza hacia abajo para actualizar o mira Global.</string>
+    <string name="live_empty_global">No hay streams emitiendo en estos relays ahora mismo. Desliza hacia abajo para actualizar.</string>
     <string name="live_error">No se ha podido conectar con los relays. Revisa la conexión y desliza hacia abajo para reintentar.</string>
     <string name="refresh">Actualizar</string>
 
@@ -24,7 +24,7 @@
     <string name="login_prompt_body">Conéctate con Amber o pega tu npub para navegar en solo lectura.</string>
     <string name="login_amber">Entrar con Amber</string>
     <string name="login_npub">Usar mi npub (solo lectura)</string>
-    <string name="npub_explain">En solo lectura ves los directos de la gente que sigues. Para enviar zaps más adelante necesitarás Amber.</string>
+    <string name="npub_explain">En solo lectura ves los streams de la gente que sigues. Para enviar zaps más adelante necesitarás Amber.</string>
     <string name="npub_invalid">Eso no parece un npub. Debe empezar por npub1.</string>
     <string name="amber_missing">Amber no está instalado. Instálalo para iniciar sesión o usa tu npub.</string>
     <string name="amber_failed">Amber no ha devuelto ninguna clave. Inténtalo de nuevo o usa tu npub.</string>
@@ -36,9 +36,9 @@
     <string name="player_video">Vídeo</string>
     <string name="mode_audio">SOLO AUDIO</string>
     <string name="mode_video">VÍDEO</string>
-    <string name="hint_video">Vídeo · cambia a solo audio sin cortar el directo.</string>
-    <string name="hint_audio_separate">Este directo tiene pista de audio separada: ahorras batería y datos.</string>
-    <string name="hint_audio_muxed">Ahorras batería. Este directo mezcla audio y vídeo, así que los datos no bajan.</string>
+    <string name="hint_video">Vídeo · cambia a solo audio sin cortar el stream.</string>
+    <string name="hint_audio_separate">Este stream tiene pista de audio separada: ahorras batería y datos.</string>
+    <string name="hint_audio_muxed">Ahorras batería. Este stream mezcla audio y vídeo, así que los datos no bajan.</string>
     <string name="hint_audio_unknown">Solo audio: el vídeo no se decodifica para ahorrar batería.</string>
     <string name="hint_cellular">Estás con datos móviles, así que suena solo el audio. Toca Vídeo para verlo igualmente o cámbialo en Ajustes.</string>
     <string name="quality_video">Calidad de vídeo</string>
@@ -49,11 +49,11 @@
     <string name="stop">Detener</string>
     <string name="minimize">Minimizar</string>
     <string name="view_profile">Ver perfil ›</string>
-    <string name="player_error">No se ha podido reproducir este directo. Puede que haya terminado.</string>
+    <string name="player_error">No se ha podido reproducir este stream. Puede que haya terminado.</string>
     <string name="nothing_playing">No suena nada.</string>
 
-    <string name="profile_live_now">En directo ahora</string>
-    <string name="profile_past">Directos anteriores</string>
+    <string name="profile_live_now">Emitiendo ahora</string>
+    <string name="profile_past">Streams anteriores</string>
     <string name="profile_no_past">Aún no hay grabaciones.</string>
     <string name="recording">grabación</string>
     <string name="copy">Copiar</string>
@@ -240,7 +240,7 @@
     <string name="zap_send">⚡ Enviar %s sats</string>
     <string name="zap_custody_note">El pago va directo a la cartera del streamer. Wavestr nunca guarda tu dinero.</string>
     <string name="zap_sent">⚡ %1$s sats enviados a %2$s</string>
-    <string name="zap_sent_note">Aparecerá en el chat del directo en unos segundos.</string>
+    <string name="zap_sent_note">Aparecerá en el chat del stream en unos segundos.</string>
     <string name="zap_pay_external">Factura lista. Págala en tu app de cartera; el zap aparecerá en el chat cuando se pague.</string>
     <string name="zap_open_wallet">Abrir mi cartera</string>
     <string name="zap_copy_invoice">Copiar factura</string>
@@ -280,7 +280,7 @@
     <!-- Sorpresa y relays -->
     <string name="surprise">Sorpresa</string>
     <string name="surprise_radio">Radio</string>
-    <string name="surprise_live">Directos</string>
+    <string name="surprise_live">Streams</string>
     <string name="surprise_both">Ambos</string>
     <string name="surprise_from_favs">Tus favoritos</string>
     <string name="surprise_from_all">De todo</string>
@@ -313,5 +313,14 @@
     <string name="desk_login_npub_only">En el ordenador, de momento, se entra con tu npub (solo lectura). El inicio de sesión con un firmante remoto (NIP-46) llegará pronto.</string>
     <string name="desk_zaps_soon">Los zaps desde el ordenador llegarán con el inicio de sesión NIP-46.</string>
     <string name="desk_favs_note">En el ordenador, los favoritos se guardan en este equipo. Para traer los del móvil, exporta una copia allí e impórtala en Ajustes → Datos y copias.</string>
-    <string name="desk_streamer_offline">%1$s no está en directo ahora.</string>
+    <string name="desk_streamer_offline">%1$s no está emitiendo ahora.</string>
+
+    <!-- Temporizador de apagado -->
+    <string name="sleep_timer">Temporizador</string>
+    <string name="sleep_in">Se apaga en %1$s</string>
+    <string name="sleep_minutes">%1$d min</string>
+    <string name="sleep_stream_end">Al terminar el stream</string>
+    <string name="sleep_until_stream_end">Se apaga al terminar el stream</string>
+    <string name="sleep_extend">+10 min</string>
+    <string name="sleep_cancel">Cancelar temporizador</string>
 </resources>

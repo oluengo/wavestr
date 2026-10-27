@@ -1,5 +1,10 @@
 # Cambios
 
+## 0.7.0
+
+- **Temporizador de apagado** (Android y ordenador): 15, 30, 45, 60 o 90 minutos, con el volumen bajando en los últimos 30 segundos; «+10 min» y cancelar. Con un stream de Nostr, también «al terminar el stream».
+- **«Directos» pasa a llamarse «Streams»:** la radio también es en directo; los streams son los de Nostr.
+
 ## 0.6.0
 
 - **Wavestr para Linux y Windows** (beta): `.deb`, `.tar.gz` y `.msi`. Ventana que se adapta (formato móvil, navegación lateral o tres columnas con el reproductor fijo), icono en la bandeja para seguir escuchando con la ventana cerrada, tamaño y posición recordados. Directos, radios (con importación PLS/M3U), favoritos con carpetas, sorpresa, relays, copias para pasar los favoritos del móvil. Reproduce con VLC. Inicio de sesión con npub (solo lectura) por ahora.

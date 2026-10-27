@@ -2,7 +2,7 @@
 
 *27 oct 2026 · v0.1 → v0.2: idiomas, decisiones abiertas cerradas, estado de las fases. Ver «Cambios» al final.*
 
-Radio online (PLS/M3U) y directos de Nostr en una sola app Android. **Nostr first**: primero los directos de la gente que sigues; la radio llega después sobre el mismo reproductor.
+Radio online (PLS/M3U) y streams de Nostr (antes «directos») en una sola app, para Android, Linux y Windows. **Nostr first**: primero los directos de la gente que sigues; la radio llega después sobre el mismo reproductor.
 
 ---
 

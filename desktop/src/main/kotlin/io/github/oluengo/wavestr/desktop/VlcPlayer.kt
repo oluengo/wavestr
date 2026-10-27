@@ -66,6 +66,10 @@ class VlcPlayer(private val scope: CoroutineScope, private val http: okhttp3.OkH
     val video = VideoFrames()
     private val variantChoice = HashMap<String, Int?>()
     private var icyJob: kotlinx.coroutines.Job? = null
+    /** Factor 0..1 del temporizador sobre el volumen elegido. */
+    @Volatile private var fade = 1f
+    /** Temporizador de apagado: por tiempo (todo) o al terminar el stream (solo Nostr). */
+    val sleep = io.github.oluengo.wavestr.player.SleepTimer(scope, setVolume = { f -> fade = f; applyVolume() }, stop = { stop() })
 
     private val factory: MediaPlayerFactory? = runCatching {
         if (NativeDiscovery().discover()) MediaPlayerFactory("--no-video-title-show", "--quiet") else null
@@ -80,8 +84,14 @@ class VlcPlayer(private val scope: CoroutineScope, private val http: okhttp3.OkH
                 override fun playing(mediaPlayer: MediaPlayer) = _state.update { it.copy(isPlaying = true, isBuffering = false, error = false) }
                 override fun paused(mediaPlayer: MediaPlayer) = _state.update { it.copy(isPlaying = false) }
                 override fun stopped(mediaPlayer: MediaPlayer) = _state.update { it.copy(isPlaying = false, isBuffering = false) }
-                override fun finished(mediaPlayer: MediaPlayer) = _state.update { it.copy(isPlaying = false, isBuffering = false) }
-                override fun error(mediaPlayer: MediaPlayer) = _state.update { it.copy(isPlaying = false, isBuffering = false, error = true) }
+                override fun finished(mediaPlayer: MediaPlayer) {
+                    _state.update { it.copy(isPlaying = false, isBuffering = false) }
+                    streamEnded()
+                }
+                override fun error(mediaPlayer: MediaPlayer) {
+                    _state.update { it.copy(isPlaying = false, isBuffering = false, error = true) }
+                    streamEnded()
+                }
                 override fun buffering(mediaPlayer: MediaPlayer, newCache: Float) = _state.update { it.copy(isBuffering = newCache < 100f) }
             })
             // Los eventos de vlcj llegan en un hilo de libVLC: no se puede volver a llamar a libVLC desde ahí
@@ -104,6 +114,8 @@ class VlcPlayer(private val scope: CoroutineScope, private val http: okhttp3.OkH
 
     fun play(item: NowPlaying) {
         val p = mp ?: return
+        // «Al terminar el stream» no tiene sentido con una radio.
+        if (!item.isLive && sleep.mode.value == io.github.oluengo.wavestr.player.SleepTimer.Mode.StreamEnd) sleep.cancel()
         video.clear()
         _state.update { it.copy(nowPlaying = item, error = false, icyTitle = null, isBuffering = true, audioOnly = it.audioOnly && !item.isRadio) }
         // Las llamadas a libVLC, fuera del hilo de la UI y de sus propios eventos.
@@ -144,6 +156,7 @@ class VlcPlayer(private val scope: CoroutineScope, private val http: okhttp3.OkH
     }
 
     fun stop() {
+        if (sleep.mode.value != null) sleep.cancel()
         icyJob?.cancel()
         val p = mp ?: return
         scope.launch(Dispatchers.IO) { p.controls().stop() }
@@ -155,9 +168,18 @@ class VlcPlayer(private val scope: CoroutineScope, private val http: okhttp3.OkH
     fun setAudioOnly(v: Boolean) = _state.update { it.copy(audioOnly = v) }
 
     fun setVolume(v: Int) {
-        val vol = v.coerceIn(0, 150)
-        _state.update { it.copy(volume = vol) }
+        _state.update { it.copy(volume = v.coerceIn(0, 150)) }
+        applyVolume()
+    }
+
+    private fun applyVolume() {
+        val vol = (_state.value.volume * fade).toInt()
         mp?.let { p -> scope.launch(Dispatchers.IO) { p.audio().setVolume(vol) } }
+    }
+
+    /** Desde el hilo de eventos de VLC: se pasa al hilo principal. */
+    private fun streamEnded() {
+        if (_state.value.nowPlaying?.isLive == true) scope.launch { sleep.onStreamEnded() }
     }
 
     /**

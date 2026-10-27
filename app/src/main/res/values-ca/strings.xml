@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="tab_live">Directes</string>
+    <string name="tab_live">Streams</string>
     <string name="tab_radio">Ràdios</string>
     <string name="tab_favorites">Preferits</string>
     <string name="tab_settings">Configuració</string>
 
-    <string name="live_title">En directe</string>
+    <string name="live_title">Streams de Nostr</string>
     <string name="live_sub_following">De la gent que segueixes a Nostr</string>
     <string name="live_sub_global">A tot Nostr</string>
     <string name="chip_following">Seguits</string>
     <string name="chip_global">Global</string>
     <string name="featured">Destacat</string>
-    <string name="also_live_count">També en directe · %d</string>
+    <string name="also_live_count">També emetent · %d</string>
     <string name="live_badge">EN DIRECTE</string>
     <string name="listeners">%d escoltant</string>
-    <string name="untitled_stream">Directe sense títol</string>
-    <string name="live_empty_following">Ningú dels que segueixes és en directe ara. Llisca cap avall per actualitzar o mira Global.</string>
-    <string name="live_empty_global">Ara mateix no hi ha directes en aquests relays. Llisca cap avall per actualitzar.</string>
+    <string name="untitled_stream">Stream sense títol</string>
+    <string name="live_empty_following">Ningú dels que segueixes està emetent ara. Llisca cap avall per actualitzar o mira Global.</string>
+    <string name="live_empty_global">Ara mateix no hi ha streams emetent en aquests relays. Llisca cap avall per actualitzar.</string>
     <string name="live_error">No s’ha pogut connectar amb els relays. Revisa la connexió i llisca cap avall per tornar-ho a provar.</string>
     <string name="refresh">Actualitza</string>
 
@@ -24,7 +24,7 @@
     <string name="login_prompt_body">Connecta’t amb Amber o enganxa el teu npub per navegar en mode només lectura.</string>
     <string name="login_amber">Entra amb Amber</string>
     <string name="login_npub">Fes servir el meu npub (només lectura)</string>
-    <string name="npub_explain">En mode només lectura veus els directes de la gent que segueixes. Per enviar zaps més endavant necessitaràs Amber.</string>
+    <string name="npub_explain">En mode només lectura veus els streams de la gent que segueixes. Per enviar zaps més endavant necessitaràs Amber.</string>
     <string name="npub_invalid">Això no sembla un npub. Ha de començar per npub1.</string>
     <string name="amber_missing">Amber no està instal·lat. Instal·la’l per iniciar la sessió o fes servir el teu npub.</string>
     <string name="amber_failed">Amber no ha retornat cap clau. Torna-ho a provar o fes servir el teu npub.</string>
@@ -36,9 +36,9 @@
     <string name="player_video">Vídeo</string>
     <string name="mode_audio">NOMÉS ÀUDIO</string>
     <string name="mode_video">VÍDEO</string>
-    <string name="hint_video">Vídeo · canvia a només àudio sense tallar el directe.</string>
-    <string name="hint_audio_separate">Aquest directe té la pista d’àudio separada: estalvies bateria i dades.</string>
-    <string name="hint_audio_muxed">Estalvies bateria. Aquest directe barreja àudio i vídeo, així que les dades no baixen.</string>
+    <string name="hint_video">Vídeo · canvia a només àudio sense tallar l’stream.</string>
+    <string name="hint_audio_separate">Aquest stream té la pista d’àudio separada: estalvies bateria i dades.</string>
+    <string name="hint_audio_muxed">Estalvies bateria. Aquest stream barreja àudio i vídeo, així que les dades no baixen.</string>
     <string name="hint_audio_unknown">Només àudio: el vídeo no es descodifica per estalviar bateria.</string>
     <string name="hint_cellular">Estàs amb dades mòbils, així que només sona l’àudio. Toca Vídeo per veure’l igualment o canvia-ho a Configuració.</string>
     <string name="quality_video">Qualitat del vídeo</string>
@@ -49,11 +49,11 @@
     <string name="stop">Atura</string>
     <string name="minimize">Minimitza</string>
     <string name="view_profile">Mostra el perfil ›</string>
-    <string name="player_error">No s’ha pogut reproduir aquest directe. Potser ja ha acabat.</string>
+    <string name="player_error">No s’ha pogut reproduir aquest stream. Potser ja ha acabat.</string>
     <string name="nothing_playing">No sona res.</string>
 
-    <string name="profile_live_now">En directe ara</string>
-    <string name="profile_past">Directes anteriors</string>
+    <string name="profile_live_now">Emetent ara</string>
+    <string name="profile_past">Streams anteriors</string>
     <string name="profile_no_past">Encara no hi ha enregistraments.</string>
     <string name="recording">enregistrament</string>
     <string name="copy">Copia</string>
@@ -240,7 +240,7 @@
     <string name="zap_send">⚡ Envia %s sats</string>
     <string name="zap_custody_note">El pagament va directe a la cartera de l’streamer. Wavestr mai no guarda els teus diners.</string>
     <string name="zap_sent">⚡ %1$s sats enviats a %2$s</string>
-    <string name="zap_sent_note">Apareixerà al xat del directe d’aquí a uns segons.</string>
+    <string name="zap_sent_note">Apareixerà al xat de l’stream d’aquí a uns segons.</string>
     <string name="zap_pay_external">Factura a punt. Paga-la a la teva app de cartera; el zap apareixerà al xat quan es pagui.</string>
     <string name="zap_open_wallet">Obre la meva cartera</string>
     <string name="zap_copy_invoice">Copia la factura</string>
@@ -280,7 +280,7 @@
     <!-- Sorpresa y relays -->
     <string name="surprise">Sorpresa</string>
     <string name="surprise_radio">Ràdio</string>
-    <string name="surprise_live">Directes</string>
+    <string name="surprise_live">Streams</string>
     <string name="surprise_both">Tots dos</string>
     <string name="surprise_from_favs">Els teus preferits</string>
     <string name="surprise_from_all">De tot</string>
@@ -313,5 +313,14 @@
     <string name="desk_login_npub_only">A l\'ordinador, de moment, s\'entra amb el teu npub (només lectura). L\'inici de sessió amb un signant remot (NIP-46) arribarà aviat.</string>
     <string name="desk_zaps_soon">Els zaps des de l\'ordinador arribaran amb l\'inici de sessió NIP-46.</string>
     <string name="desk_favs_note">A l\'ordinador, els preferits es desen en aquest equip. Per portar els del mòbil, exporta-hi una còpia i importa-la a Configuració → Dades i còpies.</string>
-    <string name="desk_streamer_offline">%1$s no està en directe ara.</string>
+    <string name="desk_streamer_offline">%1$s no està emetent ara.</string>
+
+    <!-- Temporizador de apagado -->
+    <string name="sleep_timer">Temporitzador</string>
+    <string name="sleep_in">S\'atura en %1$s</string>
+    <string name="sleep_minutes">%1$d min</string>
+    <string name="sleep_stream_end">En acabar l’stream</string>
+    <string name="sleep_until_stream_end">S\'atura en acabar l’stream</string>
+    <string name="sleep_extend">+10 min</string>
+    <string name="sleep_cancel">Cancel·la el temporitzador</string>
 </resources>

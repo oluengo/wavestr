@@ -208,6 +208,10 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
             }
         }
 
+        Box(Modifier.fillMaxWidth().padding(bottom = 8.dp), contentAlignment = Alignment.Center) {
+            SleepTimerChip(c.player.sleep, isNostr = np.hostPubkey != null)
+        }
+
         if (liveAddress != null) LiveChat(activity)
         np.station?.let { SimilarStations(c, it) }
     }
