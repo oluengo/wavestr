@@ -69,7 +69,7 @@ python3 scripts/check_strings.py        # comprueba las traducciones
 
 GitHub Actions ([`android.yml`](.github/workflows/android.yml)):
 
-- **Push a `main`:** tests, traducciones, APK e instaladores de escritorio en «Artifacts», y una prueba de arranque del escritorio (xvfb + VLC: radio y vídeo HLS).
+- **Push a `main`:** tests, traducciones, APK e instaladores de escritorio en «Artifacts», una prueba de arranque del APK en un emulador Android y otra del escritorio (xvfb + VLC: radio y vídeo HLS). La beta y las versiones solo se publican si todo eso pasa.
 - **Versión normal:** en GitHub, Actions → Build → *Run workflow* (rama `main`) → marcar «Publicar versión». Crea la etiqueta `vX.Y.Z` (la de `wavestrVersion`) y la Release con el APK firmado, los instaladores de Linux y Windows y las notas de [CHANGELOG.md](CHANGELOG.md). De ahí lo recogen Obtainium y Zapstore. También sirve empujar una etiqueta `v*`.
 - **Versión de pruebas (beta):** cada push a la rama `beta` publica la pre-release **Wavestr Beta** (`X.Y.Z-beta.N`). Se instala como otra app (`io.github.oluengo.wavestr.beta`), junto a la normal y con sus propios datos. En Obtainium se añade aparte activando «incluir pre-releases». Cuando la beta está bien, se pasa a `main` y se publica la versión normal.
 
