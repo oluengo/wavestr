@@ -2,6 +2,8 @@
 
 ## 0.9.0
 
+- **Anterior / siguiente** también para los streams de Nostr (por la lista de Streams) y al volver a abrir la app con una radio sonando. Los botones están siempre a la vista; se apagan cuando no hay a dónde ir.
+- **Ordenador:** el icono de la bandeja solo se usa si el escritorio la tiene (en GNOME no hay sin extensión: al cerrar, la app se cierra); icono correcto en el panel de Linux; si la app falla, el error queda en `crash.log` en su carpeta de datos.
 - **Relays:** las listas de Ajustes → Relays se pliegan y despliegan (cerradas por defecto, con el número de relays a la vista).
 - **Emisora anterior / siguiente** (móvil y ordenador): si la radio está en favoritos, salta entre los favoritos de su carpeta (o todos); si no, por la lista de la que la elegiste (populares, cerca de ti, estilo, búsqueda, parecidas). En Android también desde la notificación, la pantalla de bloqueo, los auriculares y el coche; en el ordenador, desde la bandeja.
 - **Margen contra cortes** (Ajustes → Reproducción, móvil y ordenador): Auto, Directo, 10, 20 o 30 s. Con más margen hay menos cortes con mala cobertura, a cambio de ir unos segundos por detrás del directo; la radio muestra «Cargando 12/20 s» mientras lo llena. Auto: directo con wifi y 20 s con datos móviles. Por defecto, 10 s.
