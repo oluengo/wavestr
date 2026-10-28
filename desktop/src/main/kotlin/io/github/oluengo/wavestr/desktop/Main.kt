@@ -86,7 +86,7 @@ fun main() {
     application { WavestrApplication(c) }
 }
 
-@OptIn(FlowPreview::class)
+@OptIn(FlowPreview::class, androidx.compose.ui.ExperimentalComposeUiApi::class)
 @Composable
 private fun ApplicationScope.WavestrApplication(c: DesktopContainer) {
     val saved = remember { c.settings.current.window }
