@@ -33,6 +33,7 @@ data class AppSettings(
     val appRelays: List<String>? = null,
     val surpriseKind: SurpriseKind = SurpriseKind.BOTH,
     val surpriseFromFavorites: Boolean = false,
+    val bufferMode: io.github.oluengo.wavestr.player.BufferMode = io.github.oluengo.wavestr.player.BufferMode.S10,
 )
 
 private val Context.dataStore by preferencesDataStore(name = "settings")
@@ -50,6 +51,7 @@ class SettingsRepository(private val context: Context) {
         val relays = stringPreferencesKey("app_relays")
         val surpriseKind = stringPreferencesKey("surprise_kind")
         val surpriseFav = booleanPreferencesKey("surprise_fav")
+        val buffer = stringPreferencesKey("buffer_mode")
     }
 
     val flow: Flow<AppSettings> = context.dataStore.data.map { p ->
@@ -65,6 +67,7 @@ class SettingsRepository(private val context: Context) {
             appRelays = p[K.relays]?.split('\n')?.filter { it.isNotBlank() },
             surpriseKind = p[K.surpriseKind]?.let { runCatching { SurpriseKind.valueOf(it) }.getOrNull() } ?: SurpriseKind.BOTH,
             surpriseFromFavorites = p[K.surpriseFav] ?: false,
+            bufferMode = p[K.buffer]?.let { runCatching { io.github.oluengo.wavestr.player.BufferMode.valueOf(it) }.getOrNull() } ?: io.github.oluengo.wavestr.player.BufferMode.S10,
         )
     }
 
@@ -83,6 +86,7 @@ class SettingsRepository(private val context: Context) {
     suspend fun setSurprise(kind: SurpriseKind, fromFavorites: Boolean) = context.dataStore.edit {
         it[K.surpriseKind] = kind.name; it[K.surpriseFav] = fromFavorites
     }
+    suspend fun setBufferMode(m: io.github.oluengo.wavestr.player.BufferMode) = context.dataStore.edit { it[K.buffer] = m.name }
     suspend fun setFavSync(v: Boolean) = context.dataStore.edit { it[K.favSync] = v }
     suspend fun setAudioOnScreenOff(v: Boolean) = context.dataStore.edit { it[K.audioOff] = v }
     suspend fun setAudioOnCellular(v: Boolean) = context.dataStore.edit { it[K.audioCell] = v }

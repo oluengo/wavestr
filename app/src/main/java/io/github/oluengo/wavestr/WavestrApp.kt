@@ -36,6 +36,7 @@ class WavestrApp : Application(), coil.ImageLoaderFactory {
         val s = runBlocking { container.settings.current() }
         SettingsRepository.applyNightMode(s.theme)
         RelayPool.DEFAULT = s.appRelays ?: RelayPool.BUILTIN
+        io.github.oluengo.wavestr.player.BufferPolicy.mode = s.bufferMode
         container.watchRelays()
         container.widgets.start()
     }
@@ -68,6 +69,7 @@ class AppContainer(app: Application) {
                 if (next != RelayPool.DEFAULT) { RelayPool.DEFAULT = next; nostr.clearRelayCaches() }
             }
         }
+        appScope.launch { settings.flow.collect { io.github.oluengo.wavestr.player.BufferPolicy.mode = it.bufferMode } }
     }
 
     val player = PlayerConnection(app, settings, HlsInspector(http), appScope, onStationPlay = radio::countClick)

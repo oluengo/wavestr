@@ -23,6 +23,7 @@ import io.github.oluengo.wavestr.MainActivity
 class PlaybackService : MediaSessionService() {
     private var session: MediaSession? = null
 
+    @androidx.annotation.OptIn(UnstableApi::class)
     override fun onCreate() {
         super.onCreate()
         val player = ExoPlayer.Builder(this)
@@ -35,6 +36,7 @@ class PlaybackService : MediaSessionService() {
             )
             .setHandleAudioBecomingNoisy(true)
             .setWakeMode(C.WAKE_MODE_NETWORK)
+            .setLoadControl(MarginLoadControl())
             .build()
 
         // Radio: el título de la canción llega en los metadatos ICY. Lo publicamos como metadatos de la

@@ -54,6 +54,8 @@ data class PlayerState(
     /** false si no se encuentra VLC en el equipo. */
     val available: Boolean = true,
     val volume: Int = 90,
+    /** 0..100 mientras VLC llena el margen. */
+    val bufferPercent: Int = 0,
 )
 
 /**
@@ -92,7 +94,7 @@ class VlcPlayer(private val scope: CoroutineScope, private val http: okhttp3.OkH
                     _state.update { it.copy(isPlaying = false, isBuffering = false, error = true) }
                     streamEnded()
                 }
-                override fun buffering(mediaPlayer: MediaPlayer, newCache: Float) = _state.update { it.copy(isBuffering = newCache < 100f) }
+                override fun buffering(mediaPlayer: MediaPlayer, newCache: Float) = _state.update { it.copy(isBuffering = newCache < 100f, bufferPercent = newCache.toInt()) }
             })
             // Los eventos de vlcj llegan en un hilo de libVLC: no se puede volver a llamar a libVLC desde ahí
             // (con HLS revienta el proceso). Solo se avisa, y la lectura del título se hace en otro hilo.
@@ -210,7 +212,8 @@ class VlcPlayer(private val scope: CoroutineScope, private val http: okhttp3.OkH
      * (comprobado en CI). Se puede volver a él con -Dwavestr.hlsdemux=adaptive.
      */
     private fun mediaOptions(url: String): Array<String> {
-        val opts = mutableListOf(":network-caching=1500")
+        // Margen contra cortes (en el ordenador no hay datos móviles: Auto = directo).
+        val opts = mutableListOf(":network-caching=" + maxOf(1_500L, io.github.oluengo.wavestr.player.BufferPolicy.marginMs()))
         if (url.contains(".m3u8", ignoreCase = true)) {
             val demux = System.getProperty("wavestr.hlsdemux") ?: "avformat"
             if (demux != "adaptive") opts += ":demux=$demux"

@@ -54,3 +54,13 @@ class SleepTimerTest {
         assertNull(timer.mode.value)
     }
 }
+
+class BufferPolicyTest {
+    @Test
+    fun marginByMode() {
+        assertEquals(0L, BufferPolicy.marginMs(BufferMode.LIVE, true))
+        assertEquals(0L, BufferPolicy.marginMs(BufferMode.AUTO, false))
+        assertEquals(20_000L, BufferPolicy.marginMs(BufferMode.AUTO, true))
+        assertEquals(30_000L, BufferPolicy.marginMs(BufferMode.S30, false))
+    }
+}

@@ -345,4 +345,12 @@
     <string name="widget_config_sub">Quins preferits vols veure?</string>
     <string name="widget_config_all">Tots els preferits</string>
     <string name="fav_offline">Sense emetre</string>
+
+    <!-- Margen contra cortes -->
+    <string name="buffer_title">Marge contra talls</string>
+    <string name="buffer_sub">Més marge: menys talls amb mala cobertura, però sona uns segons per darrere del directe (i la ràdio triga això a començar). Auto: directe amb wifi, 20 s amb dades mòbils.</string>
+    <string name="buffer_auto">Auto</string>
+    <string name="buffer_live">Directe</string>
+    <string name="buffer_seconds">%1$d s</string>
+    <string name="buffer_loading">Carregant %1$d/%2$d s</string>
 </resources>

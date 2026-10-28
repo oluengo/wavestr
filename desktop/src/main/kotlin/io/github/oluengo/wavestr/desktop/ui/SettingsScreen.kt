@@ -95,6 +95,26 @@ fun SettingsScreen(c: DesktopContainer) {
                 }
             }
 
+            SectionLabel(t("settings_playback"))
+            Group {
+                Text(t("buffer_title"), fontWeight = FontWeight.SemiBold)
+                Row(Modifier.padding(vertical = 6.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    io.github.oluengo.wavestr.player.BufferMode.entries.forEach { m ->
+                        androidx.compose.material3.FilterChip(
+                            selected = s.bufferMode == m, onClick = { c.settings.setBufferMode(m) },
+                            label = {
+                                Text(when (m) {
+                                    io.github.oluengo.wavestr.player.BufferMode.AUTO -> t("buffer_auto")
+                                    io.github.oluengo.wavestr.player.BufferMode.LIVE -> t("buffer_live")
+                                    else -> t("buffer_seconds", (io.github.oluengo.wavestr.player.BufferPolicy.marginMs(m) / 1000).toInt())
+                                })
+                            },
+                        )
+                    }
+                }
+                Text(t("buffer_sub"), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
+            }
+
             SectionLabel(t("settings_language"))
             Group {
                 listOf<Pair<String?, String>>(null to t("lang_system"), "ca" to "Català", "es" to "Español", "en" to "English").forEach { (tag, label) ->

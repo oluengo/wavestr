@@ -55,6 +55,7 @@ class DesktopContainer {
 
     init {
         RelayPool.DEFAULT = settings.current.appRelays ?: RelayPool.BUILTIN
+        io.github.oluengo.wavestr.player.BufferPolicy.mode = settings.current.bufferMode
         scope.launch {
             settings.flow.map { it.appRelays }.distinctUntilChanged().collect { list ->
                 val next = list ?: RelayPool.BUILTIN

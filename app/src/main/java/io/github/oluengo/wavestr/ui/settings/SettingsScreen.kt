@@ -99,6 +99,8 @@ fun SettingsScreen(c: AppContainer, onOpenMe: () -> Unit) {
                 ToggleRow(R.string.set_audio_cell, R.string.set_audio_cell_sub, s.audioOnCellular) {
                     scope.launch { c.settings.setAudioOnCellular(it) }
                 }
+                HorizontalDivider(color = Rs.colors.line)
+                BufferPicker(s.bufferMode) { m -> scope.launch { c.settings.setBufferMode(m) } }
             }
 
             SectionLabel(stringResource(R.string.settings_account))
@@ -233,4 +235,26 @@ private fun AccentPicker(current: io.github.oluengo.wavestr.data.Accent, onPick:
             }
         }
     }
+}
+
+/** Margen contra cortes: Auto, Directo, 10, 20 o 30 s. */
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+@Composable
+private fun BufferPicker(current: io.github.oluengo.wavestr.player.BufferMode, onPick: (io.github.oluengo.wavestr.player.BufferMode) -> Unit) {
+    Column(Modifier.padding(vertical = 10.dp)) {
+        Text(stringResource(R.string.buffer_title), fontWeight = FontWeight.SemiBold)
+        androidx.compose.foundation.layout.FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            io.github.oluengo.wavestr.player.BufferMode.entries.forEach { m ->
+                androidx.compose.material3.FilterChip(selected = current == m, onClick = { onPick(m) }, label = { Text(bufferLabel(m)) })
+            }
+        }
+        Text(stringResource(R.string.buffer_sub), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
+    }
+}
+
+@Composable
+fun bufferLabel(m: io.github.oluengo.wavestr.player.BufferMode): String = when (m) {
+    io.github.oluengo.wavestr.player.BufferMode.AUTO -> stringResource(R.string.buffer_auto)
+    io.github.oluengo.wavestr.player.BufferMode.LIVE -> stringResource(R.string.buffer_live)
+    else -> stringResource(R.string.buffer_seconds, (io.github.oluengo.wavestr.player.BufferPolicy.marginMs(m) / 1000).toInt())
 }

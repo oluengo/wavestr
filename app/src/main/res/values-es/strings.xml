@@ -345,4 +345,12 @@
     <string name="widget_config_sub">¿Qué favoritos quieres ver?</string>
     <string name="widget_config_all">Todos los favoritos</string>
     <string name="fav_offline">Sin emitir</string>
+
+    <!-- Margen contra cortes -->
+    <string name="buffer_title">Margen contra cortes</string>
+    <string name="buffer_sub">Más margen: menos cortes con mala cobertura, pero suena unos segundos por detrás del directo (y la radio tarda eso en empezar). Auto: directo con wifi, 20 s con datos móviles.</string>
+    <string name="buffer_auto">Auto</string>
+    <string name="buffer_live">Directo</string>
+    <string name="buffer_seconds">%1$d s</string>
+    <string name="buffer_loading">Cargando %1$d/%2$d s</string>
 </resources>

@@ -22,6 +22,7 @@ data class Settings(
     val surpriseFromFavorites: Boolean = false,
     val window: WindowBox? = null,
     val radioCountry: String? = null,
+    val bufferMode: io.github.oluengo.wavestr.player.BufferMode = io.github.oluengo.wavestr.player.BufferMode.S10,
 )
 
 /** Tamaño y posición de la ventana, para abrirla donde se dejó. */
@@ -46,6 +47,7 @@ class SettingsRepository(private val store: FileStore) {
         surpriseFromFavorites = store.get("surprise_fav")?.toBoolean() ?: false,
         window = store.get("window")?.split(',')?.mapNotNull { it.toIntOrNull() }?.takeIf { it.size == 4 }?.let { WindowBox(it[0], it[1], it[2], it[3]) },
         radioCountry = store.get("radio_country"),
+        bufferMode = enumOr("buffer_mode", io.github.oluengo.wavestr.player.BufferMode.S10),
     )
 
     private fun set(key: String, value: String?) {
@@ -62,5 +64,6 @@ class SettingsRepository(private val store: FileStore) {
     fun setKeepInTray(v: Boolean) = set("keep_in_tray", v.toString())
     fun setSurprise(kind: SurpriseKind, fromFavorites: Boolean) { store.put("surprise_kind", kind.name); set("surprise_fav", fromFavorites.toString()) }
     fun setWindow(b: WindowBox) = store.put("window", "${b.x},${b.y},${b.w},${b.h}")
+    fun setBufferMode(m: io.github.oluengo.wavestr.player.BufferMode) { set("buffer_mode", m.name); io.github.oluengo.wavestr.player.BufferPolicy.mode = m }
     fun setRadioCountry(code: String?) = set("radio_country", code)
 }

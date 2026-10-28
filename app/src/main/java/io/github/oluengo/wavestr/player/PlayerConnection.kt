@@ -133,6 +133,8 @@ class PlayerConnection(
         scope.launch {
             val c = ensureController()
             val s = settings.current()
+            BufferPolicy.cellular = isCellular()
+            val margin = BufferPolicy.marginMs()
             val cellular = s.audioOnCellular && isCellular()
             _state.update {
                 it.copy(
@@ -144,7 +146,13 @@ class PlayerConnection(
             val media = MediaItem.Builder()
                 .setMediaId(item.id)
                 .setUri(item.url)
-                .apply { if (item.url.contains(".m3u8", true)) setMimeType(MimeTypes.APPLICATION_M3U8) }
+                .apply {
+                    if (item.url.contains(".m3u8", true)) {
+                        setMimeType(MimeTypes.APPLICATION_M3U8)
+                        // Margen en HLS: ir tantos segundos por detrás del directo.
+                        if (margin > 0 && item.isLive) setLiveConfiguration(MediaItem.LiveConfiguration.Builder().setTargetOffsetMs(margin).build())
+                    }
+                }
                 .setMediaMetadata(
                     MediaMetadata.Builder()
                         .setTitle(item.title)
@@ -210,6 +218,12 @@ class PlayerConnection(
                 c.play()
             }
         }
+    }
+
+    /** Segundos cargados y margen pedido (para «Cargando 12/20 s»). */
+    fun bufferProgress(): Pair<Long, Long>? {
+        val c = controller ?: return null
+        return c.totalBufferedDuration to BufferPolicy.marginMs()
     }
 
     private val lastPrefs = context.getSharedPreferences("player", Context.MODE_PRIVATE)

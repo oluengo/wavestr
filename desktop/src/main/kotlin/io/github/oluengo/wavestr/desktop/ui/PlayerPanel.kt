@@ -102,6 +102,12 @@ fun PlayerPanel(c: DesktopContainer, onClose: (() -> Unit)?) {
             }
             if (st.isBuffering && st.available) CircularProgressIndicator()
         }
+        val margin = io.github.oluengo.wavestr.player.BufferPolicy.marginMs()
+        if (st.isBuffering && margin >= 5_000) Text(
+            t("buffer_loading", (margin * st.bufferPercent / 100_000).toInt(), (margin / 1000).toInt()),
+            color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 6.dp),
+        )
 
         if (np.isLive) SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp)) {
             SegmentedButton(st.audioOnly, { c.player.setAudioOnly(true) }, SegmentedButtonDefaults.itemShape(0, 2), icon = { Icon(Icons.Outlined.Headphones, null, Modifier.size(18.dp)) }) { Text(t("player_audio")) }

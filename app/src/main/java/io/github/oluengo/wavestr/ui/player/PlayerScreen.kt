@@ -135,6 +135,7 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
         }
 
         if (np.isRadio) Box(Modifier.size(16.dp))
+        if (st.isBuffering && np.isRadio) BufferProgress(c)
         Text(hintFor(st), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(horizontal = 18.dp))
 
         if (!st.audioOnly && st.videoHeights.size > 1) QualityChip(c, st)
@@ -225,6 +226,22 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
             onZapped = { activity.refreshNow() },
         )
     }
+}
+
+/** «Cargando 12/20 s» mientras la radio llena el margen elegido. */
+@Composable
+private fun BufferProgress(c: AppContainer) {
+    var progress by remember { mutableStateOf<Pair<Long, Long>?>(null) }
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        while (true) { progress = c.player.bufferProgress(); kotlinx.coroutines.delay(500) }
+    }
+    val (have, want) = progress ?: return
+    if (want < 5_000) return
+    Text(
+        stringResource(R.string.buffer_loading, (have / 1000).coerceAtMost(want / 1000).toInt(), (want / 1000).toInt()),
+        color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold,
+        modifier = Modifier.padding(horizontal = 18.dp, vertical = 4.dp),
+    )
 }
 
 /** Emisoras que comparten estilo con la que suena (Radio Browser), para saltar a otra parecida. */

@@ -346,4 +346,12 @@
     <string name="widget_config_sub">Which favorites should it show?</string>
     <string name="widget_config_all">All favorites</string>
     <string name="fav_offline">Offline</string>
+
+    <!-- Margen contra cortes -->
+    <string name="buffer_title">Margin against dropouts</string>
+    <string name="buffer_sub">More margin means fewer dropouts on a bad connection, but you hear it a few seconds behind live (radio also takes that long to start). Auto: live on Wi-Fi, 20 s on mobile data.</string>
+    <string name="buffer_auto">Auto</string>
+    <string name="buffer_live">Live</string>
+    <string name="buffer_seconds">%1$d s</string>
+    <string name="buffer_loading">Loading %1$d/%2$d s</string>
 </resources>
