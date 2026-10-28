@@ -63,6 +63,14 @@ fun FavoritesScreen(c: DesktopContainer) {
     var deleting by remember { mutableStateOf<Folder?>(null) }
     var note by remember { mutableStateOf<String?>(null) }
     if (current != null && lib.folder(current) == null) current = null
+    val live by c.liveStatus.live.collectAsState()
+    val hosts = lib.favorites.mapNotNull { it.hostPubkey }.toSet()
+    androidx.compose.runtime.LaunchedEffect(hosts) {
+        while (true) {
+            c.liveStatus.refresh(hosts, c.settings.current.pubkey)
+            kotlinx.coroutines.delay(60_000)
+        }
+    }
 
     fun open(item: FavItem) {
         val st = item.station
@@ -70,7 +78,7 @@ fun FavoritesScreen(c: DesktopContainer) {
         val host = item.hostPubkey ?: return
         note = null
         scope.launch {
-            val live = runCatching { c.nostr.liveOf(setOf(host), s.pubkey) }.getOrDefault(emptyList()).firstOrNull()
+            val live = c.liveStatus.live.value?.get(host) ?: runCatching { c.nostr.liveOf(setOf(host), s.pubkey) }.getOrDefault(emptyList()).firstOrNull()
             if (live == null) { note = t("desk_streamer_offline", item.title); return@launch }
             val profile = runCatching { c.nostr.profiles(listOf(host), s.pubkey)[host] }.getOrNull()
             c.player.play(liveNowPlaying(live, profile)); nav.openPlayer()
@@ -106,6 +114,7 @@ fun FavoritesScreen(c: DesktopContainer) {
             items(items, key = { it.key }) { item ->
                 FavCard(
                     c, item, selected = ps.nowPlaying?.id == (item.station?.id ?: "x"),
+                    live = item.hostPubkey?.let { h -> live?.let { h in it } },
                     destinations = listOf<Folder?>(null) + lib.tree().map { it.first },
                     onClick = { open(item) },
                     onMove = { dest -> c.library.update { it.move(item.key, dest) } },
@@ -159,7 +168,7 @@ private fun FolderCard(f: Folder, count: Int, onOpen: () -> Unit, onRename: () -
 
 @Composable
 private fun FavCard(
-    c: DesktopContainer, item: FavItem, selected: Boolean, destinations: List<Folder?>,
+    c: DesktopContainer, item: FavItem, selected: Boolean, live: Boolean?, destinations: List<Folder?>,
     onClick: () -> Unit, onMove: (String?) -> Unit, onRemove: () -> Unit,
 ) {
     var menu by remember { mutableStateOf(false) }
@@ -179,6 +188,14 @@ private fun FavCard(
                 item.subtitle ?: t(if (st != null) "fav_kind_station" else "fav_kind_streamer"),
                 color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall, maxLines = 1, overflow = TextOverflow.Ellipsis,
             )
+        }
+        when (live) {
+            true -> LiveBadge()
+            false -> Text(
+                t("fav_offline"), color = Rs.colors.muted, style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(6.dp)).padding(horizontal = 7.dp, vertical = 2.dp),
+            )
+            null -> {}
         }
         Box {
             IconButton(onClick = { menu = true }) { Icon(Icons.Outlined.MoreVert, t("fav_item_options", item.title)) }

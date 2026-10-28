@@ -72,6 +72,15 @@ fun FavoritesScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenProfile: (S
     var dialog by androidx.compose.runtime.remember { mutableStateOf<Dialog?>(null) }
     val subs = lib.subfolders(current)
     val items = lib.itemsIn(current)
+    // Estado de los streamers favoritos (emitiendo o no), cada minuto mientras la pantalla está abierta.
+    val live by c.liveStatus.live.collectAsStateWithLifecycle()
+    val hosts = lib.favorites.mapNotNull { it.hostPubkey }.toSet()
+    androidx.compose.runtime.LaunchedEffect(hosts) {
+        while (true) {
+            c.liveStatus.refresh(hosts, c.settings.current().pubkey)
+            kotlinx.coroutines.delay(60_000)
+        }
+    }
 
     Column(Modifier.fillMaxSize()) {
         ScreenHeader(stringResource(R.string.tab_favorites), stringResource(R.string.fav_sub)) {
@@ -105,7 +114,7 @@ fun FavoritesScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenProfile: (S
                 EmptyNote(stringResource(if (lib.favorites.isEmpty()) R.string.fav_empty_all else R.string.fav_empty_folder))
             }
             items(items, key = { it.key }) { item ->
-                ItemRow(c, item, onClick = {
+                ItemRow(c, item, live = item.hostPubkey?.let { h -> live?.let { h in it } }, onClick = {
                     when (item.kind) {
                         FavItem.Kind.STATION -> item.station?.let { c.player.playStation(it); onOpenPlayer() }
                         FavItem.Kind.STREAMER -> item.hostPubkey?.let(onOpenProfile)
@@ -172,7 +181,8 @@ private fun FolderRow(f: Folder, lib: Library, onOpen: () -> Unit, onMore: () ->
 }
 
 @Composable
-private fun ItemRow(c: AppContainer, item: FavItem, onClick: () -> Unit, onMore: () -> Unit) {
+/** [live]: solo streamers; true = emitiendo, false = sin emitir, null = aún no se sabe. */
+private fun ItemRow(c: AppContainer, item: FavItem, live: Boolean?, onClick: () -> Unit, onMore: () -> Unit) {
     Row(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         val station = item.station
         if (station != null) io.github.oluengo.wavestr.ui.common.StationArtwork(c, station, Modifier.size(52.dp))
@@ -187,7 +197,15 @@ private fun ItemRow(c: AppContainer, item: FavItem, onClick: () -> Unit, onMore:
                 color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall, maxLines = 1, overflow = TextOverflow.Ellipsis,
             )
         }
-        Text(if (item.kind == FavItem.Kind.STREAMER) "NOSTR" else "RADIO", fontSize = 10.sp, color = Rs.colors.muted)
+        when {
+            item.kind != FavItem.Kind.STREAMER -> Text("RADIO", fontSize = 10.sp, color = Rs.colors.muted)
+            live == true -> io.github.oluengo.wavestr.ui.common.LiveBadge()
+            live == false -> Text(
+                stringResource(R.string.fav_offline), fontSize = 11.sp, color = Rs.colors.muted,
+                modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant, androidx.compose.foundation.shape.RoundedCornerShape(6.dp)).padding(horizontal = 7.dp, vertical = 2.dp),
+            )
+            else -> Text("NOSTR", fontSize = 10.sp, color = Rs.colors.muted)
+        }
         IconButton(onClick = onMore) { Icon(Icons.Outlined.MoreVert, stringResource(R.string.fav_item_options, item.title), tint = Rs.colors.muted) }
     }
 }

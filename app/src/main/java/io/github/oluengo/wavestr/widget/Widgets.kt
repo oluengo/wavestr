@@ -278,12 +278,19 @@ private fun FavoritesContent(m: WidgetModel) {
                     GlanceModifier.width(tileSide).clickable(actionRunCallback<PlayFavoriteAction>(actionParametersOf(PlayFavoriteAction.KEY to t.key))),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    val art = t.art
-                    if (art != null) Image(ImageProvider(art), t.title, GlanceModifier.size(tileSide).cornerRadius(14.dp), contentScale = ContentScale.Crop)
-                    else Box(GlanceModifier.size(tileSide).cornerRadius(14.dp).background(GlanceTheme.colors.primaryContainer), contentAlignment = Alignment.Center) {
-                        Text(initials(t.title), style = TextStyle(color = GlanceTheme.colors.onPrimaryContainer, fontWeight = FontWeight.Bold, fontSize = 13.sp))
+                    Box(contentAlignment = Alignment.TopEnd) {
+                        val art = t.art
+                        if (art != null) Image(ImageProvider(art), t.title, GlanceModifier.size(tileSide).cornerRadius(14.dp), contentScale = ContentScale.Crop)
+                        else Box(GlanceModifier.size(tileSide).cornerRadius(14.dp).background(GlanceTheme.colors.primaryContainer), contentAlignment = Alignment.Center) {
+                            Text(initials(t.title), style = TextStyle(color = GlanceTheme.colors.onPrimaryContainer, fontWeight = FontWeight.Bold, fontSize = 13.sp))
+                        }
+                        // Streamer emitiendo: punto rojo.
+                        if (t.live == true) Box(GlanceModifier.padding(5.dp)) { Box(GlanceModifier.size(10.dp).cornerRadius(5.dp).background(LiveRed)) {} }
                     }
-                    Text(t.title, style = TextStyle(color = GlanceTheme.colors.onSurface, fontSize = 10.5.sp), maxLines = 1)
+                    Text(
+                        t.title, maxLines = 1,
+                        style = TextStyle(color = if (t.live == false) GlanceTheme.colors.onSurfaceVariant else GlanceTheme.colors.onSurface, fontSize = 10.5.sp),
+                    )
                 }
             }
         }

@@ -344,4 +344,5 @@
     <string name="widget_config_title">Widget de favoritos</string>
     <string name="widget_config_sub">¿Qué favoritos quieres ver?</string>
     <string name="widget_config_all">Todos los favoritos</string>
+    <string name="fav_offline">Sin emitir</string>
 </resources>

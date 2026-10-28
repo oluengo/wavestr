@@ -30,7 +30,8 @@ import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
 
 /** Un favorito tal como lo pinta el widget. */
-data class FavTile(val key: String, val title: String, val folderId: String?, val art: Bitmap?)
+/** [live]: solo streamers; true emitiendo, false sin emitir, null sin saber. */
+data class FavTile(val key: String, val title: String, val folderId: String?, val art: Bitmap?, val live: Boolean? = null)
 
 /** Todo lo que necesitan los widgets, ya calculado (y con las carátulas como Bitmap). */
 data class WidgetModel(
@@ -61,8 +62,8 @@ class WidgetSync(private val app: Application, private val c: AppContainer) {
 
     fun start() {
         c.appScope.launch {
-            combine(c.player.state, c.library.library, c.settings.flow, c.player.sleep.mode) { ps, lib, s, sleep ->
-                Snapshot(ps.nowPlaying, ps.isPlaying, ps.icyTitle, lib.favorites, s.accent, sleep)
+            combine(c.player.state, c.library.library, c.settings.flow, c.player.sleep.mode, c.liveStatus.live) { ps, lib, s, sleep, live ->
+                Snapshot(ps.nowPlaying, ps.isPlaying, ps.icyTitle, lib.favorites, s.accent, sleep, live?.keys, s.pubkey)
             }.distinctUntilChanged().debounce(300).collectLatest { snap ->
                 try {
                     _model.value = build(snap)
@@ -78,6 +79,7 @@ class WidgetSync(private val app: Application, private val c: AppContainer) {
     private data class Snapshot(
         val np: io.github.oluengo.wavestr.player.NowPlaying?, val playing: Boolean, val icy: String?,
         val favs: List<FavItem>, val accent: Accent, val sleep: SleepTimer.Mode?,
+        val liveHosts: Set<String>?, val viewer: String?,
     )
 
     private suspend fun anyPlaced(): Boolean = runCatching {
@@ -88,9 +90,12 @@ class WidgetSync(private val app: Application, private val c: AppContainer) {
     private fun stationArt(st: Station): String? = c.artwork.cached(st)?.ifEmpty { null } ?: st.favicon
 
     private suspend fun build(s: Snapshot): WidgetModel {
+        // Estado de los streamers, como mucho cada 5 min (al cambiar algo; los widgets no consultan solos).
+        val hosts = s.favs.mapNotNull { it.hostPubkey }.toSet()
+        if (hosts.isNotEmpty()) c.liveStatus.refresh(hosts, s.viewer, maxAgeMs = 300_000)
         val favs = s.favs.take(30).map { f ->
             val url = f.station?.let(::stationArt) ?: f.image
-            FavTile(f.key, f.title, f.folderId, url?.let { load(it) })
+            FavTile(f.key, f.title, f.folderId, url?.let { load(it) }, live = f.hostPubkey?.let { h -> s.liveHosts?.let { h in it } })
         }
         val sleepAt = when (val m = s.sleep) {
             is SleepTimer.Mode.At -> m.endsAt

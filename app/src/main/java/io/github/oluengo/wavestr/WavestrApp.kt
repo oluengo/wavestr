@@ -71,6 +71,7 @@ class AppContainer(app: Application) {
     }
 
     val player = PlayerConnection(app, settings, HlsInspector(http), appScope, onStationPlay = radio::countClick)
+    val liveStatus = io.github.oluengo.wavestr.nostr.LiveStatus(nostr)
     val widgets = io.github.oluengo.wavestr.widget.WidgetSync(app, this)
 }
 

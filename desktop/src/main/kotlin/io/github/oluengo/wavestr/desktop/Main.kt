@@ -47,6 +47,7 @@ class DesktopContainer {
     val settings = SettingsRepository(FileStore(File(AppInfo.dataDir, "settings.properties")))
     val relays = RelayPool(http)
     val nostr = NostrRepository(relays)
+    val liveStatus = io.github.oluengo.wavestr.nostr.LiveStatus(nostr)
     val radio = RadioBrowserClient(http, scope, "${AppInfo.name.replace(' ', '-')}/${AppInfo.version} (github.com/oluengo/wavestr)")
     val library = LibraryRepository(File(AppInfo.dataDir, "library.json"), scope)
     val artwork = ArtworkResolver(FileStore(File(AppInfo.dataDir, "artwork.properties")), http)

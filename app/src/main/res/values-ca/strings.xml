@@ -344,4 +344,5 @@
     <string name="widget_config_title">Widget de preferits</string>
     <string name="widget_config_sub">Quins preferits vols veure?</string>
     <string name="widget_config_all">Tots els preferits</string>
+    <string name="fav_offline">Sense emetre</string>
 </resources>

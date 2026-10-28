@@ -1,5 +1,9 @@
 # Cambios
 
+## Próxima versión
+
+- **Favoritos:** los streamers de Nostr indican si están emitiendo («EN DIRECTO») o no («Sin emitir»), en el móvil y en el ordenador. En el widget de favoritos, un punto rojo marca los que emiten. Se comprueba al abrir Favoritos y cada minuto.
+
 ## 0.8.0
 
 - **Widgets para la pantalla de inicio (Android):** Barra (4×1), Reproductor (4×2), Favoritos (4×2, con la carpeta que elijas) y Cuadrado (2×2). Play/pausa, sorpresa y favoritos sin abrir la app; si no suena nada, play pone la última emisora. Siguen el tema del móvil y tu color de acento.
