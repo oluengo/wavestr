@@ -1,7 +1,7 @@
 // Beta (WAVESTR_BETA=1, rama beta en CI): otra app, «Wavestr Beta» (io.github.oluengo.wavestr.beta),
 // versión X.Y.Z-beta.N y código versionCode·1000 + N. Se instala junto a la normal, con sus propios datos.
-val wavestrVersion = "0.7.0"
-val wavestrCode = 7
+val wavestrVersion = "0.8.0"
+val wavestrCode = 8
 val beta = System.getenv("WAVESTR_BETA") == "1"
 val betaN = (System.getenv("WAVESTR_BETA_N") ?: "0").toInt()
 
@@ -105,6 +105,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.guava)
     implementation(libs.coil.compose)
+    implementation(libs.glance.appwidget)
+    implementation(libs.glance.material3)
     implementation(libs.coil.svg)
 
     testImplementation(libs.junit)

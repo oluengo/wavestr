@@ -323,4 +323,25 @@
     <string name="sleep_until_stream_end">Se apaga al terminar el stream</string>
     <string name="sleep_extend">+10 min</string>
     <string name="sleep_cancel">Cancelar temporizador</string>
+
+    <!-- Widgets -->
+    <string name="widget_bar_name">Wavestr · Barra</string>
+    <string name="widget_bar_desc">Lo que suena y play/pausa</string>
+    <string name="widget_player_name">Wavestr · Reproductor</string>
+    <string name="widget_player_desc">Carátula, canción, play/pausa y sorpresa</string>
+    <string name="widget_favorites_name">Wavestr · Favoritos</string>
+    <string name="widget_favorites_desc">Tus favoritos, a un toque</string>
+    <string name="widget_square_name">Wavestr · Cuadrado</string>
+    <string name="widget_square_desc">Carátula, play/pausa y sorpresa</string>
+    <string name="widget_idle_empty">No suena nada</string>
+    <string name="widget_idle_last">La última que escuchaste</string>
+    <string name="widget_kind_stream">Stream de Nostr</string>
+    <string name="widget_kind_radio">Radio</string>
+    <string name="widget_sleep_until">hasta las %1$s</string>
+    <string name="widget_fav_hint">Toca uno para escucharlo</string>
+    <string name="widget_fav_empty">Aún no hay favoritos aquí. Añádelos desde la app con ♥.</string>
+    <string name="widget_not_streaming">%1$s no está emitiendo ahora.</string>
+    <string name="widget_config_title">Widget de favoritos</string>
+    <string name="widget_config_sub">¿Qué favoritos quieres ver?</string>
+    <string name="widget_config_all">Todos los favoritos</string>
 </resources>

@@ -323,4 +323,25 @@
     <string name="sleep_until_stream_end">S\'atura en acabar l’stream</string>
     <string name="sleep_extend">+10 min</string>
     <string name="sleep_cancel">Cancel·la el temporitzador</string>
+
+    <!-- Widgets -->
+    <string name="widget_bar_name">Wavestr · Barra</string>
+    <string name="widget_bar_desc">El que sona i play/pausa</string>
+    <string name="widget_player_name">Wavestr · Reproductor</string>
+    <string name="widget_player_desc">Caràtula, cançó, play/pausa i sorpresa</string>
+    <string name="widget_favorites_name">Wavestr · Preferits</string>
+    <string name="widget_favorites_desc">Els teus preferits, a un toc</string>
+    <string name="widget_square_name">Wavestr · Quadrat</string>
+    <string name="widget_square_desc">Caràtula, play/pausa i sorpresa</string>
+    <string name="widget_idle_empty">No sona res</string>
+    <string name="widget_idle_last">L\'última que vas escoltar</string>
+    <string name="widget_kind_stream">Stream de Nostr</string>
+    <string name="widget_kind_radio">Ràdio</string>
+    <string name="widget_sleep_until">fins a les %1$s</string>
+    <string name="widget_fav_hint">Toca\'n un per escoltar-lo</string>
+    <string name="widget_fav_empty">Encara no hi ha preferits aquí. Afegeix-los des de l\'app amb ♥.</string>
+    <string name="widget_not_streaming">%1$s no està emetent ara.</string>
+    <string name="widget_config_title">Widget de preferits</string>
+    <string name="widget_config_sub">Quins preferits vols veure?</string>
+    <string name="widget_config_all">Tots els preferits</string>
 </resources>

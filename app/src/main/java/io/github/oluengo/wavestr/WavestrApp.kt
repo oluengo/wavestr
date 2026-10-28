@@ -37,6 +37,7 @@ class WavestrApp : Application(), coil.ImageLoaderFactory {
         SettingsRepository.applyNightMode(s.theme)
         RelayPool.DEFAULT = s.appRelays ?: RelayPool.BUILTIN
         container.watchRelays()
+        container.widgets.start()
     }
 }
 
@@ -70,6 +71,7 @@ class AppContainer(app: Application) {
     }
 
     val player = PlayerConnection(app, settings, HlsInspector(http), appScope, onStationPlay = radio::countClick)
+    val widgets = io.github.oluengo.wavestr.widget.WidgetSync(app, this)
 }
 
 val Context.container: AppContainer get() = (applicationContext as WavestrApp).container

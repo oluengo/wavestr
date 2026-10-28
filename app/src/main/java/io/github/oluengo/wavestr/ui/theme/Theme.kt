@@ -94,6 +94,14 @@ fun WavestrTheme(accent: Accent = Accent.VIOLET, content: @Composable () -> Unit
     }
 }
 
+/** Esquemas claro y oscuro con el acento elegido, para los widgets (Glance). */
+fun accentSchemes(accent: Accent): Pair<androidx.compose.material3.ColorScheme, androidx.compose.material3.ColorScheme> {
+    val a = accentColors(accent)
+    val light = LightScheme.copy(primary = a.light, onPrimary = Color.White, primaryContainer = a.lightSoft, onPrimaryContainer = a.lightOn, surface = Color(0xFFFBF9FF))
+    val dark = DarkScheme.copy(primary = a.dark, onPrimary = Color(0xFF160F26), primaryContainer = a.darkSoft, onPrimaryContainer = a.darkOn, surface = Color(0xFF1E1A2B))
+    return light to dark
+}
+
 object Rs {
     val colors: RsColors @Composable get() = LocalRsColors.current
 }

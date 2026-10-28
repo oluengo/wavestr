@@ -55,6 +55,64 @@
             </intent-filter>
         </service>
 
+        <!-- Widgets de la pantalla de inicio (Jetpack Glance) -->
+        <receiver
+            android:name=".widget.BarWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_bar_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_bar" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.PlayerWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_player_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_player" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.FavoritesWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_favorites_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_favorites" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.SquareWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_square_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_square" />
+        </receiver>
+
+        <activity
+            android:name=".widget.FavoritesWidgetConfigActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Wavestr">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
         <!-- Guarda el idioma elegido en la app en Android < 13 (AppCompat) -->
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"

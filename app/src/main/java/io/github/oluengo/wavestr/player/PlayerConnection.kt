@@ -169,6 +169,7 @@ class PlayerConnection(
     /** Reproduce una emisora con la variante elegida o, en Auto, según la red. */
     fun playStation(st: Station, chosen: Int? = variantChoice[st.id]) {
         val v = Stations.pick(st, chosen, isCellular())
+        lastPrefs.edit().putString("last_station", io.github.oluengo.wavestr.data.Library.stationJson(st).toString()).apply()
         play(
             NowPlaying(
                 id = st.id, url = v.url, title = st.name,
@@ -194,14 +195,28 @@ class PlayerConnection(
         applyVideo()
     }
 
+    /** También desde el widget, con la app cerrada: conecta con el servicio si hace falta. Sin nada cargado, la última emisora. */
     fun togglePlay() {
-        val c = controller ?: return
-        if (c.isPlaying) c.pause() else {
-            if (c.playbackState == Player.STATE_IDLE) c.prepare()
-            // En directo, volver al borde en vez de reanudar con retraso.
-            if (c.isCurrentMediaItemLive) c.seekToDefaultPosition()
-            c.play()
+        scope.launch {
+            val c = ensureController()
+            if (_state.value.nowPlaying == null && c.mediaItemCount == 0) {
+                lastStation()?.let { playStation(it) }
+                return@launch
+            }
+            if (c.isPlaying) c.pause() else {
+                if (c.playbackState == Player.STATE_IDLE) c.prepare()
+                // En directo, volver al borde en vez de reanudar con retraso.
+                if (c.isCurrentMediaItemLive) c.seekToDefaultPosition()
+                c.play()
+            }
         }
+    }
+
+    private val lastPrefs = context.getSharedPreferences("player", Context.MODE_PRIVATE)
+
+    /** Última emisora escuchada (para el widget cuando no suena nada). */
+    fun lastStation(): Station? = lastPrefs.getString("last_station", null)?.let { s ->
+        runCatching { io.github.oluengo.wavestr.data.Library.stationFrom(io.github.oluengo.wavestr.nostr.NostrJson.parseToJsonElement(s)) }.getOrNull()
     }
 
     fun stop() {

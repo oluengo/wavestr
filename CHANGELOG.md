@@ -1,5 +1,9 @@
 # Cambios
 
+## 0.8.0
+
+- **Widgets para la pantalla de inicio (Android):** Barra (4×1), Reproductor (4×2), Favoritos (4×2, con la carpeta que elijas) y Cuadrado (2×2). Play/pausa, sorpresa y favoritos sin abrir la app; si no suena nada, play pone la última emisora. Siguen el tema del móvil y tu color de acento.
+
 ## 0.7.0
 
 - **Temporizador de apagado** (Android y ordenador): 15, 30, 45, 60 o 90 minutos, con el volumen bajando en los últimos 30 segundos; «+10 min» y cancelar. Con un stream de Nostr, también «al terminar el stream».

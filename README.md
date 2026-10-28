@@ -41,6 +41,7 @@ Comprueba que la huella del certificado coincide (también está en Ajustes → 
 - **Botón sorpresa:** radio, stream o ambos; de tus favoritos o de todo.
 - **Relays de Wavestr** editables, además de tu lista NIP-65.
 - **Tablets y pantallas anchas:** navegación lateral y reproductor fijo con chat.
+- **Widgets** para la pantalla de inicio de Android: barra, reproductor, favoritos y cuadrado.
 - **Temporizador de apagado:** 15 a 90 minutos con bajada de volumen al final, o al terminar el stream de Nostr.
 - **Escritorio (Linux y Windows):** la misma app en una ventana que se adapta del formato móvil a tres columnas, con icono en la bandeja.
 
