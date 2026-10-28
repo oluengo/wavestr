@@ -197,10 +197,11 @@ jobs:
       # Temporal: comprobar que la beta 0.9.0-beta.56 es la que fallaba.
       - name: Beta anterior (diagnóstico)
         continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          mkdir -p old && cd old
-          code=$(curl -sSL -w '%{http_code}' -o old.apk "https://github.com/oluengo/wavestr/releases/download/wavestr-beta/wavestr-beta-0.9.0-beta.56.apk")
-          echo "::notice::Beta anterior: HTTP $code · $(stat -c %s old.apk) bytes · $(file -b old.apk | cut -c1-60)"
+          gh release download wavestr-beta -p "*.apk" -D old -R "${{ github.repository }}"
+          echo "::notice::Beta anterior: $(ls old)"
       - name: Arrancar la beta anterior (diagnóstico)
         continue-on-error: true
         uses: reactivecircus/android-emulator-runner@v2
