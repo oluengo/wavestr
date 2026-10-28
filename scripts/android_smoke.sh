@@ -3,7 +3,7 @@
 # Deja el resultado como anotaciones de GitHub Actions (cada una, varias líneas unidas con %0A).
 set -u
 join() { head -${1:-30} | sed 's/%/%25/g' | sed ':a;N;$!ba;s/\n/%0A/g'; }
-apk=$(ls dist/*.apk | head -1)
+apk=$(ls ${APK_DIR:-dist}/*.apk | head -1)
 bt=$(ls -d "$ANDROID_HOME"/build-tools/* 2>/dev/null | sort -V | tail -1)
 pkg=$("$bt/aapt2" dump packagename "$apk" 2>/dev/null | head -1)
 act=$("$bt/aapt2" dump badging "$apk" 2>/dev/null | sed -n "s/^launchable-activity: name='\([^']*\)'.*/\1/p" | head -1)
