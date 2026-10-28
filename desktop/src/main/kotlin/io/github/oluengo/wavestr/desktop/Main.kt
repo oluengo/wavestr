@@ -51,7 +51,7 @@ class DesktopContainer {
     val radio = RadioBrowserClient(http, scope, "${AppInfo.name.replace(' ', '-')}/${AppInfo.version} (github.com/oluengo/wavestr)")
     val library = LibraryRepository(File(AppInfo.dataDir, "library.json"), scope)
     val artwork = ArtworkResolver(FileStore(File(AppInfo.dataDir, "artwork.properties")), http)
-    val player = VlcPlayer(scope, http, onStationPlay = radio::countClick)
+    val player = VlcPlayer(scope, http, onStationPlay = radio::countClick, favorites = { library.library.value.favorites })
 
     init {
         RelayPool.DEFAULT = settings.current.appRelays ?: RelayPool.BUILTIN
@@ -97,6 +97,10 @@ private fun ApplicationScope.WavestrApplication(c: DesktopContainer) {
             Item(t("desk_tray_show"), onClick = { visible = true })
             if (ps.nowPlaying != null) {
                 Item(if (ps.isPlaying) t("pause") else t("play"), onClick = { c.player.togglePlay() })
+                if (ps.nowPlaying?.station != null && c.player.skipList().size > 1) {
+                    Item(t("skip_previous"), onClick = { c.player.skip(-1) })
+                    Item(t("skip_next"), onClick = { c.player.skip(+1) })
+                }
                 Item(t("stop"), onClick = { c.player.stop() })
             }
             Separator()

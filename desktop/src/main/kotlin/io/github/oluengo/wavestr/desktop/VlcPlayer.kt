@@ -62,7 +62,27 @@ data class PlayerState(
  * Reproductor con libVLC (vlcj): radio (MP3/AAC/Ogg/FLAC, PLS/M3U ya resueltos), HLS y vídeo.
  * El vídeo se pinta en Compose fotograma a fotograma ([VideoFrames]); sin ventana aparte de VLC.
  */
-class VlcPlayer(private val scope: CoroutineScope, private val http: okhttp3.OkHttpClient, private val onStationPlay: (String?) -> Unit) {
+class VlcPlayer(
+    private val scope: CoroutineScope,
+    private val http: okhttp3.OkHttpClient,
+    private val onStationPlay: (String?) -> Unit,
+    /** Favoritos actuales, para anterior/siguiente emisora. */
+    private val favorites: () -> List<io.github.oluengo.wavestr.data.FavItem> = { emptyList() },
+) {
+    /** Lista desde la que se eligió la emisora (para anterior/siguiente si no es favorita). */
+    private var skipContext: List<Station> = emptyList()
+
+    fun skipList(): List<Station> {
+        val cur = _state.value.nowPlaying?.station ?: return emptyList()
+        return io.github.oluengo.wavestr.radio.StationSkip.list(cur, favorites(), skipContext)
+    }
+
+    /** +1 siguiente, -1 anterior. */
+    fun skip(dir: Int) {
+        val cur = _state.value.nowPlaying?.station ?: return
+        io.github.oluengo.wavestr.radio.StationSkip.neighbor(cur, skipList(), dir)?.let { playStation(it) }
+    }
+
     private val _state = MutableStateFlow(PlayerState())
     val state: StateFlow<PlayerState> = _state.asStateFlow()
     val video = VideoFrames()
@@ -126,7 +146,9 @@ class VlcPlayer(private val scope: CoroutineScope, private val http: okhttp3.OkH
     }
 
     /** Emisora con la variante elegida o, en Auto, la de más calidad (en el ordenador no hay datos móviles). */
-    fun playStation(st: Station, chosen: Int? = variantChoice[st.id]) {
+    /** [from]: la lista en la que estaba (populares, país, búsqueda…), para anterior/siguiente. */
+    fun playStation(st: Station, chosen: Int? = variantChoice[st.id], from: List<Station>? = null) {
+        if (from != null) skipContext = from
         val v = Stations.pick(st, chosen, false)
         play(
             NowPlaying(

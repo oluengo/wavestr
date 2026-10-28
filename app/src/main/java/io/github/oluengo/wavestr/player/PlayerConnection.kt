@@ -79,7 +79,11 @@ class PlayerConnection(
     private val scope: CoroutineScope,
     /** Se llama con el id del directorio al reproducir una emisora (contador de escuchas). */
     private val onStationPlay: (String?) -> Unit = {},
+    /** Favoritos actuales, para anterior/siguiente emisora. */
+    private val favorites: () -> List<io.github.oluengo.wavestr.data.FavItem> = { emptyList() },
 ) {
+    /** Lista desde la que se eligió la emisora (para anterior/siguiente si no es favorita). */
+    private var skipContext: List<Station> = emptyList()
     /** Calidad elegida por emisora (índice de variante); sin entrada = Auto. */
     private val variantChoice = mutableMapOf<String, Int>()
     private val _state = MutableStateFlow(PlayerUiState())
@@ -175,7 +179,21 @@ class PlayerConnection(
     }
 
     /** Reproduce una emisora con la variante elegida o, en Auto, según la red. */
-    fun playStation(st: Station, chosen: Int? = variantChoice[st.id]) {
+    /** Emisoras entre las que saltar desde la que suena (vacío si no hay). */
+    fun skipList(): List<Station> {
+        val cur = _state.value.nowPlaying?.station ?: return emptyList()
+        return io.github.oluengo.wavestr.radio.StationSkip.list(cur, favorites(), skipContext)
+    }
+
+    /** +1 siguiente, -1 anterior. */
+    fun skip(dir: Int) {
+        val cur = _state.value.nowPlaying?.station ?: return
+        io.github.oluengo.wavestr.radio.StationSkip.neighbor(cur, skipList(), dir)?.let { playStation(it) }
+    }
+
+    /** [from]: la lista en la que estaba (populares, país, búsqueda…), para anterior/siguiente. */
+    fun playStation(st: Station, chosen: Int? = variantChoice[st.id], from: List<Station>? = null) {
+        if (from != null) skipContext = from
         val v = Stations.pick(st, chosen, isCellular())
         lastPrefs.edit().putString("last_station", io.github.oluengo.wavestr.data.Library.stationJson(st).toString()).apply()
         play(
@@ -224,6 +242,12 @@ class PlayerConnection(
     fun bufferProgress(): Pair<Long, Long>? {
         val c = controller ?: return null
         return c.totalBufferedDuration to BufferPolicy.marginMs()
+    }
+
+    init {
+        // Notificación, pantalla de bloqueo, auriculares y coche: anterior / siguiente emisora.
+        SkipBridge.handler = { dir -> scope.launch { skip(dir) } }
+        SkipBridge.available = { skipList().size > 1 }
     }
 
     private val lastPrefs = context.getSharedPreferences("player", Context.MODE_PRIVATE)

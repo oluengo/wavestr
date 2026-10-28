@@ -353,4 +353,6 @@
     <string name="buffer_live">Directo</string>
     <string name="buffer_seconds">%1$d s</string>
     <string name="buffer_loading">Cargando %1$d/%2$d s</string>
+    <string name="skip_previous">Emisora anterior</string>
+    <string name="skip_next">Emisora siguiente</string>
 </resources>

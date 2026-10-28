@@ -99,7 +99,7 @@ fun RadioScreen(c: DesktopContainer) {
     }
 
     val list = if (mode == RadioMode.IMPORTED) lib.imported else stations
-    fun play(st: Station) { c.player.playStation(st); nav.openPlayer() }
+    fun play(st: Station) { c.player.playStation(st, from = list); nav.openPlayer() }
 
     Column(Modifier.fillMaxSize()) {
         ScreenHeader(t("tab_radio"), t("radio_sub")) { HeaderActions(c) }

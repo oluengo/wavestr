@@ -23,6 +23,8 @@ import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.Headphones
 import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material.icons.outlined.SkipNext
+import androidx.compose.material.icons.outlined.SkipPrevious
 import androidx.compose.material.icons.outlined.Videocam
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.CircularProgressIndicator
@@ -133,7 +135,7 @@ fun PlayerPanel(c: DesktopContainer, onClose: (() -> Unit)?) {
 
         Row(
             Modifier.fillMaxWidth().padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally),
+            horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             val station = np.station
@@ -145,13 +147,16 @@ fun PlayerPanel(c: DesktopContainer, onClose: (() -> Unit)?) {
                     host != null -> c.library.toggleStreamer(host, np.subtitle, np.artworkUrl)
                 }
             }
+            val canSkip = station != null && c.player.skipList().size > 1
+            if (canSkip) IconButton(onClick = { c.player.skip(-1) }) { Icon(Icons.Outlined.SkipPrevious, t("skip_previous"), Modifier.size(28.dp)) }
             FilledIconButton(
                 onClick = c.player::togglePlay, modifier = Modifier.size(60.dp),
                 colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.onSurface, contentColor = MaterialTheme.colorScheme.surface),
             ) {
                 Icon(if (st.isPlaying) Icons.Outlined.Pause else Icons.Outlined.PlayArrow, t(if (st.isPlaying) "pause" else "play"), Modifier.size(28.dp))
             }
-            Box(Modifier.size(48.dp))
+            if (canSkip) IconButton(onClick = { c.player.skip(+1) }) { Icon(Icons.Outlined.SkipNext, t("skip_next"), Modifier.size(28.dp)) }
+            else Box(Modifier.size(48.dp))
         }
         Row(Modifier.fillMaxWidth().padding(horizontal = 24.dp), verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.AutoMirrored.Outlined.VolumeUp, null, tint = Rs.colors.muted, modifier = Modifier.size(18.dp))
@@ -268,7 +273,7 @@ private fun SimilarStations(c: DesktopContainer, current: Station) {
         HorizontalDivider(color = Rs.colors.line)
         Text(t("similar_stations"), color = Rs.colors.muted, style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(top = 8.dp))
         similar.forEach { s ->
-            StationRow(c, s, lib.isFavorite(s.id), false, onClick = { c.player.playStation(s) }, onToggleFav = { c.library.toggleStation(s) })
+            StationRow(c, s, lib.isFavorite(s.id), false, onClick = { c.player.playStation(s, from = listOf(current) + similar) }, onToggleFav = { c.library.toggleStation(s) })
         }
     }
 }

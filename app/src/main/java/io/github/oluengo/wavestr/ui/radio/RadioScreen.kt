@@ -99,7 +99,7 @@ fun RadioScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenMe: () -> Unit)
             }
         }
 
-        val play: (io.github.oluengo.wavestr.radio.Station) -> Unit = { c.player.playStation(it); onOpenPlayer() }
+        val playFrom: (io.github.oluengo.wavestr.radio.Station, List<io.github.oluengo.wavestr.radio.Station>) -> Unit = { s, from -> c.player.playStation(s, from = from); onOpenPlayer() }
         val toggle: (io.github.oluengo.wavestr.radio.Station) -> Unit = { c.library.toggleStation(it) }
 
         LazyColumn(Modifier.fillMaxSize().padding(horizontal = 20.dp)) {
@@ -119,7 +119,7 @@ fun RadioScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenMe: () -> Unit)
                 }
                 if (lib.imported.isEmpty()) item { EmptyNote(stringResource(R.string.import_empty)) }
                 items(lib.imported, key = { it.id }) { s ->
-                    StationRow(c, s, lib.isFavorite(s.id), onClick = { play(s) }, onToggleFav = { toggle(s) }, trailing = {
+                    StationRow(c, s, lib.isFavorite(s.id), onClick = { playFrom(s, lib.imported) }, onToggleFav = { toggle(s) }, trailing = {
                         IconButton(onClick = { c.library.update { it.removeImported(s.id) } }) {
                             Icon(Icons.Outlined.Delete, stringResource(R.string.import_remove), tint = Rs.colors.muted)
                         }
@@ -155,7 +155,7 @@ fun RadioScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenMe: () -> Unit)
                         )
                     }
                     items(st.stations, key = { it.id }) { s ->
-                        StationRow(c, s, lib.isFavorite(s.id), onClick = { play(s) }, onToggleFav = { toggle(s) })
+                        StationRow(c, s, lib.isFavorite(s.id), onClick = { playFrom(s, st.stations) }, onToggleFav = { toggle(s) })
                         HorizontalDivider(color = Rs.colors.line)
                     }
                     item { EmptyNote(stringResource(R.string.radio_source_note)) }

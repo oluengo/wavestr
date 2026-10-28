@@ -26,6 +26,8 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.Headphones
 import androidx.compose.material.icons.outlined.Pause
+import androidx.compose.material.icons.outlined.SkipNext
+import androidx.compose.material.icons.outlined.SkipPrevious
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Videocam
 import androidx.compose.material3.AssistChip
@@ -168,7 +170,7 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
 
         Row(
             Modifier.fillMaxWidth().padding(vertical = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterHorizontally),
+            horizontalArrangement = Arrangement.spacedBy(if (np.station != null && c.player.skipList().size > 1) 10.dp else 24.dp, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             val station = np.station
@@ -181,6 +183,11 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
                     colors = IconButtonDefaults.iconButtonColors(containerColor = Rs.colors.zapSoft, contentColor = Rs.colors.zap),
                 ) { Icon(Icons.Filled.Bolt, stringResource(R.string.zap_button)) }
             } else Box(Modifier.size(48.dp))
+            // Anterior / siguiente emisora (favoritos o la lista de la que salió).
+            val canSkip = station != null && c.player.skipList().size > 1
+            if (canSkip) IconButton(onClick = { c.player.skip(-1) }, modifier = Modifier.size(44.dp)) {
+                Icon(Icons.Outlined.SkipPrevious, stringResource(R.string.skip_previous), Modifier.size(30.dp))
+            }
             FilledIconButton(
                 onClick = c.player::togglePlay,
                 modifier = Modifier.size(64.dp),
@@ -194,6 +201,9 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
                     stringResource(if (st.isPlaying) R.string.pause else R.string.play),
                     Modifier.size(30.dp),
                 )
+            }
+            if (canSkip) IconButton(onClick = { c.player.skip(+1) }, modifier = Modifier.size(44.dp)) {
+                Icon(Icons.Outlined.SkipNext, stringResource(R.string.skip_next), Modifier.size(30.dp))
             }
             IconButton(onClick = {
                 when {
@@ -266,7 +276,7 @@ private fun SimilarStations(c: AppContainer, current: io.github.oluengo.wavestr.
         similar.forEach { s ->
             io.github.oluengo.wavestr.ui.common.StationRow(
                 c, s, isFav = lib.isFavorite(s.id),
-                onClick = { c.player.playStation(s) },
+                onClick = { c.player.playStation(s, from = listOf(current) + similar) },
                 onToggleFav = { c.library.toggleStation(s) },
             )
         }

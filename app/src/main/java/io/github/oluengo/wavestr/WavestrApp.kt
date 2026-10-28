@@ -72,7 +72,7 @@ class AppContainer(app: Application) {
         appScope.launch { settings.flow.collect { io.github.oluengo.wavestr.player.BufferPolicy.mode = it.bufferMode } }
     }
 
-    val player = PlayerConnection(app, settings, HlsInspector(http), appScope, onStationPlay = radio::countClick)
+    val player = PlayerConnection(app, settings, HlsInspector(http), appScope, onStationPlay = radio::countClick, favorites = { library.library.value.favorites })
     val liveStatus = io.github.oluengo.wavestr.nostr.LiveStatus(nostr)
     val widgets = io.github.oluengo.wavestr.widget.WidgetSync(app, this)
 }
