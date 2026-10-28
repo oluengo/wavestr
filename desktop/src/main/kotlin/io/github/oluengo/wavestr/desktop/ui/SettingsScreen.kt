@@ -18,6 +18,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.ExpandLess
+import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -208,11 +210,13 @@ private fun RelaysSection(c: DesktopContainer, pubkey: String?, appRelays: List<
         if (r !in mine) save(mine + r)
         input = ""; invalid = false
     }
+    var openYours by remember { mutableStateOf(false) }
+    var openApp by remember { mutableStateOf(false) }
     Group {
         if (pubkey != null) {
-            Text(t("relays_yours"), fontWeight = FontWeight.SemiBold)
+            CollapsibleHeader(t("relays_yours"), nip65?.size, openYours) { openYours = !openYours }
             val list = nip65
-            when {
+            if (openYours) when {
                 list == null -> Text("…", color = Rs.colors.muted)
                 list.isEmpty() -> Text(t("relays_yours_none"), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
                 else -> list.forEach { (url, mark) ->
@@ -222,10 +226,11 @@ private fun RelaysSection(c: DesktopContainer, pubkey: String?, appRelays: List<
                     }
                 }
             }
-            Text(t("relays_yours_note"), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 4.dp))
+            if (openYours) Text(t("relays_yours_note"), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 4.dp))
             HorizontalDivider(color = Rs.colors.line, modifier = Modifier.padding(vertical = 10.dp))
         }
-        Text(t("relays_app"), fontWeight = FontWeight.SemiBold)
+        CollapsibleHeader(t("relays_app"), mine.size, openApp) { openApp = !openApp }
+        if (!openApp) return@Group
         Text(t("relays_app_sub"), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
         mine.forEach { url ->
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -321,5 +326,18 @@ private fun AboutSection() {
                 Text(addr, fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodySmall, color = Rs.colors.muted)
             }
         }
+    }
+}
+
+/** Cabecera plegable: título, número de relays y flecha. */
+@Composable
+private fun CollapsibleHeader(title: String, count: Int?, open: Boolean, onToggle: () -> Unit) {
+    Row(Modifier.fillMaxWidth().clickable(onClick = onToggle).padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(title, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
+        if (count != null) Text(count.toString(), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(end = 6.dp))
+        Icon(
+            if (open) androidx.compose.material.icons.Icons.Outlined.ExpandLess else androidx.compose.material.icons.Icons.Outlined.ExpandMore,
+            t(if (open) "collapse" else "expand"), tint = Rs.colors.muted,
+        )
     }
 }

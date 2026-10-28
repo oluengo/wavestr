@@ -2,6 +2,7 @@
 
 ## 0.9.0
 
+- **Relays:** las listas de Ajustes → Relays se pliegan y despliegan (cerradas por defecto, con el número de relays a la vista).
 - **Emisora anterior / siguiente** (móvil y ordenador): si la radio está en favoritos, salta entre los favoritos de su carpeta (o todos); si no, por la lista de la que la elegiste (populares, cerca de ti, estilo, búsqueda, parecidas). En Android también desde la notificación, la pantalla de bloqueo, los auriculares y el coche; en el ordenador, desde la bandeja.
 - **Margen contra cortes** (Ajustes → Reproducción, móvil y ordenador): Auto, Directo, 10, 20 o 30 s. Con más margen hay menos cortes con mala cobertura, a cambio de ir unos segundos por detrás del directo; la radio muestra «Cargando 12/20 s» mientras lo llena. Auto: directo con wifi y 20 s con datos móviles. Por defecto, 10 s.
 - **Favoritos:** los streamers de Nostr indican si están emitiendo («EN DIRECTO») o no («Sin emitir»), en el móvil y en el ordenador. En el widget de favoritos, un punto rojo marca los que emiten. Se comprueba al abrir Favoritos y cada minuto.

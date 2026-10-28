@@ -355,4 +355,6 @@
     <string name="buffer_loading">Carregant %1$d/%2$d s</string>
     <string name="skip_previous">Emissora anterior</string>
     <string name="skip_next">Emissora següent</string>
+    <string name="expand">Mostra</string>
+    <string name="collapse">Amaga</string>
 </resources>
