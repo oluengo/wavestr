@@ -195,7 +195,7 @@ private suspend fun smokeTest(c: DesktopContainer, window: java.awt.Window) {
     c.player.state.value.let { report(if (it.isPlaying) "notice" else "error", "Escritorio cambio: sonando=${it.isPlaying} canción=${it.icyTitle}") }
     // Radios con la ventana ancha: muchas carátulas a la vez (directorio, webs, SVG, ICO…).
     c.player.stop()
-    javax.swing.SwingUtilities.invokeAndWait { window.setSize(1280, 900) }
+    window.setSize(1280, 900)
     io.github.oluengo.wavestr.desktop.ui.SmokeHooks.tab.value = io.github.oluengo.wavestr.desktop.ui.Tab.RADIO
     report("notice", "Escritorio paso: Radios")
     kotlinx.coroutines.delay(25_000)
