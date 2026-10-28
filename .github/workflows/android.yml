@@ -169,6 +169,32 @@ jobs:
             "Se instala como otra app, «Wavestr Beta», con sus propios datos: no toca la Wavestr normal. Puede tener fallos. Los instaladores de Linux y Windows se añaden unos minutos después del APK." > "$RUNNER_TEMP/beta.md"
           gh release create wavestr-beta dist/*.apk --prerelease --target "$GITHUB_SHA" --title "Wavestr Beta ${{ steps.v.outputs.version }}" --notes-file "$RUNNER_TEMP/beta.md"
 
+  # Prueba de arranque del APK en un emulador: instala, abre y comprueba que no se cierra.
+  android-smoke:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v7
+        with:
+          pattern: "*-android"
+          merge-multiple: true
+          path: dist
+      - name: Activar KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+      - name: Arrancar en el emulador (Android 14)
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: ./scripts/android_smoke.sh
+
   # Escritorio: Compose Desktop + VLC. Cada sistema compila su instalador.
   desktop:
     name: Escritorio (${{ matrix.os }})
