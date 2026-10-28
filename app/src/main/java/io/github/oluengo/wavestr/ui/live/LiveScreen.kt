@@ -58,7 +58,11 @@ fun LiveScreen(c: AppContainer, onPlay: (NowPlaying) -> Unit, onSignIn: () -> Un
     val vm: LiveViewModel = viewModel(factory = viewModelFactory { initializer { LiveViewModel(c) } })
     val st by vm.state.collectAsStateWithLifecycle()
     val untitled = stringResource(R.string.untitled_stream)
-    val play: (LiveViewModel.Item) -> Unit = { onPlay(it.toNowPlaying(untitled)) }
+    val play: (LiveViewModel.Item) -> Unit = { item ->
+        // La lista entera, para anterior/siguiente stream.
+        c.player.setStreamContext(st.items.filter { it.stream.streamingUrl != null }.map { it.toNowPlaying(untitled) })
+        onPlay(item.toNowPlaying(untitled))
+    }
 
     Column(Modifier.fillMaxSize()) {
         ScreenHeader(

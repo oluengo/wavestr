@@ -66,6 +66,21 @@ class DesktopContainer {
 }
 
 fun main() {
+    // Linux: el WM_CLASS de la ventana tiene que coincidir con el .desktop instalado para que el panel
+    // (GNOME, KDE…) muestre el icono de Wavestr y no el genérico de Java.
+    System.getProperty("wavestr.wmclass")?.let { wm ->
+        runCatching {
+            val tk = java.awt.Toolkit.getDefaultToolkit()
+            tk.javaClass.getDeclaredField("awtAppClassName").apply { isAccessible = true }.set(tk, wm)
+        }
+    }
+    // Si algo revienta, queda escrito en la carpeta de datos (crash.log) para poder verlo.
+    val previous = Thread.getDefaultUncaughtExceptionHandler()
+    Thread.setDefaultUncaughtExceptionHandler { t, e ->
+        runCatching { File(AppInfo.dataDir, "crash.log").appendText("${java.time.Instant.now()} [${t.name}] ${e.stackTraceToString()}\n") }
+        if (System.getProperty("wavestr.smoke") != null) println("\n::error::Escritorio: excepción en ${t.name}%0A" + e.stackTraceToString().lines().take(18).joinToString("%0A"))
+        previous?.uncaughtException(t, e)
+    }
     val c = DesktopContainer()
     I18n.load(c.settings.current.language)
     application { WavestrApplication(c) }
@@ -89,7 +104,9 @@ private fun ApplicationScope.WavestrApplication(c: DesktopContainer) {
         exitApplication()
     }
 
-    Tray(
+    // Bandeja del sistema solo si el escritorio la tiene (GNOME, por ejemplo, no sin extensión).
+    val trayOk = remember { runCatching { java.awt.SystemTray.isSupported() }.getOrDefault(false) }
+    if (trayOk) Tray(
         icon = icon,
         tooltip = AppInfo.name,
         onAction = { visible = true },
@@ -97,7 +114,7 @@ private fun ApplicationScope.WavestrApplication(c: DesktopContainer) {
             Item(t("desk_tray_show"), onClick = { visible = true })
             if (ps.nowPlaying != null) {
                 Item(if (ps.isPlaying) t("pause") else t("play"), onClick = { c.player.togglePlay() })
-                if (ps.nowPlaying?.station != null && c.player.skipList().size > 1) {
+                if (c.player.canSkip()) {
                     Item(t("skip_previous"), onClick = { c.player.skip(-1) })
                     Item(t("skip_next"), onClick = { c.player.skip(+1) })
                 }
@@ -111,7 +128,7 @@ private fun ApplicationScope.WavestrApplication(c: DesktopContainer) {
     Window(
         onCloseRequest = {
             val playing = c.player.state.value.nowPlaying != null
-            if (c.settings.current.keepInTray && playing) visible = false else quit()
+            if (trayOk && c.settings.current.keepInTray && playing) visible = false else quit()
         },
         visible = visible,
         state = state,
@@ -128,8 +145,18 @@ private fun ApplicationScope.WavestrApplication(c: DesktopContainer) {
                     c.settings.setWindow(WindowBox(x, y, size.width.value.toInt(), size.height.value.toInt()))
                 }
         }
-        WavestrDesktop(c)
-        if (System.getProperty("wavestr.smoke") != null) LaunchedEffect(Unit) { smokeTest(c, window); quit() }
+        if (System.getProperty("wavestr.smoke") != null) {
+            // Prueba: cualquier error al pintar queda en el informe con su traza.
+            androidx.compose.runtime.CompositionLocalProvider(
+                androidx.compose.ui.window.LocalWindowExceptionHandlerFactory provides androidx.compose.ui.window.WindowExceptionHandlerFactory {
+                    androidx.compose.ui.window.WindowExceptionHandler { e ->
+                        println("\n::error::Escritorio: excepción al pintar%0A" + e.stackTraceToString().lines().take(18).joinToString("%0A"))
+                        quit()
+                    }
+                },
+            ) { WavestrDesktop(c) }
+            LaunchedEffect(Unit) { smokeTest(c, window); quit() }
+        } else WavestrDesktop(c)
     }
 }
 
@@ -166,6 +193,13 @@ private suspend fun smokeTest(c: DesktopContainer, window: java.awt.Window) {
     c.player.play(NowPlaying("smoke-radio2", "http://ice1.somafm.com/dronezone-128-mp3", "SomaFM 2", "", null, null, isLive = false))
     kotlinx.coroutines.delay(8_000)
     c.player.state.value.let { report(if (it.isPlaying) "notice" else "error", "Escritorio cambio: sonando=${it.isPlaying} canción=${it.icyTitle}") }
+    // Radios con la ventana ancha: muchas carátulas a la vez (directorio, webs, SVG, ICO…).
+    c.player.stop()
+    javax.swing.SwingUtilities.invokeAndWait { window.setSize(1280, 900) }
+    io.github.oluengo.wavestr.desktop.ui.SmokeHooks.tab.value = io.github.oluengo.wavestr.desktop.ui.Tab.RADIO
+    report("notice", "Escritorio paso: Radios")
+    kotlinx.coroutines.delay(25_000)
+    report("notice", "Escritorio Radios: sin errores tras 25 s · carátulas buscadas en la web: ${c.artwork.searches}")
     runCatching {
         val r = window.bounds
         val img = java.awt.Robot().createScreenCapture(r)

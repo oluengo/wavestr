@@ -170,7 +170,7 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
 
         Row(
             Modifier.fillMaxWidth().padding(vertical = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(if (np.station != null && c.player.skipList().size > 1) 10.dp else 24.dp, Alignment.CenterHorizontally),
+            horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             val station = np.station
@@ -184,8 +184,9 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
                 ) { Icon(Icons.Filled.Bolt, stringResource(R.string.zap_button)) }
             } else Box(Modifier.size(48.dp))
             // Anterior / siguiente emisora (favoritos o la lista de la que salió).
-            val canSkip = station != null && c.player.skipList().size > 1
-            if (canSkip) IconButton(onClick = { c.player.skip(-1) }, modifier = Modifier.size(44.dp)) {
+            // Anterior / siguiente: siempre visibles; desactivados si no hay lista por la que moverse.
+            val canSkip = c.player.canSkip()
+            IconButton(onClick = { c.player.skip(-1) }, enabled = canSkip, modifier = Modifier.size(44.dp)) {
                 Icon(Icons.Outlined.SkipPrevious, stringResource(R.string.skip_previous), Modifier.size(30.dp))
             }
             FilledIconButton(
@@ -202,7 +203,7 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
                     Modifier.size(30.dp),
                 )
             }
-            if (canSkip) IconButton(onClick = { c.player.skip(+1) }, modifier = Modifier.size(44.dp)) {
+            IconButton(onClick = { c.player.skip(+1) }, enabled = canSkip, modifier = Modifier.size(44.dp)) {
                 Icon(Icons.Outlined.SkipNext, stringResource(R.string.skip_next), Modifier.size(30.dp))
             }
             IconButton(onClick = {

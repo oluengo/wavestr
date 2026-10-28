@@ -21,6 +21,9 @@ class ArtworkResolver(private val prefs: KeyValueStore, http: OkHttpClient) {
     private val memory = ConcurrentHashMap<String, String>()
     private val inFlight = ConcurrentHashMap<String, CompletableDeferred<String?>>()
     private val parallel = Semaphore(4)
+    /** Búsquedas en la web hechas (para la prueba de arranque). */
+    @Volatile var searches = 0
+        private set
 
     /** Lo que ya sabemos sin red: url, "" (no hay) o null (no se ha buscado). */
     fun cached(st: Station): String? = memory[st.id] ?: prefs.get(st.id)?.also { memory[st.id] = it }
@@ -45,6 +48,7 @@ class ArtworkResolver(private val prefs: KeyValueStore, http: OkHttpClient) {
     }
 
     private fun search(st: Station, skip: Set<String>): String? {
+        searches++
         val page = SiteIcons.pageFor(st)
         val fromSite = page?.let { p -> runCatching { SiteIcons.fromHtml(fetchHtml(p), p) }.getOrDefault(emptyList()) }.orEmpty()
         val candidates = buildList {

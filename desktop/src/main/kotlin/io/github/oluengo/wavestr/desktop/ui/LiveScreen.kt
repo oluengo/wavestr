@@ -105,6 +105,7 @@ fun LiveScreen(c: DesktopContainer) {
                 }
                 else -> items(items, key = { it.stream.address }) { li ->
                     LiveCard(li, selected = ps.nowPlaying?.id == li.stream.address) {
+                        c.player.setStreamContext(items.filter { it.stream.streamingUrl != null }.map { liveNowPlaying(it.stream, it.host) })
                         c.player.play(liveNowPlaying(li.stream, li.host)); nav.openPlayer()
                     }
                 }

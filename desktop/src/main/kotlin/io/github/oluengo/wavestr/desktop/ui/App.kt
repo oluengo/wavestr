@@ -69,6 +69,11 @@ enum class Tab(val label: String, val icon: ImageVector) {
     SETTINGS("tab_settings", Icons.Outlined.Settings),
 }
 
+/** Pestaña actual (también la usa la prueba de arranque de CI para abrir Radios). */
+object SmokeHooks {
+    val tab = mutableStateOf(Tab.LIVE)
+}
+
 /** Acciones de navegación que necesitan las pantallas. */
 class Nav(val openPlayer: () -> Unit, val openAccount: () -> Unit, val me: Pair<String?, Profile?>)
 
@@ -96,7 +101,7 @@ fun WavestrDesktop(c: DesktopContainer) {
         Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             BoxWithConstraints(Modifier.fillMaxSize()) {
                 val layout = when { maxWidth >= 1000.dp -> Layout.EXPANDED; maxWidth >= 600.dp -> Layout.MEDIUM; else -> Layout.COMPACT }
-                var tab by remember { mutableStateOf(Tab.LIVE) }
+                var tab by SmokeHooks.tab
                 var playerOpen by remember { mutableStateOf(false) }
                 if (layout == Layout.EXPANDED && playerOpen) LaunchedEffect(Unit) { playerOpen = false }
                 val nav = Nav(

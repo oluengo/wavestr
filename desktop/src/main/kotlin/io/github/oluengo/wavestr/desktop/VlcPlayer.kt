@@ -77,10 +77,30 @@ class VlcPlayer(
         return io.github.oluengo.wavestr.radio.StationSkip.list(cur, favorites(), skipContext)
     }
 
-    /** +1 siguiente, -1 anterior. */
+    /** Streams de la lista desde la que se eligió uno. */
+    private var streamContext: List<NowPlaying> = emptyList()
+    fun setStreamContext(list: List<NowPlaying>) { streamContext = list }
+
+    private fun streamList(): List<NowPlaying> {
+        val np = _state.value.nowPlaying ?: return emptyList()
+        if (np.isRadio) return emptyList()
+        return streamContext.takeIf { l -> l.size > 1 && l.any { it.id == np.id } } ?: emptyList()
+    }
+
+    fun canSkip(): Boolean = skipList().size > 1 || streamList().size > 1
+
+    /** +1 siguiente, -1 anterior: radio (favoritos o lista de origen) o stream (lista de Streams). */
     fun skip(dir: Int) {
-        val cur = _state.value.nowPlaying?.station ?: return
-        io.github.oluengo.wavestr.radio.StationSkip.neighbor(cur, skipList(), dir)?.let { playStation(it) }
+        val np = _state.value.nowPlaying ?: return
+        val st = np.station
+        if (st != null) {
+            io.github.oluengo.wavestr.radio.StationSkip.neighbor(st, skipList(), dir)?.let { playStation(it) }
+            return
+        }
+        val list = streamList()
+        if (list.size < 2) return
+        val i = list.indexOfFirst { it.id == np.id }.coerceAtLeast(0)
+        play(list[((i + dir) % list.size + list.size) % list.size])
     }
 
     private val _state = MutableStateFlow(PlayerState())

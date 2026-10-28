@@ -147,16 +147,15 @@ fun PlayerPanel(c: DesktopContainer, onClose: (() -> Unit)?) {
                     host != null -> c.library.toggleStreamer(host, np.subtitle, np.artworkUrl)
                 }
             }
-            val canSkip = station != null && c.player.skipList().size > 1
-            if (canSkip) IconButton(onClick = { c.player.skip(-1) }) { Icon(Icons.Outlined.SkipPrevious, t("skip_previous"), Modifier.size(28.dp)) }
+            val canSkip = c.player.canSkip()
+            IconButton(onClick = { c.player.skip(-1) }, enabled = canSkip) { Icon(Icons.Outlined.SkipPrevious, t("skip_previous"), Modifier.size(28.dp)) }
             FilledIconButton(
                 onClick = c.player::togglePlay, modifier = Modifier.size(60.dp),
                 colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.onSurface, contentColor = MaterialTheme.colorScheme.surface),
             ) {
                 Icon(if (st.isPlaying) Icons.Outlined.Pause else Icons.Outlined.PlayArrow, t(if (st.isPlaying) "pause" else "play"), Modifier.size(28.dp))
             }
-            if (canSkip) IconButton(onClick = { c.player.skip(+1) }) { Icon(Icons.Outlined.SkipNext, t("skip_next"), Modifier.size(28.dp)) }
-            else Box(Modifier.size(48.dp))
+            IconButton(onClick = { c.player.skip(+1) }, enabled = canSkip) { Icon(Icons.Outlined.SkipNext, t("skip_next"), Modifier.size(28.dp)) }
         }
         Row(Modifier.fillMaxWidth().padding(horizontal = 24.dp), verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.AutoMirrored.Outlined.VolumeUp, null, tint = Rs.colors.muted, modifier = Modifier.size(18.dp))

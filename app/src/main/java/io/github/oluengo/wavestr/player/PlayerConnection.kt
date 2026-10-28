@@ -149,6 +149,7 @@ class PlayerConnection(
             }
             val media = MediaItem.Builder()
                 .setMediaId(item.id)
+                .setRequestMetadata(MediaItem.RequestMetadata.Builder().setMediaUri(Uri.parse(item.url)).build())
                 .setUri(item.url)
                 .apply {
                     if (item.url.contains(".m3u8", true)) {
@@ -179,16 +180,38 @@ class PlayerConnection(
     }
 
     /** Reproduce una emisora con la variante elegida o, en Auto, según la red. */
+    /** Streams de la lista desde la que se eligió uno (Streams: seguidos o global). */
+    private var streamContext: List<NowPlaying> = emptyList()
+
+    fun setStreamContext(list: List<NowPlaying>) { streamContext = list }
+
     /** Emisoras entre las que saltar desde la que suena (vacío si no hay). */
     fun skipList(): List<Station> {
         val cur = _state.value.nowPlaying?.station ?: return emptyList()
         return io.github.oluengo.wavestr.radio.StationSkip.list(cur, favorites(), skipContext)
     }
 
-    /** +1 siguiente, -1 anterior. */
+    private fun streamList(): List<NowPlaying> {
+        val np = _state.value.nowPlaying ?: return emptyList()
+        if (np.isRadio) return emptyList()
+        return streamContext.takeIf { l -> l.size > 1 && l.any { it.id == np.id } } ?: emptyList()
+    }
+
+    /** ¿Hay anterior / siguiente para lo que suena (radio o stream)? */
+    fun canSkip(): Boolean = skipList().size > 1 || streamList().size > 1
+
+    /** +1 siguiente, -1 anterior: radio (favoritos o lista de origen) o stream (lista de Streams). */
     fun skip(dir: Int) {
-        val cur = _state.value.nowPlaying?.station ?: return
-        io.github.oluengo.wavestr.radio.StationSkip.neighbor(cur, skipList(), dir)?.let { playStation(it) }
+        val np = _state.value.nowPlaying ?: return
+        val st = np.station
+        if (st != null) {
+            io.github.oluengo.wavestr.radio.StationSkip.neighbor(st, skipList(), dir)?.let { playStation(it) }
+            return
+        }
+        val list = streamList()
+        if (list.size < 2) return
+        val i = list.indexOfFirst { it.id == np.id }.coerceAtLeast(0)
+        play(list[((i + dir) % list.size + list.size) % list.size])
     }
 
     /** [from]: la lista en la que estaba (populares, país, búsqueda…), para anterior/siguiente. */
@@ -247,7 +270,7 @@ class PlayerConnection(
     init {
         // Notificación, pantalla de bloqueo, auriculares y coche: anterior / siguiente emisora.
         SkipBridge.handler = { dir -> scope.launch { skip(dir) } }
-        SkipBridge.available = { skipList().size > 1 }
+        SkipBridge.available = { canSkip() }
     }
 
     private val lastPrefs = context.getSharedPreferences("player", Context.MODE_PRIVATE)
@@ -310,13 +333,21 @@ class PlayerConnection(
                 isPlaying = c.isPlaying,
                 isBuffering = c.playbackState == Player.STATE_BUFFERING,
                 nowPlaying = it.nowPlaying ?: c.currentMediaItem?.let { m ->
-                    m.localConfiguration?.uri?.toString()?.let { url ->
+                    // Al reabrir la app con algo sonando: si es la última emisora, se recupera entera
+                    // (calidad, carátula, anterior/siguiente).
+                    val last = lastStation()?.takeIf { s -> s.id == m.mediaId }
+                    val url = (m.localConfiguration?.uri ?: m.requestMetadata.mediaUri)?.toString()
+                    if (last != null) NowPlaying(
+                        id = last.id, url = url ?: last.best.url, title = last.name,
+                        subtitle = m.mediaMetadata.artist?.toString().orEmpty(), artworkUrl = last.favicon,
+                        hostPubkey = null, hasVideo = false, isLive = false, station = last,
+                    ) else url?.let { u ->
                         NowPlaying(
-                            id = m.mediaId, url = url,
+                            id = m.mediaId, url = u,
                             title = m.mediaMetadata.title?.toString().orEmpty(),
                             subtitle = m.mediaMetadata.artist?.toString().orEmpty(),
                             artworkUrl = m.mediaMetadata.artworkUri?.toString(),
-                            hostPubkey = null,
+                            hostPubkey = m.mediaId.split(':').getOrNull(1)?.takeIf { pk -> pk.length == 64 },
                         )
                     }
                 },

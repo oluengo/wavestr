@@ -51,6 +51,11 @@ tasks.named("processResources") { dependsOn(syncI18n, buildInfo) }
 compose.desktop {
     application {
         mainClass = "io.github.oluengo.wavestr.desktop.MainKt"
+        // Linux: WM_CLASS = nombre del .desktop que instala jpackage («paquete-Lanzador»), para el icono del panel.
+        jvmArgs += listOf(
+            "--add-opens=java.desktop/sun.awt.X11=ALL-UNNAMED",
+            "-Dwavestr.wmclass=" + (if (beta) "wavestr-beta-Wavestr-Beta" else "wavestr-Wavestr"),
+        )
         // Solo para la prueba de arranque en CI (WAVESTR_SMOKE=1 ./gradlew :desktop:run).
         if (System.getenv("WAVESTR_SMOKE") != null) jvmArgs += listOf("-Dwavestr.smoke=" + System.getenv("WAVESTR_SMOKE"), "-XX:ErrorFile=/tmp/wavestr_hs_err.log")
         System.getenv("WAVESTR_HLS_DEMUX")?.let { jvmArgs += "-Dwavestr.hlsdemux=$it" }

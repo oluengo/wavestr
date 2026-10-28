@@ -93,7 +93,7 @@ fun initials(name: String): String =
 fun Artwork(url: String?, key: String, label: String?, modifier: Modifier, corner: Dp = 12.dp) {
     var failed by remember(url) { mutableStateOf(false) }
     Box(modifier.clip(RoundedCornerShape(corner)).background(keyGradient(key)), contentAlignment = Alignment.Center) {
-        if (url != null && !failed) {
+        if (!url.isNullOrBlank() && !failed) {
             AsyncImage(model = url, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize(), onError = { failed = true })
         } else if (label != null) {
             Text(initials(label), color = Color.White, fontWeight = FontWeight.Bold)
@@ -120,11 +120,11 @@ fun StationArtwork(c: DesktopContainer, st: Station, modifier: Modifier, corner:
     LaunchedEffect(st.id, url) {
         if (url == null && !searched) {
             searched = true
-            url = c.artwork.resolve(st, failed) ?: st.favicon?.takeIf { it !in failed }
+            url = runCatching { c.artwork.resolve(st, failed) }.getOrNull() ?: st.favicon?.takeIf { it.isNotBlank() && it !in failed }
         }
     }
     Box(modifier.clip(RoundedCornerShape(corner)).background(keyGradient(st.id)), contentAlignment = Alignment.Center) {
-        val u = url
+        val u = url?.takeIf { it.isNotBlank() }
         if (u != null) {
             AsyncImage(
                 model = u, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.matchParentSize(),
