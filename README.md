@@ -3,7 +3,7 @@
 Radio online y streams de Nostr en una sola app, para Android, Linux y Windows.
 *Online radio and Nostr live streams in one app for Android, Linux and Windows. Català · Español · English.*
 
-> Estado: **beta pública** ([Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta)). Aún sin versión estable.
+> Estado: **versión 0.9.0** ([Releases](https://github.com/oluengo/wavestr/releases)) y **beta** ([Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta)) con lo último.
 
 ## Instalar la beta
 
@@ -70,7 +70,7 @@ python3 scripts/check_strings.py        # comprueba las traducciones
 GitHub Actions ([`android.yml`](.github/workflows/android.yml)):
 
 - **Push a `main`:** tests, traducciones, APK e instaladores de escritorio en «Artifacts», y una prueba de arranque del escritorio (xvfb + VLC: radio y vídeo HLS).
-- **Etiqueta `v*`** (igual que `wavestrVersion` en `app/build.gradle.kts`): Release con el APK firmado y las notas de [CHANGELOG.md](CHANGELOG.md). De ahí lo recogen Obtainium y Zapstore.
+- **Versión normal:** en GitHub, Actions → Build → *Run workflow* (rama `main`) → marcar «Publicar versión». Crea la etiqueta `vX.Y.Z` (la de `wavestrVersion`) y la Release con el APK firmado, los instaladores de Linux y Windows y las notas de [CHANGELOG.md](CHANGELOG.md). De ahí lo recogen Obtainium y Zapstore. También sirve empujar una etiqueta `v*`.
 - **Versión de pruebas (beta):** cada push a la rama `beta` publica la pre-release **Wavestr Beta** (`X.Y.Z-beta.N`). Se instala como otra app (`io.github.oluengo.wavestr.beta`), junto a la normal y con sus propios datos. En Obtainium se añade aparte activando «incluir pre-releases». Cuando la beta está bien, se pasa a `main` y se publica la versión normal.
 
 Firma: secrets `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` y `ANDROID_KEY_PASSWORD` (mismos nombres que en Usus; la clave es propia del proyecto; su alias es `radiostr`, del nombre anterior, y no hace falta cambiarlo). Sin ellos se genera un APK de depuración y no se publica nada.
