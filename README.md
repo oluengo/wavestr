@@ -3,7 +3,7 @@
 Radio online y streams de Nostr en una sola app, para Android, Linux y Windows.
 *Online radio and Nostr live streams in one app for Android, Linux and Windows. Català · Español · English.*
 
-> Estado: **versión 0.9.0** ([Releases](https://github.com/oluengo/wavestr/releases)) y **beta** ([Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta)) con lo último.
+> Estado: **beta** ([Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta)) con lo último.
 
 ## Instalar la beta
 
