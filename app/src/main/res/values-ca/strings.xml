@@ -257,7 +257,6 @@
     <string name="zap_err_timeout">La cartera no ha respost a temps. Comprova a la cartera si s’ha pagat abans de tornar-ho a provar.</string>
     <string name="live_chat_title">Xat i zaps</string>
     <string name="live_chat_empty">Encara no hi ha missatges.</string>
-    <string name="live_chat_readonly">Escriure al xat arribarà en una propera versió.</string>
 
     <!-- Favoritos en Nostr -->
     <string name="fav_sync_title">Preferits a Nostr</string>
@@ -357,4 +356,22 @@
     <string name="skip_next">Emissora següent</string>
     <string name="expand">Mostra</string>
     <string name="collapse">Amaga</string>
+
+    <!-- Ajustes: índice -->
+    <string name="settings_appearance_lang">Aparença i idioma</string>
+    <string name="settings_data">Preferits i còpies</string>
+    <string name="sum_buffer">Marge: %1$s</string>
+    <string name="sum_wallet">%1$s/%2$s sats aquest mes</string>
+    <string name="sum_backup">Exporta i importa els preferits</string>
+    <plurals name="sum_relays">
+        <item quantity="one">%d relay</item>
+        <item quantity="other">%d relays</item>
+    </plurals>
+
+    <!-- Chat -->
+    <string name="chat_hint">Escriu al xat</string>
+    <string name="chat_send">Envia</string>
+    <string name="chat_needs_amber">Inicia sessió amb Amber per escriure al xat.</string>
+    <string name="chat_failed">No s\'ha pogut enviar el missatge. Revisa la connexió i torna-ho a provar.</string>
+    <string name="auto_recent">Recents</string>
 </resources>

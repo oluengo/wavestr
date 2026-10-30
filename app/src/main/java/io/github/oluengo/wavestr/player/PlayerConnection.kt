@@ -147,25 +147,7 @@ class PlayerConnection(
                     selectedHeight = null, currentHeight = null,
                 )
             }
-            val media = MediaItem.Builder()
-                .setMediaId(item.id)
-                .setRequestMetadata(MediaItem.RequestMetadata.Builder().setMediaUri(Uri.parse(item.url)).build())
-                .setUri(item.url)
-                .apply {
-                    if (item.url.contains(".m3u8", true)) {
-                        setMimeType(MimeTypes.APPLICATION_M3U8)
-                        // Margen en HLS: ir tantos segundos por detrás del directo.
-                        if (margin > 0 && item.isLive) setLiveConfiguration(MediaItem.LiveConfiguration.Builder().setTargetOffsetMs(margin).build())
-                    }
-                }
-                .setMediaMetadata(
-                    MediaMetadata.Builder()
-                        .setTitle(item.title)
-                        .setArtist(item.subtitle)
-                        .apply { item.artworkUrl?.let { setArtworkUri(Uri.parse(it)) } }
-                        .build()
-                )
-                .build()
+            val media = mediaItemFor(item, margin)
             c.trackSelectionParameters = c.trackSelectionParameters.buildUpon()
                 .clearOverridesOfType(C.TRACK_TYPE_VIDEO)
                 .build()
@@ -177,6 +159,55 @@ class PlayerConnection(
             val layout = hls.audioLayout(item.url)
             _state.update { if (it.nowPlaying?.id == item.id) it.copy(audioLayout = layout) else it }
         }
+    }
+
+    /** El MediaItem que se entrega al reproductor (también desde Android Auto). */
+    fun mediaItemFor(item: NowPlaying, margin: Long = BufferPolicy.marginMs()): MediaItem = MediaItem.Builder()
+        .setMediaId(item.id)
+        .setRequestMetadata(MediaItem.RequestMetadata.Builder().setMediaUri(Uri.parse(item.url)).build())
+        .setUri(item.url)
+        .apply {
+            if (item.url.contains(".m3u8", true)) {
+                setMimeType(MimeTypes.APPLICATION_M3U8)
+                // Margen en HLS: ir tantos segundos por detrás del directo.
+                if (margin > 0 && item.isLive) setLiveConfiguration(MediaItem.LiveConfiguration.Builder().setTargetOffsetMs(margin).build())
+            }
+        }
+        .setMediaMetadata(
+            MediaMetadata.Builder()
+                .setTitle(item.title)
+                .setArtist(item.subtitle)
+                .setIsPlayable(true)
+                .setIsBrowsable(false)
+                .apply { item.artworkUrl?.let { setArtworkUri(Uri.parse(it)) } }
+                .build()
+        )
+        .build()
+
+    /** Lo que suena para una emisora (variante elegida o, en Auto, según la red). */
+    fun nowPlayingFor(st: Station, chosen: Int? = variantChoice[st.id]): NowPlaying {
+        val v = Stations.pick(st, chosen, isCellular())
+        return NowPlaying(
+            id = st.id, url = v.url, title = st.name,
+            subtitle = listOfNotNull(st.country, v.label).joinToString(" · "),
+            artworkUrl = st.favicon, hostPubkey = null, hasVideo = false, isLive = false,
+            station = st, variantIndex = chosen,
+        )
+    }
+
+    /**
+     * Android Auto pone a sonar el elemento directamente en el servicio: aquí solo se actualiza el estado
+     * de la app (lo que suena, última emisora, listas para anterior/siguiente), sin volver a cargarlo.
+     */
+    fun adopt(np: NowPlaying, stations: List<Station>? = null, streams: List<NowPlaying>? = null) {
+        if (stations != null) skipContext = stations
+        if (streams != null) streamContext = streams
+        np.station?.let { st ->
+            lastPrefs.edit().putString("last_station", io.github.oluengo.wavestr.data.Library.stationJson(st).toString()).apply()
+            onStationPlay(Stations.pick(st, np.variantIndex, isCellular()).uuid)
+        }
+        BufferPolicy.cellular = isCellular()
+        _state.update { it.copy(nowPlaying = np, error = false, icyTitle = null, audioLayout = Hls.AudioLayout.UNKNOWN, videoHeights = emptyList()) }
     }
 
     /** Reproduce una emisora con la variante elegida o, en Auto, según la red. */

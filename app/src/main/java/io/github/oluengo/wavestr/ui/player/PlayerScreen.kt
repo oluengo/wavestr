@@ -224,7 +224,7 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
             SleepTimerChip(c.player.sleep, isNostr = np.hostPubkey != null)
         }
 
-        if (liveAddress != null) LiveChat(activity)
+        if (liveAddress != null) LiveChat(activity, c)
         np.station?.let { SimilarStations(c, it) }
     }
 

@@ -15,6 +15,8 @@ La beta se instala como otra app, **Wavestr Beta**, junto a la normal y con sus 
 Comprueba que la huella del certificado coincide (también está en Ajustes → Acerca de):
 `06:23:37:6B:0C:75:09:50:D7:E5:F1:4E:ED:06:C3:B3:C4:86:8B:B2:64:8B:8F:34:34:76:E2:DE:90:70:0F:89`
 
+**Android Auto:** Wavestr aparece en el coche (Favoritos, Streams, Radios y Recientes; búsqueda por voz). Como no está en Google Play, Android Auto la oculta hasta que lo permitas una vez: abre la app Android Auto en el móvil → toca 10 veces «Versión» (al final) para activar el modo desarrollador → menú ⋮ → *Ajustes de desarrollador* → activa **Fuentes desconocidas**.
+
 ¿Algo no va? [Abre un aviso](https://github.com/oluengo/wavestr/issues/new?labels=bug) o usa Ajustes → Acerca de → Informar de un problema.
 
 ## Qué hace
@@ -43,9 +45,11 @@ Comprueba que la huella del certificado coincide (también está en Ajustes → 
 - **Emisora anterior / siguiente** (favoritos o la lista de origen), también desde la notificación, los auriculares y el coche.
 - **Margen contra cortes:** Auto, Directo, 10, 20 o 30 s.
 - **Temporizador de apagado:** 15 a 90 minutos con bajada de volumen al final, o al terminar el stream de Nostr.
+- **Android Auto:** Favoritos, Streams, Radios y Recientes en el coche, con búsqueda por voz y anterior/siguiente.
+- **Chat de los streams:** leer y escribir (con Amber).
 - **Escritorio (Linux y Windows):** en desarrollo, todavía sin descargas.
 
-**Próximamente:** escribir en el chat, Android Auto y la versión de escritorio. El orden está en el [plan técnico](docs/plan-tecnico.md).
+**Próximamente:** radiodespertador y la versión de escritorio. El orden está en el [plan técnico](docs/plan-tecnico.md).
 
 ## Demo de la interfaz
 

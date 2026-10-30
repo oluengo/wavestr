@@ -47,6 +47,8 @@ data class WidgetModel(
     val sleepAt: Long? = null,
     val favorites: List<FavTile> = emptyList(),
     val accent: Accent = Accent.VIOLET,
+    /** Hay anterior / siguiente para lo que suena. */
+    val canSkip: Boolean = false,
 )
 
 /**
@@ -115,6 +117,7 @@ class WidgetSync(private val app: Application, private val c: AppContainer) {
             idle = false, title = np.title, subtitle = np.subtitle, song = s.icy,
             isNostr = np.hostPubkey != null, isLive = np.isLive && np.station == null, playing = s.playing,
             art = artUrl?.let { load(it) }, sleepAt = sleepAt, favorites = favs, accent = s.accent,
+            canSkip = runCatching { c.player.canSkip() }.getOrDefault(false),
         )
     }
 

@@ -1,5 +1,12 @@
 # Cambios
 
+## 0.10.0
+
+- **Android Auto:** Wavestr aparece en el coche con Favoritos (y sus carpetas), Streams que están emitiendo, Radios (populares y cerca de ti) y la última escuchada; búsqueda por voz de emisoras y anterior/siguiente. Fuera de Google Play hay que activar «Fuentes desconocidas» en los ajustes de desarrollador de Android Auto (ver README).
+- **Chat de los streams:** ya se puede escribir (firmado con Amber).
+- **Widgets:** anterior/siguiente en la barra y en el reproductor.
+- **Ajustes reorganizados:** una pantalla principal con categorías (Cuenta, Zaps y cartera, Reproducción, Apariencia e idioma, Favoritos y copias, Relays, Acerca de) y un resumen de cada una.
+
 ## 0.9.0
 
 - **Anterior / siguiente** también para los streams de Nostr (por la lista de Streams) y al volver a abrir la app con una radio sonando. Los botones están siempre a la vista; se apagan cuando no hay a dónde ir.

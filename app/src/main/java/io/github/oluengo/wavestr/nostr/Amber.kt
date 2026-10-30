@@ -28,7 +28,7 @@ object Amber {
 
     /** Permisos que pediremos por adelantado para no molestar en cada zap. */
     private const val PERMISSIONS =
-        """[{"type":"sign_event","kind":9734},{"type":"sign_event","kind":30078},{"type":"nip44_encrypt"},{"type":"nip44_decrypt"}]"""
+        """[{"type":"sign_event","kind":9734},{"type":"sign_event","kind":30078},{"type":"sign_event","kind":1311},{"type":"nip44_encrypt"},{"type":"nip44_decrypt"}]"""
 
     fun loginIntent(): Intent = probe.apply {
         putExtra("type", "get_public_key")

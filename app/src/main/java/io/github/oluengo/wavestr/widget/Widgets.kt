@@ -146,6 +146,22 @@ private fun PlayButton(m: WidgetModel, size: Dp = 40.dp) {
     }
 }
 
+/** Anterior (-1) / siguiente (+1). */
+@Composable
+private fun SkipButton(dir: Int, size: Dp = 34.dp) {
+    val ctx = LocalContext.current
+    Box(
+        GlanceModifier.size(size).cornerRadius(size / 2).clickable(actionRunCallback<SkipAction>(actionParametersOf(SkipAction.DIR to dir))),
+        contentAlignment = Alignment.Center,
+    ) {
+        Image(
+            ImageProvider(if (dir < 0) R.drawable.ic_w_prev else R.drawable.ic_w_next),
+            ctx.getString(if (dir < 0) R.string.skip_previous else R.string.skip_next),
+            GlanceModifier.size(size * 0.6f), colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurface),
+        )
+    }
+}
+
 @Composable
 private fun DiceButton(size: Dp = 34.dp) {
     Box(
@@ -211,7 +227,12 @@ private fun BarContent(m: WidgetModel) {
             SecondLine(m)
         }
         Spacer(GlanceModifier.width(8.dp))
-        if (m.idle && m.title.isEmpty()) DiceButton(40.dp) else PlayButton(m)
+        if (m.idle && m.title.isEmpty()) DiceButton(40.dp)
+        else {
+            if (m.canSkip) SkipButton(-1, 32.dp)
+            PlayButton(m)
+            if (m.canSkip) SkipButton(+1, 32.dp)
+        }
     }
 }
 
@@ -231,8 +252,10 @@ private fun PlayerContent(m: WidgetModel) {
             SecondLine(m)
             Spacer(GlanceModifier.defaultWeight())
             Row(verticalAlignment = Alignment.CenterVertically) {
+                if (m.canSkip) SkipButton(-1)
                 PlayButton(m)
-                Spacer(GlanceModifier.width(8.dp))
+                if (m.canSkip) SkipButton(+1)
+                Spacer(GlanceModifier.width(6.dp))
                 DiceButton()
                 sleepLabel(m)?.let {
                     Spacer(GlanceModifier.width(8.dp))
@@ -319,6 +342,15 @@ class ToggleAction : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
         withContext(Dispatchers.Main) { context.container.player.togglePlay() }
     }
+}
+
+class SkipAction : ActionCallback {
+    override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
+        val dir = parameters[DIR] ?: return
+        withContext(Dispatchers.Main) { context.container.player.skip(dir) }
+    }
+
+    companion object { val DIR = ActionParameters.Key<Int>("dir") }
 }
 
 class SurpriseAction : ActionCallback {

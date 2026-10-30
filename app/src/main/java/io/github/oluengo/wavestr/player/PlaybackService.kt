@@ -11,17 +11,19 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.extractor.metadata.icy.IcyInfo
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.MediaLibraryService
+import androidx.media3.session.MediaLibraryService.MediaLibrarySession
 import androidx.media3.session.MediaSession
-import androidx.media3.session.MediaSessionService
 import io.github.oluengo.wavestr.MainActivity
 
 /**
  * Un único ExoPlayer para toda la app. Al ser un servicio en primer plano con MediaSession,
  * sigue sonando con la pantalla apagada y expone controles en la notificación y la pantalla
- * de bloqueo. En F5 pasará a MediaLibraryService para Android Auto.
+ * de bloqueo. Como MediaLibraryService, además ofrece un catálogo navegable a Android Auto ([AutoLibrary]).
  */
-class PlaybackService : MediaSessionService() {
-    private var session: MediaSession? = null
+class PlaybackService : MediaLibraryService() {
+    private var session: MediaLibrarySession? = null
+    private var library: AutoLibrary? = null
 
     @androidx.annotation.OptIn(UnstableApi::class)
     override fun onCreate() {
@@ -63,10 +65,11 @@ class PlaybackService : MediaSessionService() {
             Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
-        session = MediaSession.Builder(this, SkipPlayer(player)).setSessionActivity(open).build()
+        val lib = AutoLibrary((application as io.github.oluengo.wavestr.WavestrApp).container).also { library = it }
+        session = MediaLibrarySession.Builder(this, SkipPlayer(player), lib).setSessionActivity(open).build()
     }
 
-    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? = session
+    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession? = session
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         val p = session?.player
@@ -79,6 +82,7 @@ class PlaybackService : MediaSessionService() {
             release()
         }
         session = null
+        library?.release()
         super.onDestroy()
     }
 }

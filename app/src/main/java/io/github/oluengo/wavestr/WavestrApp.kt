@@ -44,6 +44,8 @@ class WavestrApp : Application(), coil.ImageLoaderFactory {
 
 /** Dependencias de la app, sin framework de inyección (ver docs/decisiones/0002). */
 class AppContainer(app: Application) {
+    /** Contexto de la aplicación (textos fuera de Compose, Android Auto). */
+    val appContext: Context = app
     val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     val http: OkHttpClient = OkHttpClient.Builder()
         .connectTimeout(10, TimeUnit.SECONDS)

@@ -257,7 +257,6 @@
     <string name="zap_err_timeout">Tu cartera no ha respondido a tiempo. Comprueba en tu cartera si se ha pagado antes de volver a intentarlo.</string>
     <string name="live_chat_title">Chat y zaps</string>
     <string name="live_chat_empty">Aún no hay mensajes.</string>
-    <string name="live_chat_readonly">Escribir en el chat llegará en una próxima versión.</string>
 
     <!-- Favoritos en Nostr -->
     <string name="fav_sync_title">Favoritos en Nostr</string>
@@ -357,4 +356,22 @@
     <string name="skip_next">Emisora siguiente</string>
     <string name="expand">Mostrar</string>
     <string name="collapse">Ocultar</string>
+
+    <!-- Ajustes: índice -->
+    <string name="settings_appearance_lang">Apariencia e idioma</string>
+    <string name="settings_data">Favoritos y copias</string>
+    <string name="sum_buffer">Margen: %1$s</string>
+    <string name="sum_wallet">%1$s/%2$s sats este mes</string>
+    <string name="sum_backup">Exportar e importar favoritos</string>
+    <plurals name="sum_relays">
+        <item quantity="one">%d relay</item>
+        <item quantity="other">%d relays</item>
+    </plurals>
+
+    <!-- Chat -->
+    <string name="chat_hint">Escribe en el chat</string>
+    <string name="chat_send">Enviar</string>
+    <string name="chat_needs_amber">Inicia sesión con Amber para escribir en el chat.</string>
+    <string name="chat_failed">No se ha podido enviar el mensaje. Revisa la conexión y vuelve a probar.</string>
+    <string name="auto_recent">Recientes</string>
 </resources>

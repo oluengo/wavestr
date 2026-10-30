@@ -258,7 +258,6 @@
     <string name="zap_err_timeout">Your wallet didn’t answer in time. Check in your wallet whether it was paid before trying again.</string>
     <string name="live_chat_title">Chat and zaps</string>
     <string name="live_chat_empty">No messages yet.</string>
-    <string name="live_chat_readonly">Writing in the chat comes in a later version.</string>
 
     <!-- Favoritos en Nostr -->
     <string name="fav_sync_title">Favorites on Nostr</string>
@@ -358,4 +357,22 @@
     <string name="skip_next">Next station</string>
     <string name="expand">Show</string>
     <string name="collapse">Hide</string>
+
+    <!-- Ajustes: índice -->
+    <string name="settings_appearance_lang">Appearance and language</string>
+    <string name="settings_data">Favorites and backups</string>
+    <string name="sum_buffer">Margin: %1$s</string>
+    <string name="sum_wallet">%1$s/%2$s sats this month</string>
+    <string name="sum_backup">Export and import favorites</string>
+    <plurals name="sum_relays">
+        <item quantity="one">%d relay</item>
+        <item quantity="other">%d relays</item>
+    </plurals>
+
+    <!-- Chat -->
+    <string name="chat_hint">Write in the chat</string>
+    <string name="chat_send">Send</string>
+    <string name="chat_needs_amber">Sign in with Amber to write in the chat.</string>
+    <string name="chat_failed">The message couldn\'t be sent. Check your connection and try again.</string>
+    <string name="auto_recent">Recent</string>
 </resources>

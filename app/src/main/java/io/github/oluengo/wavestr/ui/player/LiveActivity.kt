@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -63,6 +64,17 @@ class LiveActivityViewModel(private val c: AppContainer) : ViewModel() {
         }
     }
 
+    /** Mensaje propio recién enviado: se ve al momento, sin esperar a la siguiente consulta. */
+    fun addLocal(author: String, text: String) {
+        _state.update { it.copy(lines = (it.lines + Line(System.currentTimeMillis() / 1000, author, text, null)).takeLast(40)) }
+    }
+
+    /** Publica un mensaje ya firmado (kind 1311) en los relays del usuario y los de serie. */
+    suspend fun publish(ev: io.github.oluengo.wavestr.nostr.Event, viewer: String): Boolean {
+        val relays = runCatching { c.nostr.relaysFor(viewer) }.getOrDefault(io.github.oluengo.wavestr.nostr.RelayPool.DEFAULT)
+        return c.relays.publish(relays, ev) > 0
+    }
+
     fun refreshNow() {
         val a = _state.value.address ?: return
         viewModelScope.launch { refreshOnce(a, System.currentTimeMillis() / 1000 - 12 * 3600) }
@@ -88,7 +100,7 @@ class LiveActivityViewModel(private val c: AppContainer) : ViewModel() {
 }
 
 @Composable
-fun LiveChat(vm: LiveActivityViewModel) {
+fun LiveChat(vm: LiveActivityViewModel, c: AppContainer) {
     val st by vm.state.collectAsStateWithLifecycle()
     val fmt = remember { NumberFormat.getIntegerInstance() }
     Column(Modifier.fillMaxWidth().padding(horizontal = 18.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -109,6 +121,75 @@ fun LiveChat(vm: LiveActivityViewModel) {
                 if (l.text.isNotBlank()) Text(l.text, style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
             }
         }
-        Text(stringResource(R.string.live_chat_readonly), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 4.dp, bottom = 12.dp))
+        ChatInput(vm, c, st.address)
+    }
+}
+
+/** Escribir en el chat del stream (kind 1311), firmado con Amber. */
+@Composable
+private fun ChatInput(vm: LiveActivityViewModel, c: AppContainer, address: String?) {
+    val s by c.settings.flow.collectAsStateWithLifecycle(initialValue = null)
+    val ctx = androidx.compose.ui.platform.LocalContext.current
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    var text by androidx.compose.runtime.saveable.rememberSaveable { androidx.compose.runtime.mutableStateOf("") }
+    var sending by remember { androidx.compose.runtime.mutableStateOf(false) }
+    var pending by remember { androidx.compose.runtime.mutableStateOf<io.github.oluengo.wavestr.nostr.Event?>(null) }
+    val me = s?.pubkey
+    val canWrite = me != null && s?.loginMethod == io.github.oluengo.wavestr.data.LoginMethod.AMBER && address != null
+    val failed = stringResource(R.string.chat_failed)
+    val myName = io.github.oluengo.wavestr.ui.common.rememberMyProfile(c).second?.bestName ?: me?.let { Nip19.shortNpub(it) } ?: ""
+
+    suspend fun publish(ev: io.github.oluengo.wavestr.nostr.Event) {
+        val ok = vm.publish(ev, me!!)
+        sending = false
+        if (ok) { vm.addLocal(myName, ev.content); text = "" }
+        else android.widget.Toast.makeText(ctx, failed, android.widget.Toast.LENGTH_LONG).show()
+    }
+
+    val amber = androidx.activity.compose.rememberLauncherForActivityResult(androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()) { res ->
+        val u = pending ?: return@rememberLauncherForActivityResult
+        pending = null
+        val signed = io.github.oluengo.wavestr.nostr.Amber.parseSigned(res.data, u)
+        if (signed == null) { sending = false; return@rememberLauncherForActivityResult }
+        scope.launch { publish(signed) }
+    }
+
+    if (!canWrite) {
+        Text(
+            stringResource(if (me == null || s?.loginMethod != io.github.oluengo.wavestr.data.LoginMethod.AMBER) R.string.chat_needs_amber else R.string.live_chat_empty),
+            color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
+        )
+        return
+    }
+    Row(Modifier.fillMaxWidth().padding(top = 4.dp, bottom = 12.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        androidx.compose.material3.OutlinedTextField(
+            value = text, onValueChange = { text = it.take(500) },
+            placeholder = { Text(stringResource(R.string.chat_hint)) }, singleLine = false, maxLines = 3,
+            textStyle = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f),
+        )
+        androidx.compose.material3.FilledIconButton(
+            enabled = text.isNotBlank() && !sending,
+            onClick = {
+                val content = text.trim()
+                val unsigned = io.github.oluengo.wavestr.nostr.EventSigning.unsigned(
+                    me!!, io.github.oluengo.wavestr.nostr.Kinds.LIVE_CHAT, listOf(listOf("a", address!!, "", "root")), content,
+                )
+                sending = true
+                scope.launch {
+                    // Primero en silencio (si Amber lo tiene permitido); si no, se abre Amber.
+                    val silent = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                        io.github.oluengo.wavestr.nostr.Amber.signSilently(ctx, s?.signerPackage, unsigned, me)
+                    }
+                    if (silent != null) publish(silent)
+                    else {
+                        pending = unsigned
+                        runCatching { amber.launch(io.github.oluengo.wavestr.nostr.Amber.signIntent(unsigned, me, s?.signerPackage)) }
+                            .onFailure { sending = false; pending = null }
+                    }
+                }
+            },
+        ) {
+            androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.AutoMirrored.Outlined.Send, stringResource(R.string.chat_send))
+        }
     }
 }
