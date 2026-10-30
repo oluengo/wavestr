@@ -2,7 +2,8 @@
 
 ## 0.10.0
 
-- **Android Auto:** Wavestr aparece en el coche con Favoritos (y sus carpetas), Streams que están emitiendo, Radios (populares y cerca de ti) y la última escuchada; búsqueda por voz de emisoras y anterior/siguiente. Fuera de Google Play hay que activar «Fuentes desconocidas» en los ajustes de desarrollador de Android Auto (ver README).
+- **Nuevo icono:** el anillo con la onda, renovado, con degradado ámbar → coral → magenta sobre fondo oscuro; también en el icono temático de Android 13+ y en los widgets.
+- **Android Auto:** Wavestr aparece en el coche con Favoritos (y sus carpetas), Streams que están emitiendo, Radios (populares y cerca de ti) y la última escuchada; búsqueda por voz de emisoras y anterior/siguiente. Fuera de Google Play hay que activar «Fuentes desconocidas» en los ajustes de desarrollador de Android Auto (pasos en el README).
 - **Chat de los streams:** ya se puede escribir (firmado con Amber).
 - **Widgets:** anterior/siguiente en la barra y en el reproductor.
 - **Ajustes reorganizados:** una pantalla principal con categorías (Cuenta, Zaps y cartera, Reproducción, Apariencia e idioma, Favoritos y copias, Relays, Acerca de) y un resumen de cada una.

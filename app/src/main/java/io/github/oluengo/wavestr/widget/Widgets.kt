@@ -122,7 +122,7 @@ private fun Art(m: WidgetModel, size: Dp, corner: Dp, fill: Boolean = false) {
     } else {
         Box(mod.background(GlanceTheme.colors.primaryContainer), contentAlignment = Alignment.Center) {
             if (m.idle && m.title.isEmpty()) {
-                Image(ImageProvider(R.drawable.ic_launcher_foreground), null, GlanceModifier.size(size * 0.8f),
+                Image(ImageProvider(R.drawable.ic_launcher_monochrome), null, GlanceModifier.size(size * 0.8f),
                     colorFilter = ColorFilter.tint(GlanceTheme.colors.primary))
             } else {
                 Text(initials(m.title), style = TextStyle(color = GlanceTheme.colors.onPrimaryContainer, fontWeight = FontWeight.Bold, fontSize = (size.value / 3.2f).sp))

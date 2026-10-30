@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/brand/wavestr-icon.png" width="112" alt="Wavestr"></p>
+
 # Wavestr
 
 Radio online y streams de Nostr en una sola app para Android.
@@ -15,7 +17,20 @@ La beta se instala como otra app, **Wavestr Beta**, junto a la normal y con sus 
 Comprueba que la huella del certificado coincide (también está en Ajustes → Acerca de):
 `06:23:37:6B:0C:75:09:50:D7:E5:F1:4E:ED:06:C3:B3:C4:86:8B:B2:64:8B:8F:34:34:76:E2:DE:90:70:0F:89`
 
-**Android Auto:** Wavestr aparece en el coche (Favoritos, Streams, Radios y Recientes; búsqueda por voz). Como no está en Google Play, Android Auto la oculta hasta que lo permitas una vez: abre la app Android Auto en el móvil → toca 10 veces «Versión» (al final) para activar el modo desarrollador → menú ⋮ → *Ajustes de desarrollador* → activa **Fuentes desconocidas**.
+## Android Auto
+
+Wavestr aparece en el coche con Favoritos (y sus carpetas), Streams que están emitiendo, Radios (populares y cerca de ti) y Recientes, con búsqueda por voz y anterior/siguiente.
+
+Como no viene de Google Play, Android Auto la oculta hasta que lo permitas. Solo hay que hacerlo una vez:
+
+1. Instala Wavestr (0.10.0 o posterior) y ábrela una vez.
+2. Abre los ajustes de Android Auto en el móvil: *Ajustes → Dispositivos conectados → Preferencias de conexión → Android Auto* (o busca «Android Auto» en los ajustes).
+3. Baja hasta **Versión** y tócala unas 10 veces seguidas; acepta el aviso para activar el modo desarrollador.
+4. Menú **⋮** (arriba a la derecha) → **Ajustes de desarrollador** → activa **Fuentes desconocidas**.
+5. Desconecta el móvil del coche, fuerza la detención de Android Auto (*Ajustes → Aplicaciones → Android Auto → Forzar detención*) y vuelve a conectar.
+6. Si no sale en el menú del coche: ajustes de Android Auto → **Personalizar menú de aplicaciones** → marca Wavestr.
+
+Si deja de aparecer tras actualizar Android Auto, revisa que **Fuentes desconocidas** siga activado.
 
 ¿Algo no va? [Abre un aviso](https://github.com/oluengo/wavestr/issues/new?labels=bug) o usa Ajustes → Acerca de → Informar de un problema.
 
