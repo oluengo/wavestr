@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Wavestr · Compartido</title>
+<link rel="icon" href="../icon.svg">
+<style>
+  :root { --bg:#f6f6f9; --card:#fff; --ink:#16151d; --mute:#6b6a78; --line:#e7e6ee; --acc:#e0457b; --acc2:#f59e0b; --btn:#16151d; --btnInk:#fff; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0d0c14; --card:#17161f; --ink:#f2f1f7; --mute:#9a99a8; --line:#2a2935; --btn:#f2f1f7; --btnInk:#0d0c14; } }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--bg); color:var(--ink); font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; padding:28px 16px 48px; }
+  .wrap { max-width:560px; margin:0 auto; }
+  header { display:flex; align-items:center; gap:10px; margin-bottom:22px; }
+  header img { width:34px; height:34px; border-radius:9px; }
+  header b { font-size:19px; letter-spacing:-.02em; }
+  h1 { font-size:24px; letter-spacing:-.02em; line-height:1.2; }
+  .sub { color:var(--mute); margin:4px 0 18px; }
+  .actions { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; }
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:11px 16px; border-radius:12px; font-weight:600; text-decoration:none; border:1px solid var(--line); color:var(--ink); background:var(--card); cursor:pointer; font-size:14px; }
+  .btn.primary { background:linear-gradient(135deg,var(--acc2),var(--acc) 60%,#c026d3); color:#fff; border:0; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:6px 14px; }
+  .folder { display:flex; align-items:center; gap:6px; color:var(--mute); font-size:12.5px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; padding:14px 0 4px; }
+  .item { display:flex; align-items:center; gap:12px; padding:9px 0; border-top:1px solid var(--line); }
+  .folder + .item, .card > .item:first-child { border-top:0; }
+  .art { width:40px; height:40px; border-radius:10px; flex:none; background:linear-gradient(135deg,#f59e0b,#e0457b); color:#fff; display:grid; place-items:center; font-weight:700; font-size:14px; overflow:hidden; }
+  .art.round { border-radius:50%; }
+  .art img { width:100%; height:100%; object-fit:cover; background:#fff; }
+  .t { font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .m { color:var(--mute); font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .grow { flex:1; min-width:0; }
+  .note { color:var(--mute); font-size:13px; margin-top:18px; }
+  .err { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px; }
+  a { color:inherit; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><img src="../icon.svg" alt=""><b>Wavestr</b></header>
+  <main id="app"></main>
+</div>
+<script>
+const L = (navigator.language || 'es').slice(0, 2);
+const D = {
+  es: { title: 'Te han compartido', open: 'Abrir en Wavestr', m3u: 'Descargar M3U', get: 'Instalar Wavestr', station: 'Radio', streamer: 'Streamer de Nostr',
+        st: n => n === 1 ? '1 emisora' : n + ' emisoras', sm: n => n === 1 ? '1 streamer' : n + ' streamers', and: ' y ',
+        note: 'Con Wavestr instalada (Android), «Abrir en Wavestr» te deja elegir qué añadir a tus favoritos. La lista M3U funciona en VLC y otros reproductores.',
+        bad: 'Este enlace no se puede leer. Puede que esté incompleto: pide que te lo vuelvan a enviar.', favs: 'Favoritos' },
+  ca: { title: 'T’han compartit', open: 'Obre a Wavestr', m3u: 'Baixa la M3U', get: 'Instal·la Wavestr', station: 'Ràdio', streamer: 'Streamer de Nostr',
+        st: n => n === 1 ? '1 emissora' : n + ' emissores', sm: n => n === 1 ? '1 streamer' : n + ' streamers', and: ' i ',
+        note: 'Amb Wavestr instal·lada (Android), «Obre a Wavestr» et deixa triar què afegir als preferits. La llista M3U funciona amb VLC i altres reproductors.',
+        bad: 'Aquest enllaç no es pot llegir. Potser està incomplet: demana que te’l tornin a enviar.', favs: 'Preferits' },
+  en: { title: 'Shared with you', open: 'Open in Wavestr', m3u: 'Download M3U', get: 'Get Wavestr', station: 'Radio', streamer: 'Nostr streamer',
+        st: n => n === 1 ? '1 radio station' : n + ' radio stations', sm: n => n === 1 ? '1 streamer' : n + ' streamers', and: ' and ',
+        note: 'With Wavestr installed (Android), “Open in Wavestr” lets you pick what to add to your favorites. The M3U playlist works in VLC and other players.',
+        bad: 'This link can’t be read. It may be incomplete: ask for it to be sent again.', favs: 'Favorites' },
+};
+const tr = D[L] || D.en;
+document.documentElement.lang = D[L] ? L : 'en';
+
+const app = document.getElementById('app');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const initials = s => String(s || '?').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+
+async function decode(code) {
+  const b64 = code.replace(/-/g, '+').replace(/_/g, '/');
+  const bin = atob(b64 + '==='.slice((b64.length + 3) % 4));
+  const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+  return JSON.parse(await new Response(stream).text());
+}
+
+function m3u(d) {
+  const f = Object.fromEntries((d.f || []).map(x => [x.i, x]));
+  const path = id => { const out = []; let x = f[id]; const seen = new Set(); while (x && !seen.has(x.i)) { seen.add(x.i); out.unshift(x.n); x = f[x.p]; } return out.join(' / '); };
+  const clean = s => String(s).replace(/"/g, "'").replace(/[\n,]/g, ' ').trim();
+  let s = '#EXTM3U\n';
+  for (const x of d.x) {
+    if (!x.s) continue;
+    const g = x.f ? path(x.f) : '';
+    s += '#EXTINF:-1' + (g ? ` group-title="${clean(g)}"` : '') + (x.s.fv ? ` tvg-logo="${x.s.fv}"` : '') + ',' + clean(x.t || x.s.n) + '\n' + x.s.v[0].u + '\n';
+  }
+  return s;
+}
+
+function row(x) {
+  const st = x.s;
+  const img = st ? st.fv : x.i;
+  const meta = st ? [st.co, st.v[0].c && st.v[0].c.toUpperCase(), st.v[0].b ? st.v[0].b + ' kbps' : null].filter(Boolean).join(' · ') || tr.station : tr.streamer;
+  return `<div class="item"><div class="art${st ? '' : ' round'}">${img ? `<img src="${esc(img)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(document.createTextNode('${esc(initials(x.t))}'))">` : esc(initials(x.t))}</div>
+    <div class="grow"><div class="t">${esc(x.t || (st && st.n))}</div><div class="m">${esc(meta)}</div></div></div>`;
+}
+
+(async () => {
+  const code = location.hash.slice(1);
+  let d;
+  try { d = await decode(code); if (!d || !Array.isArray(d.x) || !d.x.length) throw 0; }
+  catch { app.innerHTML = `<div class="err">${esc(tr.bad)}</div>`; return; }
+
+  const name = d.n || tr.favs;
+  document.title = 'Wavestr · ' + name;
+  const ns = d.x.filter(x => x.s).length, nh = d.x.length - ns;
+  const summary = [ns ? tr.st(ns) : null, nh ? tr.sm(nh) : null].filter(Boolean).join(tr.and);
+
+  // Sueltos primero; luego cada carpeta (con su ruta) en orden de árbol.
+  const folders = d.f || [];
+  const byParent = p => folders.filter(f => (f.p || null) === p).sort((a, b) => a.n.localeCompare(b.n));
+  const pathOf = id => { const out = []; let x = folders.find(f => f.i === id); const seen = new Set(); while (x && !seen.has(x.i)) { seen.add(x.i); out.unshift(x.n); x = folders.find(f => f.i === x.p); } return out.join(' / '); };
+  let list = d.x.filter(x => !x.f).map(row).join('');
+  const walk = p => byParent(p).forEach(f => {
+    const items = d.x.filter(x => x.f === f.i);
+    if (items.length) list += `<div class="folder">📁 ${esc(pathOf(f.i))}</div>` + items.map(row).join('');
+    walk(f.i);
+  });
+  walk(null);
+
+  const blob = ns ? URL.createObjectURL(new Blob([m3u(d)], { type: 'audio/x-mpegurl' })) : null;
+  const file = (name.replace(/[^\p{L}\p{N} _-]/gu, '').trim() || 'wavestr') + '.m3u';
+  app.innerHTML = `
+    <div class="sub">${esc(tr.title)}</div>
+    <h1>${esc(name)}</h1>
+    <div class="sub">${esc(summary)}</div>
+    <div class="actions">
+      <a class="btn primary" href="wavestr://s#${code}">${esc(tr.open)}</a>
+      ${blob ? `<a class="btn" href="${blob}" download="${esc(file)}">${esc(tr.m3u)}</a>` : ''}
+      <a class="btn" href="https://github.com/oluengo/wavestr#readme">${esc(tr.get)}</a>
+    </div>
+    <div class="card">${list}</div>
+    <p class="note">${esc(tr.note)}</p>`;
+})();
+</script>
+</body>
+</html>

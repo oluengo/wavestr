@@ -375,4 +375,38 @@
     <string name="chat_needs_amber">Sign in with Amber to write in the chat.</string>
     <string name="chat_failed">The message couldn\'t be sent. Check your connection and try again.</string>
     <string name="auto_recent">Recent</string>
+    <string name="share">Share</string>
+    <string name="share_all">Share favorites</string>
+    <string name="share_folder">Share folder</string>
+    <string name="share_title">Share “%1$s”</string>
+    <string name="share_and"> and </string>
+    <string name="share_link">Link</string>
+    <string name="share_link_sub">Opens in Wavestr, or in the browser if it isn\'t installed.</string>
+    <string name="share_link_text">%1$s on Wavestr:\n%2$s</string>
+    <string name="share_m3u">M3U playlist</string>
+    <string name="share_m3u_sub">For VLC and other players. Radio stations only.</string>
+    <string name="share_m3u_none">No radio stations to include (streamers don\'t fit in M3U).</string>
+    <string name="share_text">Text</string>
+    <string name="share_text_sub">Names and stream addresses, to paste anywhere.</string>
+    <string name="share_received">Shared with you: %1$s</string>
+    <string name="share_wrapper">%1$s (shared)</string>
+    <string name="share_into_wrapper">They\'ll be added to the folder “%1$s”.</string>
+    <string name="share_select_all">All</string>
+    <string name="share_select_none">None</string>
+    <string name="share_add">Add (%1$d)</string>
+    <string name="share_already">Already in your favorites</string>
+    <string name="share_empty">There\'s nothing to share here yet.</string>
+    <string name="share_bad_link">This link can\'t be read. It may be incomplete.</string>
+    <plurals name="share_stations">
+        <item quantity="one">%d radio station</item>
+        <item quantity="other">%d radio stations</item>
+    </plurals>
+    <plurals name="share_streamers">
+        <item quantity="one">%d streamer</item>
+        <item quantity="other">%d streamers</item>
+    </plurals>
+    <plurals name="share_added">
+        <item quantity="one">%d added to Favorites</item>
+        <item quantity="other">%d added to Favorites</item>
+    </plurals>
 </resources>

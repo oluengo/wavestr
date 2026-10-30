@@ -77,6 +77,7 @@ fun WavestrRoot(c: AppContainer) {
 
     io.github.oluengo.wavestr.ui.favorites.AmberRequestHost(c)
     io.github.oluengo.wavestr.ui.favorites.SyncAskDialog(c)
+    io.github.oluengo.wavestr.ui.common.IncomingShareHost(c)
 
     CompositionLocalProvider(io.github.oluengo.wavestr.ui.common.LocalOpenPlayer provides openPlayer) {
         Row(Modifier.fillMaxSize()) {

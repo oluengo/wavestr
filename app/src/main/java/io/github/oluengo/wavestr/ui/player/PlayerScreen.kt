@@ -1,5 +1,9 @@
 package io.github.oluengo.wavestr.ui.player
 
+import io.github.oluengo.wavestr.data.FavItem
+import io.github.oluengo.wavestr.data.station
+import io.github.oluengo.wavestr.data.streamer
+
 import androidx.annotation.OptIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,6 +27,7 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.Headphones
 import androidx.compose.material.icons.outlined.Pause
@@ -80,6 +85,8 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
     val liveAddress = np?.takeIf { it.isLive && it.hostPubkey != null }?.id
     androidx.compose.runtime.LaunchedEffect(liveAddress) { activity.watch(liveAddress) }
     var zapOpen by remember { mutableStateOf(false) }
+    var shareOpen by remember { mutableStateOf<io.github.oluengo.wavestr.data.Shared?>(null) }
+    shareOpen?.let { io.github.oluengo.wavestr.ui.common.ShareDialog(it, onDismiss = { shareOpen = null }) }
 
     Column(Modifier.fillMaxSize().statusBarsPadding().verticalScroll(rememberScrollState())) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -88,6 +95,14 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
             Spacer(Modifier.weight(1f))
             if (np?.isLive == true) LiveBadge()
             Spacer(Modifier.weight(1f))
+            // Compartir la emisora o el streamer que suena.
+            val shareItem = np?.let { n ->
+                n.station?.let { FavItem.station(it) }
+                    ?: n.hostPubkey?.let { h -> FavItem.streamer(h, n.subtitle.ifBlank { n.title }, n.artworkUrl) }
+            }
+            if (shareItem != null) IconButton(onClick = { shareOpen = io.github.oluengo.wavestr.data.Shared.ofItem(shareItem) }) {
+                Icon(Icons.Outlined.Share, stringResource(R.string.share))
+            }
             IconButton(onClick = { c.player.stop(); onClose?.invoke() }, enabled = np != null) {
                 Icon(Icons.Outlined.Close, stringResource(R.string.stop))
             }

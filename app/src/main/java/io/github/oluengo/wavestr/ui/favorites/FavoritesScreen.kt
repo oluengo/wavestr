@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CreateNewFolder
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -62,6 +63,7 @@ private sealed interface Dialog {
     data class FolderOptions(val folder: Folder) : Dialog
     data class ConfirmDelete(val folder: Folder) : Dialog
     data class ItemOptions(val item: FavItem) : Dialog
+    data class Share(val shared: io.github.oluengo.wavestr.data.Shared) : Dialog
 }
 
 @Composable
@@ -85,6 +87,15 @@ fun FavoritesScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenProfile: (S
     Column(Modifier.fillMaxSize()) {
         ScreenHeader(stringResource(R.string.tab_favorites), stringResource(R.string.fav_sub)) {
             IconButton(onClick = { dialog = Dialog.NewFolder }) { Icon(Icons.Outlined.CreateNewFolder, stringResource(R.string.fav_new_folder)) }
+            // Compartir lo que se ve: todos los favoritos en la raíz, o la carpeta abierta.
+            val allName = stringResource(R.string.tab_favorites)
+            IconButton(
+                onClick = {
+                    val sh = current?.let { io.github.oluengo.wavestr.data.Shared.ofFolder(lib, it) } ?: io.github.oluengo.wavestr.data.Shared.ofAll(lib, allName)
+                    dialog = Dialog.Share(sh)
+                },
+                enabled = lib.favorites.isNotEmpty(),
+            ) { Icon(Icons.Outlined.Share, stringResource(if (current == null) R.string.share_all else R.string.share_folder)) }
             io.github.oluengo.wavestr.ui.common.SurpriseButton(c)
             MeButton(c, onOpenMe)
         }
@@ -139,6 +150,7 @@ fun FavoritesScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenProfile: (S
             d.folder,
             onRename = { name -> c.library.update { it.renameFolder(d.folder.id, name) }; dialog = null },
             onDelete = { dialog = Dialog.ConfirmDelete(d.folder) },
+            onShare = { io.github.oluengo.wavestr.data.Shared.ofFolder(lib, d.folder.id)?.let { dialog = Dialog.Share(it) } },
             onDismiss = { dialog = null },
         )
         is Dialog.ConfirmDelete -> AlertDialog(
@@ -156,8 +168,10 @@ fun FavoritesScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenProfile: (S
             lib, d.item,
             onMove = { folderId -> c.library.update { it.move(d.item.key, folderId) }; dialog = null },
             onRemove = { c.library.update { it.remove(d.item.key) }; dialog = null },
+            onShare = { dialog = Dialog.Share(io.github.oluengo.wavestr.data.Shared.ofItem(d.item)) },
             onDismiss = { dialog = null },
         )
+        is Dialog.Share -> io.github.oluengo.wavestr.ui.common.ShareDialog(d.shared, onDismiss = { dialog = null })
     }
 }
 
@@ -233,7 +247,7 @@ private fun NameDialog(title: String, subtitle: String?, initial: String, onDism
 }
 
 @Composable
-private fun FolderOptionsDialog(f: Folder, onRename: (String) -> Unit, onDelete: () -> Unit, onDismiss: () -> Unit) {
+private fun FolderOptionsDialog(f: Folder, onRename: (String) -> Unit, onDelete: () -> Unit, onShare: () -> Unit, onDismiss: () -> Unit) {
     var name by rememberSaveable(f.id) { mutableStateOf(f.name) }
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -241,6 +255,9 @@ private fun FolderOptionsDialog(f: Folder, onRename: (String) -> Unit, onDelete:
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(value = name, onValueChange = { name = it.take(40) }, singleLine = true, label = { Text(stringResource(R.string.fav_folder_name)) })
+                TextButton(onClick = onShare) {
+                    Icon(Icons.Outlined.Share, null, Modifier.size(18.dp)); Text(stringResource(R.string.share_folder), Modifier.padding(start = 8.dp))
+                }
                 TextButton(onClick = onDelete) { Text(stringResource(R.string.fav_delete_folder), color = Rs.colors.live) }
             }
         },
@@ -250,13 +267,18 @@ private fun FolderOptionsDialog(f: Folder, onRename: (String) -> Unit, onDelete:
 }
 
 @Composable
-private fun MoveDialog(lib: Library, item: FavItem, onMove: (String?) -> Unit, onRemove: () -> Unit, onDismiss: () -> Unit) {
+private fun MoveDialog(lib: Library, item: FavItem, onMove: (String?) -> Unit, onRemove: () -> Unit, onShare: () -> Unit, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.fav_move_to)) },
         text = {
             Column(Modifier.heightIn(max = 420.dp).verticalScroll(rememberScrollState())) {
-                Text(item.title, color = Rs.colors.muted, modifier = Modifier.padding(bottom = 8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(item.title, color = Rs.colors.muted, modifier = Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    TextButton(onClick = onShare) {
+                        Icon(Icons.Outlined.Share, null, Modifier.size(18.dp)); Text(stringResource(R.string.share), Modifier.padding(start = 8.dp))
+                    }
+                }
                 DestRow(stringResource(R.string.fav_no_folder), 0, item.folderId == null) { onMove(null) }
                 lib.tree().forEach { (f, depth) -> DestRow(f.name, depth + 1, item.folderId == f.id) { onMove(f.id) } }
                 TextButton(onClick = onRemove, modifier = Modifier.padding(top = 8.dp)) { Text(stringResource(R.string.fav_remove), color = Rs.colors.live) }

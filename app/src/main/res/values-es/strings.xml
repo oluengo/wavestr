@@ -374,4 +374,38 @@
     <string name="chat_needs_amber">Inicia sesión con Amber para escribir en el chat.</string>
     <string name="chat_failed">No se ha podido enviar el mensaje. Revisa la conexión y vuelve a probar.</string>
     <string name="auto_recent">Recientes</string>
+    <string name="share">Compartir</string>
+    <string name="share_all">Compartir favoritos</string>
+    <string name="share_folder">Compartir carpeta</string>
+    <string name="share_title">Compartir «%1$s»</string>
+    <string name="share_and"> y </string>
+    <string name="share_link">Enlace</string>
+    <string name="share_link_sub">Se abre en Wavestr, o en el navegador si no la tiene.</string>
+    <string name="share_link_text">%1$s en Wavestr:\n%2$s</string>
+    <string name="share_m3u">Lista M3U</string>
+    <string name="share_m3u_sub">Para VLC y otros reproductores. Solo las radios.</string>
+    <string name="share_m3u_none">No hay radios que incluir (los streamers no caben en una M3U).</string>
+    <string name="share_text">Texto</string>
+    <string name="share_text_sub">Nombres y direcciones de las emisoras, para pegar donde quieras.</string>
+    <string name="share_received">Te han compartido: %1$s</string>
+    <string name="share_wrapper">%1$s (compartido)</string>
+    <string name="share_into_wrapper">Se añadirán en la carpeta «%1$s».</string>
+    <string name="share_select_all">Todo</string>
+    <string name="share_select_none">Nada</string>
+    <string name="share_add">Añadir (%1$d)</string>
+    <string name="share_already">Ya está en tus favoritos</string>
+    <string name="share_empty">Aquí aún no hay nada que compartir.</string>
+    <string name="share_bad_link">No se puede leer este enlace. Puede que esté incompleto.</string>
+    <plurals name="share_stations">
+        <item quantity="one">%d emisora</item>
+        <item quantity="other">%d emisoras</item>
+    </plurals>
+    <plurals name="share_streamers">
+        <item quantity="one">%d streamer</item>
+        <item quantity="other">%d streamers</item>
+    </plurals>
+    <plurals name="share_added">
+        <item quantity="one">%d añadido a Favoritos</item>
+        <item quantity="other">%d añadidos a Favoritos</item>
+    </plurals>
 </resources>

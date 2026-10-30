@@ -1,5 +1,13 @@
 # Cambios
 
+## 0.11.0
+
+- **Compartir** una emisora o streamer (desde el reproductor o su menú en Favoritos), una carpeta con sus subcarpetas, o todos los favoritos (botón de compartir en Favoritos: comparte lo que estás viendo). Tres formatos:
+  - **Enlace:** abre Wavestr y muestra una vista previa para elegir qué añadir; sin la app, una página web con la lista, la descarga en M3U y cómo instalarla. Todo va dentro del enlace: no pasa por ningún servidor.
+  - **Lista M3U** para VLC y otros reproductores (solo las radios).
+  - **Texto** con los nombres y las direcciones de las emisoras.
+- Al importar, una carpeta llega como carpeta; «todos los favoritos», dentro de una carpeta nueva «… (compartido)». Lo que ya tienes en favoritos no se duplica.
+
 ## 0.10.0
 
 - **Nuevo icono:** el anillo con la onda, renovado, con degradado ámbar → coral → magenta sobre fondo oscuro; también en el icono temático de Android 13+ y en los widgets.

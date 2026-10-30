@@ -51,6 +51,7 @@ Si deja de aparecer tras actualizar Android Auto, revisa que **Fuentes desconoci
 - **Zaps con NWC** a los streams, con límite mensual; chat y zaps del stream en el reproductor.
 - **Carátulas** de las radios buscadas en su web.
 - **Exportar e importar favoritos** (JSON con carpetas o M3U).
+- **Compartir** una emisora, una carpeta o todos los favoritos: por enlace (se abre en Wavestr para elegir qué añadir, o en el navegador si no la tienen), lista M3U o texto.
 - **Color de acento** a elegir.
 - **Favoritos en Nostr**, cifrados (NIP-78 + NIP-44, con Amber).
 - **Botón sorpresa:** radio, stream o ambos; de tus favoritos o de todo.

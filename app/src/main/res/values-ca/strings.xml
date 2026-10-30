@@ -374,4 +374,38 @@
     <string name="chat_needs_amber">Inicia sessió amb Amber per escriure al xat.</string>
     <string name="chat_failed">No s\'ha pogut enviar el missatge. Revisa la connexió i torna-ho a provar.</string>
     <string name="auto_recent">Recents</string>
+    <string name="share">Comparteix</string>
+    <string name="share_all">Comparteix els preferits</string>
+    <string name="share_folder">Comparteix la carpeta</string>
+    <string name="share_title">Comparteix «%1$s»</string>
+    <string name="share_and"> i </string>
+    <string name="share_link">Enllaç</string>
+    <string name="share_link_sub">S\'obre a Wavestr, o al navegador si no la té.</string>
+    <string name="share_link_text">%1$s a Wavestr:\n%2$s</string>
+    <string name="share_m3u">Llista M3U</string>
+    <string name="share_m3u_sub">Per a VLC i altres reproductors. Només les ràdios.</string>
+    <string name="share_m3u_none">No hi ha ràdios per incloure (els streamers no caben en una M3U).</string>
+    <string name="share_text">Text</string>
+    <string name="share_text_sub">Noms i adreces de les emissores, per enganxar on vulguis.</string>
+    <string name="share_received">T\'han compartit: %1$s</string>
+    <string name="share_wrapper">%1$s (compartit)</string>
+    <string name="share_into_wrapper">S\'afegiran a la carpeta «%1$s».</string>
+    <string name="share_select_all">Tot</string>
+    <string name="share_select_none">Res</string>
+    <string name="share_add">Afegeix (%1$d)</string>
+    <string name="share_already">Ja és als teus preferits</string>
+    <string name="share_empty">Aquí encara no hi ha res per compartir.</string>
+    <string name="share_bad_link">No es pot llegir aquest enllaç. Potser està incomplet.</string>
+    <plurals name="share_stations">
+        <item quantity="one">%d emissora</item>
+        <item quantity="other">%d emissores</item>
+    </plurals>
+    <plurals name="share_streamers">
+        <item quantity="one">%d streamer</item>
+        <item quantity="other">%d streamers</item>
+    </plurals>
+    <plurals name="share_added">
+        <item quantity="one">%d afegit als Preferits</item>
+        <item quantity="other">%d afegits als Preferits</item>
+    </plurals>
 </resources>
