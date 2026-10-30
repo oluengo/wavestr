@@ -1,7 +1,7 @@
 # Wavestr
 
-Radio online y streams de Nostr en una sola app, para Android, Linux y Windows.
-*Online radio and Nostr live streams in one app for Android, Linux and Windows. Català · Español · English.*
+Radio online y streams de Nostr en una sola app para Android.
+*Online radio and Nostr live streams in one Android app. Català · Español · English.*
 
 > Estado: **beta** ([Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta)) con lo último.
 
@@ -11,8 +11,6 @@ La beta se instala como otra app, **Wavestr Beta**, junto a la normal y con sus 
 
 - **Obtainium:** añade `https://github.com/oluengo/wavestr` y activa «incluir pre-releases». Te avisará de cada nueva beta.
 - **Directo:** descarga el APK de la [pre-release Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta).
-
-**Linux y Windows** (beta): en la misma pre-release están `…-linux-amd64.deb` (Debian, Ubuntu, Mint…), `…-linux-x64.tar.gz` (cualquier distribución: descomprime y abre `bin/`) y `…-windows-x64.msi`. Necesitan **VLC** instalado ([videolan.org](https://www.videolan.org/vlc/)). En el ordenador, de momento, se entra con tu npub (solo lectura): sin zaps hasta que llegue NIP-46.
 
 Comprueba que la huella del certificado coincide (también está en Ajustes → Acerca de):
 `06:23:37:6B:0C:75:09:50:D7:E5:F1:4E:ED:06:C3:B3:C4:86:8B:B2:64:8B:8F:34:34:76:E2:DE:90:70:0F:89`
@@ -45,9 +43,9 @@ Comprueba que la huella del certificado coincide (también está en Ajustes → 
 - **Emisora anterior / siguiente** (favoritos o la lista de origen), también desde la notificación, los auriculares y el coche.
 - **Margen contra cortes:** Auto, Directo, 10, 20 o 30 s.
 - **Temporizador de apagado:** 15 a 90 minutos con bajada de volumen al final, o al terminar el stream de Nostr.
-- **Escritorio (Linux y Windows):** la misma app en una ventana que se adapta del formato móvil a tres columnas, con icono en la bandeja.
+- **Escritorio (Linux y Windows):** en desarrollo, todavía sin descargas.
 
-**Próximamente:** escribir en el chat, inicio de sesión NIP-46 y zaps en el escritorio, y Android Auto. El orden está en el [plan técnico](docs/plan-tecnico.md).
+**Próximamente:** escribir en el chat, Android Auto y la versión de escritorio. El orden está en el [plan técnico](docs/plan-tecnico.md).
 
 ## Demo de la interfaz
 
@@ -69,8 +67,8 @@ python3 scripts/check_strings.py        # comprueba las traducciones
 
 GitHub Actions ([`android.yml`](.github/workflows/android.yml)):
 
-- **Push a `main`:** tests, traducciones, APK e instaladores de escritorio en «Artifacts», una prueba de arranque del APK en un emulador Android y otra del escritorio (xvfb + VLC: radio y vídeo HLS). La beta y las versiones solo se publican si todo eso pasa.
-- **Versión normal:** en GitHub, Actions → Build → *Run workflow* (rama `main`) → marcar «Publicar versión». Crea la etiqueta `vX.Y.Z` (la de `wavestrVersion`) y la Release con el APK firmado, los instaladores de Linux y Windows y las notas de [CHANGELOG.md](CHANGELOG.md). De ahí lo recogen Obtainium y Zapstore. También sirve empujar una etiqueta `v*`.
+- **Push a `main`:** tests, traducciones, APK (y, para pruebas, los instaladores de escritorio) en «Artifacts», una prueba de arranque del APK en un emulador Android y otra del escritorio (xvfb + VLC: radio y vídeo HLS). La beta y las versiones solo se publican si todo eso pasa.
+- **Versión normal:** en GitHub, Actions → Build → *Run workflow* (rama `main`) → marcar «Publicar versión». Crea la etiqueta `vX.Y.Z` (la de `wavestrVersion`) y la Release con el APK firmado y las notas de [CHANGELOG.md](CHANGELOG.md). De ahí lo recogen Obtainium y Zapstore. También sirve empujar una etiqueta `v*`.
 - **Versión de pruebas (beta):** cada push a la rama `beta` publica la pre-release **Wavestr Beta** (`X.Y.Z-beta.N`). Se instala como otra app (`io.github.oluengo.wavestr.beta`), junto a la normal y con sus propios datos. En Obtainium se añade aparte activando «incluir pre-releases». Cuando la beta está bien, se pasa a `main` y se publica la versión normal.
 
 Firma: secrets `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` y `ANDROID_KEY_PASSWORD` (mismos nombres que en Usus; la clave es propia del proyecto; su alias es `radiostr`, del nombre anterior, y no hace falta cambiarlo). Sin ellos se genera un APK de depuración y no se publica nada.
