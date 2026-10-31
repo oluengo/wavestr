@@ -1,5 +1,10 @@
+@file:OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class, androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+
 package io.github.oluengo.wavestr.ui.player
 
+import androidx.compose.foundation.layout.isImeVisible
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -162,7 +167,19 @@ private fun ChatInput(vm: LiveActivityViewModel, c: AppContainer, address: Strin
         )
         return
     }
-    Row(Modifier.fillMaxWidth().padding(top = 4.dp, bottom = 12.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    // Al escribir, la caja se desplaza a la vista cuando aparece el teclado.
+    val bring = remember { androidx.compose.foundation.relocation.BringIntoViewRequester() }
+    var focused by remember { androidx.compose.runtime.mutableStateOf(false) }
+    val imeOpen = androidx.compose.foundation.layout.WindowInsets.isImeVisible
+    androidx.compose.runtime.LaunchedEffect(focused, imeOpen) {
+        if (focused && imeOpen) { kotlinx.coroutines.delay(120); bring.bringIntoView() }
+    }
+    Row(
+        Modifier.fillMaxWidth().padding(top = 4.dp, bottom = 12.dp)
+            .then(Modifier.bringIntoViewRequester(bring))
+            .onFocusChanged { focused = it.hasFocus },
+        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         androidx.compose.material3.OutlinedTextField(
             value = text, onValueChange = { text = it.take(500) },
             placeholder = { Text(stringResource(R.string.chat_hint)) }, singleLine = false, maxLines = 3,

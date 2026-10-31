@@ -1,11 +1,15 @@
 package io.github.oluengo.wavestr.ui.player
 
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.ime
 import io.github.oluengo.wavestr.data.FavItem
 import io.github.oluengo.wavestr.data.station
 import io.github.oluengo.wavestr.data.streamer
 
 import androidx.annotation.OptIn
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.exclude
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -88,7 +92,12 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
     var shareOpen by remember { mutableStateOf<io.github.oluengo.wavestr.data.Shared?>(null) }
     shareOpen?.let { io.github.oluengo.wavestr.ui.common.ShareDialog(it, onDismiss = { shareOpen = null }) }
 
-    Column(Modifier.fillMaxSize().statusBarsPadding().verticalScroll(rememberScrollState())) {
+    // Con el teclado abierto (chat), el contenido se encoge por encima de él en vez de quedar tapado.
+    Column(
+        Modifier.fillMaxSize().statusBarsPadding()
+            .windowInsetsPadding(androidx.compose.foundation.layout.WindowInsets.ime.exclude(androidx.compose.foundation.layout.WindowInsets.navigationBars))
+            .verticalScroll(rememberScrollState())
+    ) {
         Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             if (onClose != null) IconButton(onClick = onClose) { Icon(Icons.Outlined.ExpandMore, stringResource(R.string.minimize)) }
             else Box(Modifier.size(48.dp))
