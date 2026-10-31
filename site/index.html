@@ -1,27 +1,473 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Wavestr</title>
-<link rel="icon" href="icon.svg">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wavestr · Online radio and Nostr live streams</title>
+<meta name="description" content="Wavestr: online radio and Nostr live streams in one Android app. Audio-only or video, zaps, favourites in folders and Android Auto.">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0D0C14">
 <style>
-  :root { --bg:#f6f6f9; --ink:#16151d; --mute:#6b6a78; --line:#e7e6ee; --card:#fff; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#0d0c14; --ink:#f2f1f7; --mute:#9a99a8; --line:#2a2935; --card:#17161f; } }
-  * { box-sizing:border-box; margin:0; }
-  body { background:var(--bg); color:var(--ink); font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; min-height:100vh; display:grid; place-items:center; padding:32px 16px; text-align:center; }
-  img { width:96px; height:96px; border-radius:24px; }
-  h1 { font-size:30px; letter-spacing:-.03em; margin-top:14px; }
-  p { color:var(--mute); margin:6px 0 20px; }
-  a { display:inline-block; padding:11px 18px; border-radius:12px; font-weight:600; text-decoration:none; color:#fff; background:linear-gradient(135deg,#f59e0b,#e0457b 60%,#c026d3); }
+@font-face { font-family: "Bricolage Grotesque"; font-weight: 500; font-display: swap; src: url(fonts/bricolage-500.woff2) format("woff2"); }
+@font-face { font-family: "Bricolage Grotesque"; font-weight: 700; font-display: swap; src: url(fonts/bricolage-700.woff2) format("woff2"); }
+@font-face { font-family: "Figtree"; font-weight: 400; font-display: swap; src: url(fonts/figtree-400.woff2) format("woff2"); }
+@font-face { font-family: "Figtree"; font-weight: 600; font-display: swap; src: url(fonts/figtree-600.woff2) format("woff2"); }
+
+:root {
+	color-scheme: light dark;
+	--bg: light-dark(#F6F6F9, #0D0C14);
+	--card: light-dark(#FFFFFF, #17161F);
+	--ink: light-dark(#16151D, #F2F1F7);
+	--muted: light-dark(#6B6A78, #9A99A8);
+	--line: light-dark(#E7E6EE, #2A2935);
+	--accent: light-dark(#B4237F, #F472B6);
+	--accent-bg: light-dark(#FCE7F3, #2A1625);
+	--grad: linear-gradient(135deg, #FBBF24, #FB7185 55%, #C026D3);
+	--night: #0D0C14;
+	--head: "Bricolage Grotesque", system-ui, sans-serif;
+	--body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+	--mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.55 var(--body); -webkit-text-size-adjust: 100%; }
+a { color: var(--accent); }
+img { max-width: 100%; height: auto; display: block; }
+.wrap { max-width: 70rem; margin: 0 auto; padding: 0 1.25rem; }
+h1, h2, h3 { font-family: var(--head); font-weight: 700; line-height: 1.08; letter-spacing: -.03em; margin: 0; }
+h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin-bottom: .6rem; }
+.lead { color: var(--muted); font-size: 1.08rem; max-width: 42rem; margin: 0 0 2.2rem; }
+section { padding: 5rem 0; }
+:focus-visible { outline: 2px solid #FB7185; outline-offset: 3px; }
+code { font: .86em var(--mono); background: var(--accent-bg); padding: .1rem .35rem; border-radius: 6px; overflow-wrap: anywhere; }
+.grad-text { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+.top { position: absolute; inset: 0 0 auto; z-index: 10; color: #F2F1F7; }
+.top .wrap { display: flex; align-items: center; gap: 1rem; height: 4rem; }
+.top a { color: inherit; text-decoration: none; }
+.brand { display: flex; align-items: center; gap: .55rem; font: 700 1.2rem var(--head); }
+.brand img { width: 1.8rem; height: 1.8rem; border-radius: 24%; }
+.top nav { margin-left: auto; display: flex; align-items: center; gap: 1.1rem; font-size: .92rem; }
+.navlink { opacity: .75; } .navlink:hover { opacity: 1; }
+.lang { display: flex; gap: .15rem; font-size: .8rem; }
+.lang button, .theme { font: inherit; background: none; border: 0; color: inherit; opacity: .65; cursor: pointer; padding: .25rem .35rem; border-radius: 6px; }
+.lang button[aria-pressed="true"] { opacity: 1; font-weight: 600; background: rgba(255,255,255,.12); }
+.theme { opacity: .8; display: grid; place-items: center; }
+.theme svg { width: 1.1rem; height: 1.1rem; }
+.i-sun { display: none; }
+:root[data-theme="dark"] .i-sun { display: block; } :root[data-theme="dark"] .i-moon { display: none; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .i-sun { display: block; } :root:not([data-theme="light"]) .i-moon { display: none; } }
+
+.hero { background: var(--night); color: #F2F1F7; position: relative; overflow: hidden; padding: 8rem 0 0; }
+.hero::before { content: ""; position: absolute; width: 52rem; height: 52rem; right: -18rem; top: -14rem; background: radial-gradient(closest-side, rgba(251,113,133,.35), rgba(192,38,211,.18) 55%, transparent); pointer-events: none; }
+.hero::after { content: ""; position: absolute; width: 36rem; height: 36rem; left: -16rem; bottom: -18rem; background: radial-gradient(closest-side, rgba(251,191,36,.22), transparent); pointer-events: none; }
+.hero .wrap { position: relative; z-index: 1; display: grid; gap: 3rem; }
+.badge { display: inline-flex; align-items: center; gap: .45rem; font-size: .85rem; font-weight: 600; padding: .3rem .75rem; border-radius: 999px; border: 1px solid rgba(255,255,255,.18); color: #F9C9D4; }
+.badge::before { content: ""; width: .5rem; height: .5rem; border-radius: 50%; background: #FB7185; box-shadow: 0 0 0 4px rgba(251,113,133,.25); }
+.hero h1 { font-size: clamp(2.6rem, 7vw, 4.8rem); margin: 1.1rem 0 1rem; max-width: 13ch; }
+.hero p { color: #B4B2C2; font-size: 1.15rem; max-width: 34rem; margin: 0 0 2rem; }
+.cta { display: flex; flex-wrap: wrap; gap: .75rem; }
+.btn { display: inline-flex; align-items: center; gap: .5rem; padding: .8rem 1.3rem; border-radius: 14px; font-weight: 600; text-decoration: none; min-height: 48px; border: 1px solid transparent; }
+.btn svg { width: 1.15rem; height: 1.15rem; }
+.btn.grad { background: var(--grad); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.2); }
+.btn.grad:hover { filter: brightness(1.06); }
+.btn.dark { color: #F2F1F7; border-color: rgba(255,255,255,.18); }
+.btn.dark:hover { border-color: rgba(255,255,255,.4); }
+.btn.line { color: var(--ink); border-color: var(--line); background: var(--card); }
+.btn.line:hover { border-color: var(--accent); }
+.meta { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin: 1.5rem 0 0; padding: 0; list-style: none; font-size: .9rem; color: #8F8D9E; }
+.meta li::before { content: "● "; font-size: .6em; vertical-align: .25em; color: #FB7185; }
+.phones { display: flex; gap: 1rem; justify-content: center; align-items: flex-end; }
+.phones { min-width: 0; }
+.phones img { flex: 1 1 0; min-width: 0; max-width: 13.5rem; border-radius: 24px 24px 0 0; box-shadow: 0 -10px 40px rgba(0,0,0,.4); }
+.phones img:nth-child(1) { transform: translateY(2.5rem); }
+.phones img:nth-child(3) { transform: translateY(1.5rem); }
+@media (min-width: 62rem) {
+	.hero .wrap { grid-template-columns: 1fr 1.05fr; align-items: end; }
+	.hero .copy { padding-bottom: 6rem; }
+}
+@media (max-width: 40rem) {
+	.phones img { max-width: 46%; }
+	.phones img:nth-child(3) { display: none; }
+}
+
+.features { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr)); }
+.feature { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 1.5rem; }
+.feature .ic { width: 2.6rem; height: 2.6rem; border-radius: 12px; background: var(--grad); color: #fff; display: grid; place-items: center; margin-bottom: 1rem; }
+.feature .ic svg { width: 1.35rem; height: 1.35rem; }
+.feature h3 { font-size: 1.25rem; margin-bottom: .55rem; }
+.feature ul { margin: 0; padding-left: 1.1rem; color: var(--muted); font-size: .96rem; }
+.feature li { margin-bottom: .3rem; }
+
+.gallery { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; padding: .5rem 1.25rem 1.5rem; margin: 0 -1.25rem; scrollbar-width: thin; }
+.gallery figure { margin: 0; flex: 0 0 auto; width: min(15rem, 62vw); scroll-snap-align: start; }
+.gallery img { border-radius: 28px; }
+.gallery figcaption { font-size: .88rem; color: var(--muted); margin-top: .6rem; text-align: center; }
+
+.install { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 1.5rem; }
+.card h3 { font-size: 1.25rem; margin-bottom: .8rem; }
+.card ol { margin: 0 0 1.2rem; padding-left: 1.2rem; }
+.card li { margin-bottom: .45rem; }
+.card .actions { display: flex; flex-wrap: wrap; gap: .6rem; }
+.card .btn.grad { color: #fff; }
+.fp { margin-top: 1.2rem; background: var(--card); border: 1px dashed var(--line); border-radius: 14px; padding: 1rem 1.25rem; display: grid; gap: .5rem; }
+.fp span { font-size: .9rem; color: var(--muted); }
+.fp code { font-size: .8rem; background: none; padding: 0; line-height: 1.6; }
+.fp button { justify-self: start; font: inherit; font-size: .85rem; background: none; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: .25rem .8rem; cursor: pointer; }
+
+.auto { margin-top: 1rem; }
+.auto summary { cursor: pointer; font-weight: 600; }
+.auto ol { color: var(--muted); }
+
+.privacy { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); padding: 0; margin: 0; list-style: none; }
+.privacy li { border-top: 3px solid; border-image: var(--grad) 1; padding-top: 1rem; }
+.privacy b { display: block; font: 700 1.15rem var(--head); margin-bottom: .3rem; }
+.privacy span { color: var(--muted); font-size: .95rem; }
+
+.faq details { border-bottom: 1px solid var(--line); padding: 1rem 0; }
+.faq summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 1rem; }
+.faq summary::after { content: "+"; color: var(--accent); font-size: 1.3rem; line-height: 1; }
+.faq details[open] summary::after { content: "−"; }
+.faq details p { color: var(--muted); margin: .6rem 0 0; }
+
+footer { border-top: 1px solid var(--line); padding: 2.5rem 0 3rem; color: var(--muted); font-size: .9rem; }
+footer .wrap { display: grid; gap: 1rem; }
+footer .links { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; }
+footer .links a { color: var(--ink); text-decoration: none; }
+footer .links a:hover { color: var(--accent); }
+.donate { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.donate button { font: inherit; font-size: .85rem; background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: .3rem .8rem; cursor: pointer; }
+.donate button:hover { border-color: var(--accent); }
+#copied { color: var(--accent); }
+
+@media (max-width: 40rem) {
+	body { font-size: 16px; }
+	section { padding: 3.5rem 0; }
+	.navlink { display: none; }
+	.hero { padding-top: 6rem; }
+}
 </style>
 </head>
 <body>
+
+<header class="top">
+	<div class="wrap">
+		<a class="brand" href="./"><img src="icon.svg" alt="">Wavestr</a>
+		<nav>
+			<a class="navlink" href="#features" data-i="navFeatures"></a>
+			<a class="navlink" href="#install" data-i="navInstall"></a>
+			<a class="navlink" href="https://oluengo.github.io/">oluengo</a>
+			<div class="lang" role="group" aria-label="Language">
+				<button data-lang="ca">CA</button><button data-lang="es">ES</button><button data-lang="en">EN</button>
+			</div>
+			<button class="theme" id="theme" type="button" data-i-aria="theme">
+				<svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+				<svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+			</button>
+		</nav>
+	</div>
+</header>
+
 <main>
-  <img src="icon.svg" alt="">
-  <h1>Wavestr</h1>
-  <p>Radio online y streams de Nostr en una sola app para Android.</p>
-  <a href="https://github.com/oluengo/wavestr#readme">Ver en GitHub</a>
+	<div class="hero">
+		<div class="wrap">
+			<div class="copy">
+				<span class="badge" data-i="badge"></span>
+				<h1><span data-i="title1"></span> <span class="grad-text" data-i="title2"></span></h1>
+				<p data-i="intro"></p>
+				<div class="cta">
+					<a class="btn grad" href="https://github.com/oluengo/wavestr/releases">
+						<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 9.5l1.8-3.1a.4.4 0 0 0-.7-.4l-1.8 3.2A11 11 0 0 0 12 8.2c-1.8 0-3.4.4-4.9 1L5.3 6a.4.4 0 0 0-.7.4l1.8 3.1A10.5 10.5 0 0 0 1 18h22a10.5 10.5 0 0 0-5.4-8.5zM7 15.3a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm10 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
+						<span data-i="download"></span>
+					</a>
+					<a class="btn dark" href="#install" data-i="how"></a>
+				</div>
+				<ul class="meta" data-list="meta"></ul>
+			</div>
+			<div class="phones" id="phones"></div>
+		</div>
+	</div>
+
+	<section id="features">
+		<div class="wrap">
+			<h2 data-i="featTitle"></h2>
+			<p class="lead" data-i="featLead"></p>
+			<div class="features" id="features-list"></div>
+		</div>
+	</section>
+
+	<section style="padding-top:0">
+		<div class="wrap">
+			<h2 data-i="shotsTitle"></h2>
+			<p class="lead" data-i="shotsLead"></p>
+			<div class="gallery" id="gallery"></div>
+		</div>
+	</section>
+
+	<section id="install" style="padding-top:1rem">
+		<div class="wrap">
+			<h2 data-i="installTitle"></h2>
+			<p class="lead" data-i="installLead"></p>
+			<div class="install">
+				<div class="card">
+					<h3>Obtainium</h3>
+					<ol data-list="obtSteps"></ol>
+					<div class="actions"><a class="btn line" href="https://github.com/ImranR98/Obtainium" data-i="getObt"></a></div>
+				</div>
+				<div class="card">
+					<h3 data-i="apkTitle"></h3>
+					<ol data-list="apkSteps"></ol>
+					<div class="actions"><a class="btn grad" href="https://github.com/oluengo/wavestr/releases" data-i="download"></a></div>
+				</div>
+			</div>
+			<div class="fp">
+				<span data-i="fpText"></span>
+				<code id="fp">06:23:37:6B:0C:75:09:50:D7:E5:F1:4E:ED:06:C3:B3:C4:86:8B:B2:64:8B:8F:34:34:76:E2:DE:90:70:0F:89</code>
+				<button data-copy-el="fp" data-i="copy"></button>
+			</div>
+			<details class="auto card">
+				<summary data-i="autoTitle"></summary>
+				<p class="lead" style="margin:.8rem 0" data-i="autoLead"></p>
+				<ol data-list="autoSteps"></ol>
+			</details>
+		</div>
+	</section>
+
+	<section id="privacy" style="padding-top:1rem">
+		<div class="wrap">
+			<h2 data-i="privTitle"></h2>
+			<p class="lead" data-i="privLead"></p>
+			<ul class="privacy" id="privacy-list"></ul>
+		</div>
+	</section>
+
+	<section id="faq" style="padding-top:1rem">
+		<div class="wrap faq">
+			<h2 data-i="faqTitle"></h2>
+			<div id="faq-list"></div>
+		</div>
+	</section>
 </main>
+
+<footer>
+	<div class="wrap">
+		<div class="links">
+			<a href="https://github.com/oluengo/wavestr/releases" data-i="releases"></a>
+			<a href="https://github.com/oluengo/wavestr/blob/main/CHANGELOG.md" data-i="changelog"></a>
+			<a href="https://github.com/oluengo/wavestr">GitHub</a>
+			<a href="https://github.com/oluengo/wavestr/issues/new?labels=bug" data-i="issues"></a>
+			<a href="https://github.com/oluengo/wavestr/blob/main/LICENSE" data-i="license"></a>
+		</div>
+		<div class="donate">
+			<span data-i="support"></span>
+			<button data-copy="bc1pnvdct6hfnh67p7dcg2e5mdveyz8jlxuzv4yflkxqccc72qkuc8ls8raspa">Bitcoin</button>
+			<button data-copy="oluengo@rizful.com">Lightning · zap</button>
+			<span id="copied" role="status"></span>
+		</div>
+		<div><span data-i="made"></span> · <a href="https://oluengo.github.io/" style="color:inherit">oluengo.github.io</a></div>
+	</div>
+</footer>
+
+<script>
+const I = {
+	es: {
+		navFeatures: "Funciones", navInstall: "Instalar", theme: "Cambiar tema",
+		badge: "Beta · Android",
+		title1: "Radio online y streams de", title2: "Nostr",
+		intro: "Una sola app para escuchar emisoras de todo el mundo y ver o escuchar los directos de la gente que sigues en Nostr. Con zaps, favoritos en carpetas y Android Auto.",
+		download: "Descargar la beta", how: "Cómo instalar",
+		meta: ["Gratis y de código abierto", "Sin anuncios", "Català · Castellano · English"],
+		phones: [["live", "Streams en directo"], ["player", "Reproductor"], ["radio", "Radios"]],
+		featTitle: "Todo tu audio en directo, en un sitio",
+		featLead: "Lo que suena en Nostr y lo que emiten las radios, con los mismos favoritos y el mismo reproductor.",
+		features: [
+			["live", "Streams de Nostr", ["Directos (NIP-53) de la gente que sigues, o de todo Nostr.", "Solo audio o vídeo sin cortar el stream; pasa a audio al apagar la pantalla.", "Chat y zaps del stream en el reproductor."]],
+			["radio", "Radio online", ["Directorio libre Radio Browser: populares, cerca de ti, por estilo y búsqueda.", "Importa listas PLS y M3U por enlace, texto o archivo.", "Calidad seleccionable, canción que suena y carátulas."]],
+			["fav", "Favoritos a tu manera", ["Carpetas y subcarpetas para radios y streamers.", "Compártelos por enlace, M3U o texto; impórtalos o expórtalos.", "Opcional: guardados en Nostr y cifrados (NIP-78 + NIP-44)."]],
+			["car", "En el coche y en casa", ["Android Auto con búsqueda por voz y anterior/siguiente.", "Widgets para la pantalla de inicio y controles en la notificación.", "Temporizador de apagado y margen contra cortes."]],
+			["zap", "Zaps", ["Apoya a quien emite con zaps vía NWC.", "Límite mensual para no llevarte sorpresas.", "Inicio de sesión con Amber (NIP-55) o con tu npub en solo lectura."]],
+			["dice", "Y además", ["Botón sorpresa: radio, stream o ambos.", "Tema claro, oscuro o automático y color de acento a elegir.", "Navegación lateral en tablets y pantallas anchas."]]
+		],
+		shotsTitle: "Así se ve", shotsLead: "Capturas de la maqueta interactiva, con datos de ejemplo.",
+		shots: [["live", "Streams"], ["player", "Reproductor"], ["radio", "Radios"], ["fav", "Favoritos"]],
+		installTitle: "Instalar", installLead: "Wavestr se distribuye fuera de Google Play. La beta se instala como otra app, Wavestr Beta, con sus propios datos.",
+		obtSteps: ["Instala Obtainium.", "«Añadir app» y pega <code>https://github.com/oluengo/wavestr</code>.", "Activa «incluir pre-releases». Te avisará de cada nueva beta."],
+		getObt: "Conseguir Obtainium",
+		apkTitle: "APK directo",
+		apkSteps: ["Descarga el APK de la pre-release Wavestr Beta.", "Ábrelo y permite instalar desde esa fuente si Android lo pide.", "Para actualizar, repite los pasos con la nueva versión."],
+		fpText: "Comprueba que la huella del certificado coincide (también está en Ajustes → Acerca de):",
+		copy: "Copiar huella",
+		autoTitle: "Activar Android Auto (una sola vez)",
+		autoLead: "Como no viene de Google Play, Android Auto la oculta hasta que lo permitas.",
+		autoSteps: ["Instala Wavestr (0.10.0 o posterior) y ábrela una vez.", "Abre los ajustes de Android Auto en el móvil (busca «Android Auto» en Ajustes).", "Toca «Versión» unas 10 veces y acepta el aviso para activar el modo desarrollador.", "Menú ⋮ → Ajustes de desarrollador → activa «Fuentes desconocidas».", "Desconecta el móvil, fuerza la detención de Android Auto y vuelve a conectar.", "Si no aparece: ajustes de Android Auto → Personalizar menú de aplicaciones → marca Wavestr."],
+		privTitle: "Tus claves, contigo", privLead: "Wavestr no tiene cuentas propias ni servidor. Se conecta directamente a los relays de Nostr, al directorio de radios y a las emisoras que escuchas.",
+		privacy: [["Nunca ve tu clave privada", "Firmas con Amber (NIP-55) o entras con tu npub en solo lectura."], ["Sin librerías de seguimiento", "Ni analítica ni publicidad dentro de la app."], ["Favoritos en tu móvil", "Guardarlos en Nostr es opcional, y van cifrados."], ["Zaps con límite", "Tú decides el tope mensual que puede gastar la app con NWC."]],
+		faqTitle: "Preguntas frecuentes",
+		faq: [
+			["¿Cuánto cuesta?", "Nada. Wavestr es gratis, sin anuncios ni compras. Los zaps son opcionales y van directos a quien emite."],
+			["¿Necesito una cuenta de Nostr?", "No para escuchar radio ni streams de todo Nostr. Con tu npub ves los directos de quien sigues; con Amber puedes escribir en el chat y guardar favoritos en Nostr."],
+			["¿Por qué no está en Google Play?", "Se publica en GitHub y se instala con Obtainium o el APK. Es la misma decisión que en Usus."],
+			["¿Hay versión para ordenador?", "Linux y Windows están en desarrollo, todavía sin descargas."],
+			["¿Qué es la beta?", "Una versión de pruebas con lo último. Se instala junto a la normal, con sus propios datos, y puede tener fallos."],
+			["¿Algo no funciona?", "Abre un aviso en GitHub o usa Ajustes → Acerca de → Informar de un problema."]
+		],
+		releases: "Versiones", changelog: "Historial de cambios", issues: "Informar de un problema", license: "Licencia MIT",
+		support: "Apoya el proyecto (toca para copiar):", copied: "copiado",
+		made: "Hecha con IA · probada por humanos"
+	},
+	ca: {
+		navFeatures: "Funcions", navInstall: "Instal·lar", theme: "Canvia el tema",
+		badge: "Beta · Android",
+		title1: "Ràdio en línia i streams de", title2: "Nostr",
+		intro: "Una sola app per escoltar emissores de tot el món i veure o escoltar els directes de la gent que segueixes a Nostr. Amb zaps, preferits en carpetes i Android Auto.",
+		download: "Descarrega la beta", how: "Com instal·lar",
+		meta: ["Gratuïta i de codi obert", "Sense anuncis", "Català · Castellano · English"],
+		phones: [["live", "Streams en directe"], ["player", "Reproductor"], ["radio", "Ràdios"]],
+		featTitle: "Tot el teu àudio en directe, en un lloc",
+		featLead: "El que sona a Nostr i el que emeten les ràdios, amb els mateixos preferits i el mateix reproductor.",
+		features: [
+			["live", "Streams de Nostr", ["Directes (NIP-53) de la gent que segueixes, o de tot Nostr.", "Només àudio o vídeo sense tallar el stream; passa a àudio en apagar la pantalla.", "Xat i zaps del stream al reproductor."]],
+			["radio", "Ràdio en línia", ["Directori lliure Radio Browser: populars, a prop teu, per estil i cerca.", "Importa llistes PLS i M3U per enllaç, text o fitxer.", "Qualitat seleccionable, cançó que sona i caràtules."]],
+			["fav", "Preferits a la teva manera", ["Carpetes i subcarpetes per a ràdios i streamers.", "Comparteix-los per enllaç, M3U o text; importa'ls o exporta'ls.", "Opcional: desats a Nostr i xifrats (NIP-78 + NIP-44)."]],
+			["car", "Al cotxe i a casa", ["Android Auto amb cerca per veu i anterior/següent.", "Ginys per a la pantalla d'inici i controls a la notificació.", "Temporitzador d'apagada i marge contra talls."]],
+			["zap", "Zaps", ["Dona suport a qui emet amb zaps via NWC.", "Límit mensual per no endur-te sorpreses.", "Inici de sessió amb Amber (NIP-55) o amb el teu npub només de lectura."]],
+			["dice", "I a més", ["Botó sorpresa: ràdio, stream o tots dos.", "Tema clar, fosc o automàtic i color d'accent a triar.", "Navegació lateral en tauletes i pantalles amples."]]
+		],
+		shotsTitle: "Així es veu", shotsLead: "Captures de la maqueta interactiva, amb dades d'exemple.",
+		shots: [["live", "Streams"], ["player", "Reproductor"], ["radio", "Ràdios"], ["fav", "Preferits"]],
+		installTitle: "Instal·lar", installLead: "Wavestr es distribueix fora de Google Play. La beta s'instal·la com una altra app, Wavestr Beta, amb les seves pròpies dades.",
+		obtSteps: ["Instal·la Obtainium.", "«Afegeix app» i enganxa <code>https://github.com/oluengo/wavestr</code>.", "Activa «incloure pre-releases». T'avisarà de cada nova beta."],
+		getObt: "Aconsegueix Obtainium",
+		apkTitle: "APK directe",
+		apkSteps: ["Descarrega l'APK de la pre-release Wavestr Beta.", "Obre'l i permet instal·lar des d'aquesta font si Android ho demana.", "Per actualitzar, repeteix els passos amb la nova versió."],
+		fpText: "Comprova que l'empremta del certificat coincideix (també és a Configuració → Quant a):",
+		copy: "Copia l'empremta",
+		autoTitle: "Activar Android Auto (un sol cop)",
+		autoLead: "Com que no ve de Google Play, Android Auto l'amaga fins que ho permetis.",
+		autoSteps: ["Instal·la Wavestr (0.10.0 o posterior) i obre-la un cop.", "Obre la configuració d'Android Auto al mòbil (cerca «Android Auto» a Configuració).", "Toca «Versió» unes 10 vegades i accepta l'avís per activar el mode desenvolupador.", "Menú ⋮ → Configuració de desenvolupador → activa «Fonts desconegudes».", "Desconnecta el mòbil, força l'aturada d'Android Auto i torna a connectar.", "Si no apareix: configuració d'Android Auto → Personalitza el menú d'aplicacions → marca Wavestr."],
+		privTitle: "Les teves claus, amb tu", privLead: "Wavestr no té comptes propis ni servidor. Es connecta directament als relays de Nostr, al directori de ràdios i a les emissores que escoltes.",
+		privacy: [["Mai veu la teva clau privada", "Signes amb Amber (NIP-55) o entres amb el teu npub només de lectura."], ["Sense biblioteques de seguiment", "Ni analítica ni publicitat dins l'app."], ["Preferits al teu mòbil", "Desar-los a Nostr és opcional, i van xifrats."], ["Zaps amb límit", "Tu decideixes el topall mensual que pot gastar l'app amb NWC."]],
+		faqTitle: "Preguntes freqüents",
+		faq: [
+			["Quant costa?", "Res. Wavestr és gratuïta, sense anuncis ni compres. Els zaps són opcionals i van directes a qui emet."],
+			["Cal un compte de Nostr?", "No per escoltar ràdio ni streams de tot Nostr. Amb el teu npub veus els directes de qui segueixes; amb Amber pots escriure al xat i desar preferits a Nostr."],
+			["Per què no és a Google Play?", "Es publica a GitHub i s'instal·la amb Obtainium o l'APK. És la mateixa decisió que a Usus."],
+			["Hi ha versió per a ordinador?", "Linux i Windows són en desenvolupament, encara sense descàrregues."],
+			["Què és la beta?", "Una versió de proves amb el més nou. S'instal·la al costat de la normal, amb les seves pròpies dades, i pot tenir errors."],
+			["Alguna cosa no funciona?", "Obre un avís a GitHub o fes servir Configuració → Quant a → Informa d'un problema."]
+		],
+		releases: "Versions", changelog: "Historial de canvis", issues: "Informa d'un problema", license: "Llicència MIT",
+		support: "Dona suport al projecte (toca per copiar):", copied: "copiat",
+		made: "Feta amb IA · provada per humans"
+	},
+	en: {
+		navFeatures: "Features", navInstall: "Install", theme: "Toggle theme",
+		badge: "Beta · Android",
+		title1: "Online radio and live streams from", title2: "Nostr",
+		intro: "One app to listen to stations from all over the world and to watch or listen to live streams from the people you follow on Nostr. With zaps, favourites in folders and Android Auto.",
+		download: "Download the beta", how: "How to install",
+		meta: ["Free and open source", "No ads", "Català · Castellano · English"],
+		phones: [["live", "Live streams"], ["player", "Player"], ["radio", "Radio"]],
+		featTitle: "All your live audio in one place",
+		featLead: "What's live on Nostr and what radio stations broadcast, with the same favourites and the same player.",
+		features: [
+			["live", "Nostr streams", ["Live streams (NIP-53) from people you follow, or from all of Nostr.", "Audio-only or video without cutting the stream; switches to audio when the screen turns off.", "Stream chat and zaps in the player."]],
+			["radio", "Online radio", ["The free Radio Browser directory: popular, near you, by style and search.", "Import PLS and M3U playlists by link, text or file.", "Selectable quality, now playing and cover art."]],
+			["fav", "Favourites your way", ["Folders and subfolders for stations and streamers.", "Share them by link, M3U or text; import or export them.", "Optional: stored on Nostr, encrypted (NIP-78 + NIP-44)."]],
+			["car", "In the car and at home", ["Android Auto with voice search and previous/next.", "Home screen widgets and controls in the notification.", "Sleep timer and buffer against dropouts."]],
+			["zap", "Zaps", ["Support streamers with zaps via NWC.", "A monthly limit so there are no surprises.", "Sign in with Amber (NIP-55) or read-only with your npub."]],
+			["dice", "And more", ["Surprise button: radio, stream or both.", "Light, dark or automatic theme and an accent colour of your choice.", "Side navigation on tablets and wide screens."]]
+		],
+		shotsTitle: "Take a look", shotsLead: "Screenshots of the interactive mockup, with sample data.",
+		shots: [["live", "Streams"], ["player", "Player"], ["radio", "Radio"], ["fav", "Favourites"]],
+		installTitle: "Install", installLead: "Wavestr is distributed outside Google Play. The beta installs as a separate app, Wavestr Beta, with its own data.",
+		obtSteps: ["Install Obtainium.", "“Add app” and paste <code>https://github.com/oluengo/wavestr</code>.", "Turn on “include pre-releases”. You'll be notified of every new beta."],
+		getObt: "Get Obtainium",
+		apkTitle: "Direct APK",
+		apkSteps: ["Download the APK from the Wavestr Beta pre-release.", "Open it and allow installing from that source if Android asks.", "To update, repeat the steps with the new version."],
+		fpText: "Check that the certificate fingerprint matches (also in Settings → About):",
+		copy: "Copy fingerprint",
+		autoTitle: "Enable Android Auto (once)",
+		autoLead: "Because it doesn't come from Google Play, Android Auto hides it until you allow it.",
+		autoSteps: ["Install Wavestr (0.10.0 or later) and open it once.", "Open the Android Auto settings on your phone (search “Android Auto” in Settings).", "Tap “Version” about 10 times and accept the prompt to enable developer mode.", "⋮ menu → Developer settings → turn on “Unknown sources”.", "Disconnect the phone, force stop Android Auto and reconnect.", "If it doesn't show up: Android Auto settings → Customise app menu → tick Wavestr."],
+		privTitle: "Your keys stay with you", privLead: "Wavestr has no accounts of its own and no server. It connects directly to Nostr relays, the radio directory and the stations you listen to.",
+		privacy: [["Never sees your private key", "Sign with Amber (NIP-55) or sign in read-only with your npub."], ["No tracking libraries", "No analytics or ads inside the app."], ["Favourites on your phone", "Storing them on Nostr is optional, and they're encrypted."], ["Zaps with a limit", "You set the monthly cap the app can spend through NWC."]],
+		faqTitle: "FAQ",
+		faq: [
+			["How much does it cost?", "Nothing. Wavestr is free, with no ads or purchases. Zaps are optional and go straight to the streamer."],
+			["Do I need a Nostr account?", "Not to listen to radio or streams from all of Nostr. With your npub you see live streams from people you follow; with Amber you can chat and store favourites on Nostr."],
+			["Why isn't it on Google Play?", "It's published on GitHub and installed with Obtainium or the APK, the same choice as Usus."],
+			["Is there a desktop version?", "Linux and Windows are in development, with no downloads yet."],
+			["What is the beta?", "A test version with the latest changes. It installs alongside the regular app, with its own data, and may have bugs."],
+			["Something not working?", "Open an issue on GitHub or use Settings → About → Report a problem."]
+		],
+		releases: "Releases", changelog: "Changelog", issues: "Report a problem", license: "MIT License",
+		support: "Support the project (tap to copy):", copied: "copied",
+		made: "Built with AI · tested by humans"
+	}
+};
+const ICONS = {
+	live: '<circle cx="12" cy="12" r="2.5"/><path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4M5 5a10 10 0 0 0 0 14M19 5a10 10 0 0 1 0 14"/>',
+	radio: '<rect x="3" y="8" width="18" height="12" rx="2"/><path d="M7 8 17 3"/><circle cx="8.5" cy="14" r="2.5"/><path d="M14 12h4M14 16h4"/>',
+	fav: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+	car: '<path d="M5 17h14M6 17v2M18 17v2M4 13l2-5a2 2 0 0 1 2-1h8a2 2 0 0 1 2 1l2 5v4H4z"/><circle cx="8" cy="14" r="1"/><circle cx="16" cy="14" r="1"/>',
+	zap: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+	dice: '<rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.2"/><circle cx="15.5" cy="15.5" r="1.2"/><circle cx="12" cy="12" r="1.2"/>'
+};
+const LANGS = ["ca", "es", "en"], root = document.documentElement;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const SHOT = { live: "live-%-dark", player: "player-%-dark", radio: "radio-%", fav: "fav-%-dark" };
+const shot = (k, lang) => "img/" + SHOT[k].replace("%", lang) + ".webp";
+function pickLang() {
+	const q = new URLSearchParams(location.search).get("lang");
+	if (LANGS.includes(q)) return q;
+	try { const s = localStorage.getItem("lang"); if (LANGS.includes(s)) return s; } catch (e) {}
+	const n = (navigator.languages || [navigator.language || ""]).map(x => String(x).slice(0, 2));
+	return n.find(x => LANGS.includes(x)) || "en";
+}
+let L;
+function render(lang) {
+	L = lang; const t = I[lang]; root.lang = lang;
+	document.querySelectorAll("[data-i]").forEach(el => { el.textContent = t[el.dataset.i]; });
+	document.querySelectorAll("[data-i-aria]").forEach(el => { el.setAttribute("aria-label", t[el.dataset.iAria]); el.title = t[el.dataset.iAria]; });
+	document.querySelectorAll("[data-list]").forEach(el => { el.innerHTML = t[el.dataset.list].map(x => "<li>" + (el.dataset.list.endsWith("Steps") ? x : esc(x)) + "</li>").join(""); });
+	document.getElementById("phones").innerHTML = t.phones.map(([k, a]) => `<img src="${shot(k, lang)}" width="540" height="1169" alt="${esc(a)}">`).join("");
+	document.getElementById("features-list").innerHTML = t.features.map(([ic, h, items]) =>
+		`<div class="feature"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[ic]}</svg></div><h3>${esc(h)}</h3><ul>${items.map(x => "<li>" + esc(x) + "</li>").join("")}</ul></div>`).join("");
+	document.getElementById("gallery").innerHTML = t.shots.map(([k, c]) =>
+		`<figure><img src="${shot(k, lang)}" width="540" height="1169" loading="lazy" alt="${esc(c)}"><figcaption>${esc(c)}</figcaption></figure>`).join("");
+	document.getElementById("privacy-list").innerHTML = t.privacy.map(([b, s]) => `<li><b>${esc(b)}</b><span>${esc(s)}</span></li>`).join("");
+	document.getElementById("faq-list").innerHTML = t.faq.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("");
+	document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === lang));
+}
+document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => {
+	try { localStorage.setItem("lang", b.dataset.lang); } catch (e) {}
+	render(b.dataset.lang);
+}));
+try { const th = localStorage.getItem("theme"); if (th) root.dataset.theme = th; } catch (e) {}
+document.getElementById("theme").addEventListener("click", () => {
+	const cur = root.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+	root.dataset.theme = cur === "dark" ? "light" : "dark";
+	try { localStorage.setItem("theme", root.dataset.theme); } catch (e) {}
+});
+const copied = document.getElementById("copied"); let ct;
+async function copyText(text, label) {
+	let ok = false;
+	try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {}
+	copied.textContent = ok ? label + " " + I[L].copied : text;
+	clearTimeout(ct); ct = setTimeout(() => { copied.textContent = ""; }, ok ? 1800 : 8000);
+	return ok;
+}
+document.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => copyText(b.dataset.copy, b.textContent)));
+document.querySelectorAll("[data-copy-el]").forEach(b => b.addEventListener("click", async () => {
+	const ok = await copyText(document.getElementById(b.dataset.copyEl).textContent, "");
+	const prev = b.textContent; b.textContent = ok ? "✓ " + I[L].copied : prev;
+	setTimeout(() => { b.textContent = I[L].copy; }, 1800);
+}));
+render(pickLang());
+</script>
 </body>
 </html>

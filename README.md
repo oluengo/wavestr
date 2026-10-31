@@ -5,6 +5,8 @@
 Radio online y streams de Nostr en una sola app para Android.
 *Online radio and Nostr live streams in one Android app. Català · Español · English.*
 
+**Web:** <https://oluengo.github.io/wavestr/>
+
 > Estado: **beta** ([Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta)) con lo último.
 
 ## Instalar la beta
