@@ -76,6 +76,7 @@ fun FavoritesScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenProfile: (S
     val items = lib.itemsIn(current)
     // Estado de los streamers favoritos (emitiendo o no), cada minuto mientras la pantalla está abierta.
     val live by c.liveStatus.live.collectAsStateWithLifecycle()
+    val untitled = stringResource(R.string.untitled_stream)
     val hosts = lib.favorites.mapNotNull { it.hostPubkey }.toSet()
     androidx.compose.runtime.LaunchedEffect(hosts) {
         while (true) {
@@ -128,7 +129,16 @@ fun FavoritesScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenProfile: (S
                 ItemRow(c, item, live = item.hostPubkey?.let { h -> live?.let { h in it } }, onClick = {
                     when (item.kind) {
                         FavItem.Kind.STATION -> item.station?.let { c.player.playStation(it); onOpenPlayer() }
-                        FavItem.Kind.STREAMER -> item.hostPubkey?.let(onOpenProfile)
+                        // Si está emitiendo, a reproducir directamente; si no, su perfil (con las grabaciones).
+                        FavItem.Kind.STREAMER -> item.hostPubkey?.let { h ->
+                            val np = live?.get(h)?.let { liveNowPlaying(it, item, untitled) }
+                            if (np == null) onOpenProfile(h)
+                            else {
+                                // Anterior / siguiente: entre los favoritos que están emitiendo.
+                                c.player.setStreamContext(lib.favorites.mapNotNull { f -> f.hostPubkey?.let { live?.get(it) }?.let { liveNowPlaying(it, f, untitled) } })
+                                c.player.play(np); onOpenPlayer()
+                            }
+                        }
                     }
                 }, onMore = { dialog = Dialog.ItemOptions(item) })
                 HorizontalDivider(color = Rs.colors.line)
@@ -169,6 +179,7 @@ fun FavoritesScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenProfile: (S
             onMove = { folderId -> c.library.update { it.move(d.item.key, folderId) }; dialog = null },
             onRemove = { c.library.update { it.remove(d.item.key) }; dialog = null },
             onShare = { dialog = Dialog.Share(io.github.oluengo.wavestr.data.Shared.ofItem(d.item)) },
+            onProfile = d.item.hostPubkey?.let { h -> { dialog = null; onOpenProfile(h) } },
             onDismiss = { dialog = null },
         )
         is Dialog.Share -> io.github.oluengo.wavestr.ui.common.ShareDialog(d.shared, onDismiss = { dialog = null })
@@ -267,7 +278,7 @@ private fun FolderOptionsDialog(f: Folder, onRename: (String) -> Unit, onDelete:
 }
 
 @Composable
-private fun MoveDialog(lib: Library, item: FavItem, onMove: (String?) -> Unit, onRemove: () -> Unit, onShare: () -> Unit, onDismiss: () -> Unit) {
+private fun MoveDialog(lib: Library, item: FavItem, onMove: (String?) -> Unit, onRemove: () -> Unit, onShare: () -> Unit, onProfile: (() -> Unit)?, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.fav_move_to)) },
@@ -279,6 +290,7 @@ private fun MoveDialog(lib: Library, item: FavItem, onMove: (String?) -> Unit, o
                         Icon(Icons.Outlined.Share, null, Modifier.size(18.dp)); Text(stringResource(R.string.share), Modifier.padding(start = 8.dp))
                     }
                 }
+                if (onProfile != null) TextButton(onClick = onProfile) { Text(stringResource(R.string.view_profile)) }
                 DestRow(stringResource(R.string.fav_no_folder), 0, item.folderId == null) { onMove(null) }
                 lib.tree().forEach { (f, depth) -> DestRow(f.name, depth + 1, item.folderId == f.id) { onMove(f.id) } }
                 TextButton(onClick = onRemove, modifier = Modifier.padding(top = 8.dp)) { Text(stringResource(R.string.fav_remove), color = Rs.colors.live) }
@@ -295,4 +307,13 @@ private fun DestRow(label: String, depth: Int, selected: Boolean, onClick: () ->
         Icon(Icons.Outlined.Folder, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
         Text(label, modifier = Modifier.padding(start = 8.dp), maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
+}
+
+/** El directo de un streamer favorito, listo para el reproductor. */
+private fun liveNowPlaying(s: io.github.oluengo.wavestr.nostr.LiveStream, fav: FavItem, untitled: String): io.github.oluengo.wavestr.player.NowPlaying? {
+    val url = s.streamingUrl ?: return null
+    return io.github.oluengo.wavestr.player.NowPlaying(
+        id = s.address, url = url, title = s.title.ifBlank { untitled }, subtitle = fav.title,
+        artworkUrl = s.image ?: fav.image, hostPubkey = s.hostPubkey,
+    )
 }

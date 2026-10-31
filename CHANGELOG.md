@@ -2,6 +2,7 @@
 
 ## 0.11.0
 
+- **Favoritos:** tocar un streamer que está emitiendo reproduce su directo al momento (anterior/siguiente pasa por los demás favoritos en directo). Si no emite, se abre su perfil; el perfil también está en su menú ⋮.
 - **Compartir** una emisora o streamer (desde el reproductor o su menú en Favoritos), una carpeta con sus subcarpetas, o todos los favoritos (botón de compartir en Favoritos: comparte lo que estás viendo). Tres formatos:
   - **Enlace:** abre Wavestr y muestra una vista previa para elegir qué añadir; sin la app, una página web con la lista, la descarga en M3U y cómo instalarla. Todo va dentro del enlace: no pasa por ningún servidor.
   - **Lista M3U** para VLC y otros reproductores (solo las radios).
