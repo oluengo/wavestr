@@ -1,5 +1,11 @@
 # Cambios
 
+## 0.11.1
+
+- **Favoritos:** la nota ya no dice que la sincronización por Nostr llegará más adelante; si no sincronizas, indica dónde activarla.
+- **Reproductor:** un poco más de margen entre la barra de estado y la barra de lo que suena.
+- **Entrar:** el texto de solo lectura menciona Amber y bunker para chatear, reaccionar y enviar zaps.
+
 ## 0.11.0
 
 - **Reproductor unificado (radio y streams):** arriba siempre se ve qué suena (miniatura, título y canción o anfitrión) y, debajo, el vídeo si lo hay; en medio lo que se desplaza (carátula, detalles, chat o emisoras parecidas); abajo los mismos controles para todo y, en los directos, la caja del chat.
