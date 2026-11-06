@@ -83,6 +83,9 @@ class AppContainer(app: Application) {
     val player = PlayerConnection(app, settings, HlsInspector(http), appScope, onStationPlay = radio::countClick, favorites = { library.library.value.favorites })
     val liveStatus = io.github.oluengo.wavestr.nostr.LiveStatus(nostr)
     val widgets = io.github.oluengo.wavestr.widget.WidgetSync(app, this)
+    val reminders = io.github.oluengo.wavestr.reminder.Reminders(app)
+    /** Directo a abrir al tocar un recordatorio: (dirección, anfitrión). */
+    val openStream = kotlinx.coroutines.flow.MutableStateFlow<Pair<String, String>?>(null)
     /** Enlace compartido recibido y pendiente de revisar (se muestra la vista previa para importarlo). */
     val incomingShare = kotlinx.coroutines.flow.MutableStateFlow<io.github.oluengo.wavestr.data.Shared?>(null)
 }

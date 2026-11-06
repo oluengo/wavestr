@@ -24,6 +24,7 @@ import io.github.oluengo.wavestr.MainActivity
 class PlaybackService : MediaLibraryService() {
     private var session: MediaLibrarySession? = null
     private var library: AutoLibrary? = null
+    private var boost: VolumeBoost.Applier? = null
 
     @androidx.annotation.OptIn(UnstableApi::class)
     override fun onCreate() {
@@ -57,8 +58,12 @@ class PlaybackService : MediaLibraryService() {
 
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 player.playlistMetadata = MediaMetadata.EMPTY
+                boost?.apply()
             }
+
+            override fun onAudioSessionIdChanged(audioSessionId: Int) { boost?.apply() }
         })
+        boost = VolumeBoost.Applier(this, player).also { it.apply() }
 
         val open = PendingIntent.getActivity(
             this, 0,
@@ -82,6 +87,7 @@ class PlaybackService : MediaLibraryService() {
             release()
         }
         session = null
+        boost?.release(); boost = null
         library?.release()
         super.onDestroy()
     }

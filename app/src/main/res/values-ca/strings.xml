@@ -421,4 +421,24 @@
     <string name="bunker_connecting">Connectant… Si el signant ho demana, aprova-hi la connexió.</string>
     <string name="bunker_connect">Connecta</string>
     <string name="account_bunker">Sessió amb signant remot (bunker)</string>
+    <string name="upcoming">Properament</string>
+    <string name="time_today">Avui</string>
+    <string name="time_tomorrow">Demà</string>
+    <string name="time_their_zone">%1$s a %2$s</string>
+    <string name="reminders_channel">Recordatoris de streams</string>
+    <string name="reminder_now">%1$s comença ara. Toca per escoltar-lo.</string>
+    <string name="reminder_soon">Comença d\'aquí a %1$d min · %2$s</string>
+    <string name="reminder_saved">Recordatori desat</string>
+    <string name="reminder_edit">Canvia el recordatori</string>
+    <string name="reminder_add">Avisa\'m</string>
+    <string name="reminder_title">Avisa\'m</string>
+    <string name="reminder_at_start">Quan comenci</string>
+    <string name="reminder_before">%1$s abans</string>
+    <string name="reminder_remove">Treu el recordatori</string>
+    <string name="lead_minutes">%1$d min</string>
+    <string name="lead_hours">%1$d h</string>
+    <string name="boost">Volum</string>
+    <string name="boost_on">Volum +%1$d dB</string>
+    <string name="boost_explain">Reforç per a emissores que sonen fluix. Es desa per a aquesta emissora.</string>
+    <string name="boost_off">Normal</string>
 </resources>

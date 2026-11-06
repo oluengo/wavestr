@@ -421,4 +421,24 @@
     <string name="bunker_connecting">Conectando… Si el firmante lo pide, aprueba la conexión allí.</string>
     <string name="bunker_connect">Conectar</string>
     <string name="account_bunker">Sesión con firmante remoto (bunker)</string>
+    <string name="upcoming">Próximamente</string>
+    <string name="time_today">Hoy</string>
+    <string name="time_tomorrow">Mañana</string>
+    <string name="time_their_zone">%1$s en %2$s</string>
+    <string name="reminders_channel">Recordatorios de streams</string>
+    <string name="reminder_now">%1$s empieza ahora. Toca para escucharlo.</string>
+    <string name="reminder_soon">Empieza en %1$d min · %2$s</string>
+    <string name="reminder_saved">Recordatorio guardado</string>
+    <string name="reminder_edit">Cambiar recordatorio</string>
+    <string name="reminder_add">Avisarme</string>
+    <string name="reminder_title">Avisarme</string>
+    <string name="reminder_at_start">Al empezar</string>
+    <string name="reminder_before">%1$s antes</string>
+    <string name="reminder_remove">Quitar recordatorio</string>
+    <string name="lead_minutes">%1$d min</string>
+    <string name="lead_hours">%1$d h</string>
+    <string name="boost">Volumen</string>
+    <string name="boost_on">Volumen +%1$d dB</string>
+    <string name="boost_explain">Refuerzo para emisoras que suenan flojo. Se guarda para esta emisora.</string>
+    <string name="boost_off">Normal</string>
 </resources>

@@ -54,7 +54,7 @@ import io.github.oluengo.wavestr.ui.theme.Rs
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LiveScreen(c: AppContainer, onPlay: (NowPlaying) -> Unit, onSignIn: () -> Unit, onOpenMe: () -> Unit) {
+fun LiveScreen(c: AppContainer, onPlay: (NowPlaying) -> Unit, onSignIn: () -> Unit, onOpenMe: () -> Unit, onOpenProfile: (String) -> Unit = {}) {
     val vm: LiveViewModel = viewModel(factory = viewModelFactory { initializer { LiveViewModel(c) } })
     val st by vm.state.collectAsStateWithLifecycle()
     val untitled = stringResource(R.string.untitled_stream)
@@ -122,6 +122,14 @@ fun LiveScreen(c: AppContainer, onPlay: (NowPlaying) -> Unit, onSignIn: () -> Un
                                 HorizontalDivider(color = Rs.colors.line)
                             }
                         }
+                    }
+                }
+                // Próximamente: directos programados y eventos de calendario, con recordatorio.
+                if (st.upcoming.isNotEmpty()) {
+                    item { SectionLabel(stringResource(R.string.upcoming)) }
+                    items(st.upcoming, key = { "up:" + it.s.address }) { u ->
+                        UpcomingRow(c, u.s, u.host, onOpenProfile)
+                        HorizontalDivider(color = Rs.colors.line)
                     }
                 }
                 item { Box(Modifier.size(24.dp)) }

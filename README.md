@@ -44,7 +44,7 @@ Si deja de aparecer tras actualizar Android Auto, revisa que **Fuentes desconoci
 - **Perfil del streamer** con sus grabaciones.
 - **Tres idiomas:** català, castellano e inglés. Usa el del dispositivo; si no es ninguno de ellos, inglés.
 - **Tema** claro, oscuro o automático.
-- Inicio de sesión con **Amber** (NIP-55) o con tu **npub** en solo lectura. La app nunca ve tu clave privada.
+- Inicio de sesión con **Amber** (NIP-55), con un **bunker** (NIP-46: nsecBunker, nsec.app…) o con tu **npub** en solo lectura. La app nunca ve tu clave privada.
 
 - **Radio online** con el directorio libre Radio Browser: populares, por país, por estilo y búsqueda; calidad seleccionable y canción que suena.
 - **Importar listas PLS/M3U** (enlace, contenido o archivo).
@@ -55,7 +55,7 @@ Si deja de aparecer tras actualizar Android Auto, revisa que **Fuentes desconoci
 - **Exportar e importar favoritos** (JSON con carpetas o M3U).
 - **Compartir** una emisora, una carpeta o todos los favoritos: por enlace (se abre en Wavestr para elegir qué añadir, o en el navegador si no la tienen), lista M3U o texto.
 - **Color de acento** a elegir.
-- **Favoritos en Nostr**, cifrados (NIP-78 + NIP-44, con Amber).
+- **Favoritos en Nostr**, cifrados (NIP-78 + NIP-44, con Amber o bunker).
 - **Botón sorpresa:** radio, stream o ambos; de tus favoritos o de todo.
 - **Relays de Wavestr** editables, además de tu lista NIP-65.
 - **Tablets y pantallas anchas:** navegación lateral y reproductor fijo con chat.
@@ -64,7 +64,10 @@ Si deja de aparecer tras actualizar Android Auto, revisa que **Fuentes desconoci
 - **Margen contra cortes:** Auto, Directo, 10, 20 o 30 s.
 - **Temporizador de apagado:** 15 a 90 minutos con bajada de volumen al final, o al terminar el stream de Nostr.
 - **Android Auto:** Favoritos, Streams, Radios y Recientes en el coche, con búsqueda por voz y anterior/siguiente.
-- **Chat de los streams:** leer y escribir (con Amber).
+- **Chat de los streams:** leer y escribir, reaccionar a mensajes y al stream, y zaps a mensajes (con Amber o bunker).
+- **Próximamente y recordatorios:** directos programados (NIP-53) y eventos de calendario (NIP-52), con tu hora y la del organizador, y aviso al empezar o antes.
+- **Vídeo fijo con el chat** y **pantalla completa** en los streams con vídeo.
+- **Refuerzo de volumen** por emisora para las que suenan flojo.
 - **Escritorio (Linux y Windows):** en desarrollo, todavía sin descargas.
 
 **Próximamente:** radiodespertador y la versión de escritorio. El orden está en el [plan técnico](docs/plan-tecnico.md).

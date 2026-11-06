@@ -78,6 +78,25 @@ fun WavestrRoot(c: AppContainer) {
     io.github.oluengo.wavestr.ui.favorites.AmberRequestHost(c)
     io.github.oluengo.wavestr.ui.favorites.SyncAskDialog(c)
     io.github.oluengo.wavestr.ui.common.IncomingShareHost(c)
+    // Recordatorio tocado: si ya está en directo, a sonar; si no, el perfil del streamer.
+    val open by c.openStream.collectAsStateWithLifecycle()
+    val untitled = stringResource(R.string.untitled_stream)
+    LaunchedEffect(open) {
+        val (address, host) = open ?: return@LaunchedEffect
+        c.openStream.value = null
+        val viewer = c.settings.current().pubkey
+        val s = runCatching { c.nostr.stream(address, viewer) }.getOrNull()
+        val url = s?.takeIf { it.isLiveNow(System.currentTimeMillis() / 1000) }?.streamingUrl
+        if (s != null && url != null) {
+            val p = runCatching { c.nostr.profiles(listOf(s.hostPubkey), viewer)[s.hostPubkey] }.getOrNull()
+            c.player.play(io.github.oluengo.wavestr.player.NowPlaying(
+                id = s.address, url = url, title = s.title.ifBlank { untitled },
+                subtitle = p?.bestName ?: io.github.oluengo.wavestr.nostr.Nip19.shortNpub(s.hostPubkey),
+                artworkUrl = s.image ?: p?.picture, hostPubkey = s.hostPubkey,
+            ))
+            openPlayer()
+        } else runCatching { nav.navigate("profile/$host") }
+    }
 
     CompositionLocalProvider(io.github.oluengo.wavestr.ui.common.LocalOpenPlayer provides openPlayer) {
         Row(Modifier.fillMaxSize()) {
@@ -116,7 +135,7 @@ fun WavestrRoot(c: AppContainer) {
             ) { pad ->
                 NavHost(nav, startDestination = Tab.LIVE.route, modifier = Modifier.padding(pad)) {
                     composable(Tab.LIVE.route) {
-                        LiveScreen(c, onPlay = { c.player.play(it); openPlayer() }, onSignIn = { nav.navigate("me") }, onOpenMe = { nav.navigate("me") })
+                        LiveScreen(c, onPlay = { c.player.play(it); openPlayer() }, onSignIn = { nav.navigate("me") }, onOpenMe = { nav.navigate("me") }, onOpenProfile = { nav.navigate("profile/$it") })
                     }
                     composable(Tab.RADIO.route) {
                         RadioScreen(c, onOpenPlayer = openPlayer, onOpenMe = { nav.navigate("me") })

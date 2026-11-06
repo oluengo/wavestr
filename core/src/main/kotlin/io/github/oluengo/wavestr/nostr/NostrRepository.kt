@@ -99,6 +99,38 @@ class NostrRepository(private val pool: RelayPool) {
             .filter { it.isLiveNow(now()) }
             .sortedByDescending { it.participants ?: 0 }
 
+    /**
+     * Próximos directos programados (NIP-53 «planned») y eventos de calendario con hora (NIP-52) de
+     * [hosts], desde ahora hasta [days] días. Ordenados por hora de inicio.
+     */
+    suspend fun upcoming(hosts: Collection<String>, viewer: String?, days: Int = 14): List<Scheduled> {
+        if (hosts.isEmpty()) return emptyList()
+        val now = now()
+        val list = hosts.distinct()
+        val filters = list.chunked(300).flatMap { chunk ->
+            listOf(
+                Filter(kinds = listOf(Kinds.LIVE_EVENT, Kinds.CALENDAR_TIME), authors = chunk, since = now - 60L * 24 * 3600, limit = 300),
+                Filter(kinds = listOf(Kinds.LIVE_EVENT, Kinds.CALENDAR_TIME), tags = mapOf("p" to chunk), since = now - 60L * 24 * 3600, limit = 300),
+            )
+        }
+        val set = list.toSet()
+        return pool.query(relaysFor(viewer), filters).latestByAddress()
+            .mapNotNull(Scheduled::from)
+            .filter { it.hostPubkey in set && it.startsAt > now - 900 && it.startsAt < now + days * 24L * 3600 }
+            .distinctBy { it.address }
+            .sortedBy { it.startsAt }
+    }
+
+    /** La última versión de un directo por su dirección (kind:pubkey:d). */
+    suspend fun stream(address: String, viewer: String?): LiveStream? {
+        val parts = address.split(':', limit = 3)
+        if (parts.size < 3 || parts[0].toIntOrNull() != Kinds.LIVE_EVENT) return null
+        return pool.query(
+            relaysFor(viewer),
+            listOf(Filter(kinds = listOf(Kinds.LIVE_EVENT), authors = listOf(parts[1]), tags = mapOf("d" to listOf(parts[2])), limit = 5)),
+        ).maxByOrNull { it.createdAt }?.let(LiveStream::from)
+    }
+
     /** Directos y grabaciones de un anfitrión. */
     suspend fun streamsOf(host: String, pubkey: String?): List<LiveStream> =
         pool.query(

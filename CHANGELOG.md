@@ -2,6 +2,12 @@
 
 ## 0.11.0
 
+- **Próximamente:** los directos programados (NIP-53) y los eventos de calendario con hora (NIP-52) de la gente que sigues y de tus streamers favoritos, en Streams y en cada perfil. Con la hora en tu zona y, si el organizador está en otra, también la suya.
+- **Recordatorios:** avisan al empezar o 5, 15 o 60 minutos antes; al tocar el aviso suena el directo (o se abre el perfil si aún no ha empezado). Sobreviven a reinicios del móvil.
+- **Directos con vídeo:** el vídeo y unos controles compactos se quedan fijos arriba mientras lees o escribes en el chat; sin vídeo, solo los controles. **Pantalla completa** en horizontal.
+- **Reacciones y zaps desde el chat:** toca un mensaje para reaccionar (NIP-25) o hacerle un zap a su autor; también se puede reaccionar al stream. Se ven los recuentos en cada mensaje.
+- **Entrar con un bunker (NIP-46):** nsecBunker, nsec.app y otros firmantes remotos con un enlace `bunker://`. Firma chat, reacciones, zaps y los favoritos cifrados, como Amber.
+- **Refuerzo de volumen** por emisora (+3 a +12 dB) para las que suenan flojo; se recuerda para cada una.
 - **Chat:** al escribir, el teclado ya no tapa la caja de texto; el reproductor se encoge y la deja a la vista.
 - **Favoritos:** tocar un streamer que está emitiendo reproduce su directo al momento (anterior/siguiente pasa por los demás favoritos en directo). Si no emite, se abre su perfil; el perfil también está en su menú ⋮.
 - **Compartir** una emisora o streamer (desde el reproductor o su menú en Favoritos), una carpeta con sus subcarpetas, o todos los favoritos (botón de compartir en Favoritos: comparte lo que estás viendo). Tres formatos:

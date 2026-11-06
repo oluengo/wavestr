@@ -422,4 +422,24 @@
     <string name="bunker_connecting">Connecting… If the signer asks, approve the connection there.</string>
     <string name="bunker_connect">Connect</string>
     <string name="account_bunker">Signed in with a remote signer (bunker)</string>
+    <string name="upcoming">Coming up</string>
+    <string name="time_today">Today</string>
+    <string name="time_tomorrow">Tomorrow</string>
+    <string name="time_their_zone">%1$s in %2$s</string>
+    <string name="reminders_channel">Stream reminders</string>
+    <string name="reminder_now">%1$s is starting now. Tap to listen.</string>
+    <string name="reminder_soon">Starts in %1$d min · %2$s</string>
+    <string name="reminder_saved">Reminder set</string>
+    <string name="reminder_edit">Change reminder</string>
+    <string name="reminder_add">Remind me</string>
+    <string name="reminder_title">Remind me</string>
+    <string name="reminder_at_start">When it starts</string>
+    <string name="reminder_before">%1$s before</string>
+    <string name="reminder_remove">Remove reminder</string>
+    <string name="lead_minutes">%1$d min</string>
+    <string name="lead_hours">%1$d h</string>
+    <string name="boost">Volume</string>
+    <string name="boost_on">Volume +%1$d dB</string>
+    <string name="boost_explain">Boost for stations that sound quiet. Saved for this station.</string>
+    <string name="boost_off">Normal</string>
 </resources>

@@ -35,3 +35,18 @@ class ReactionTest {
         assertEquals(listOf("k", "1311"), Reaction.tags(addr, "p1", "m1").last())
     }
 }
+
+class ScheduledTest {
+    @Test fun plannedStreamAndCalendar() {
+        val live = Event("1", "aa".repeat(32), 10, Kinds.LIVE_EVENT, listOf(listOf("d", "x"), listOf("title", "Jam"), listOf("status", "planned"), listOf("starts", "2000000000")))
+        val s = Scheduled.from(live)!!
+        assertEquals(2000000000L, s.startsAt); assertEquals(false, s.fromCalendar)
+        val ended = live.copy(tags = live.tags.map { if (it[0] == "status") listOf("status", "ended") else it })
+        assertNull(Scheduled.from(ended))
+        val cal = Event("2", "bb".repeat(32), 10, Kinds.CALENDAR_TIME, listOf(listOf("d", "y"), listOf("title", "Show"), listOf("start", "2000003600"), listOf("start_tzid", "America/New_York")))
+        val k = Scheduled.from(cal)!!
+        assertEquals("America/New_York", k.tzid)
+        assertEquals("America/New_York", k.otherZone(java.time.ZoneId.of("Europe/Madrid"))?.id)
+        assertNull(k.otherZone(java.time.ZoneId.of("America/New_York")))
+    }
+}

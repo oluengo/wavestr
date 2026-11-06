@@ -72,6 +72,7 @@ class ProfileViewModel(private val c: AppContainer, val pubkey: String) : ViewMo
         val profile: Profile? = null,
         val live: List<LiveStream> = emptyList(),
         val past: List<LiveStream> = emptyList(),
+        val upcoming: List<io.github.oluengo.wavestr.nostr.Scheduled> = emptyList(),
         val loading: Boolean = true,
     )
 
@@ -83,6 +84,11 @@ class ProfileViewModel(private val c: AppContainer, val pubkey: String) : ViewMo
             val viewer = c.settings.current().pubkey
             val profile = runCatching { c.nostr.profiles(listOf(pubkey), viewer)[pubkey] }.getOrNull()
             _state.update { it.copy(profile = profile ?: it.profile) }
+            launch {
+                val up = runCatching { c.nostr.upcoming(listOf(pubkey), viewer, days = 60) }.getOrDefault(emptyList())
+                c.reminders.refresh(up)
+                _state.update { it.copy(upcoming = up) }
+            }
             val streams = runCatching { c.nostr.streamsOf(pubkey, viewer) }.getOrDefault(emptyList())
             val now = System.currentTimeMillis() / 1000
             _state.update {
@@ -163,6 +169,15 @@ fun ProfileScreen(c: AppContainer, pubkey: String, onBack: () -> Unit, onPlay: (
             item { SectionLabel(stringResource(R.string.profile_live_now), Modifier.padding(horizontal = 20.dp)) }
             items(st.live, key = { it.address }) { s ->
                 StreamLine(s, untitled, live = true) { onPlay(nowPlaying(s, recording = false)) }
+            }
+        }
+        if (st.upcoming.isNotEmpty()) {
+            item { SectionLabel(stringResource(R.string.upcoming), Modifier.padding(horizontal = 20.dp)) }
+            items(st.upcoming, key = { "up:" + it.address }) { s ->
+                Column(Modifier.padding(horizontal = 20.dp)) {
+                    io.github.oluengo.wavestr.ui.live.UpcomingRow(c, s, p, onOpenProfile = {})
+                    HorizontalDivider(color = Rs.colors.line)
+                }
             }
         }
         if (!st.loading) {

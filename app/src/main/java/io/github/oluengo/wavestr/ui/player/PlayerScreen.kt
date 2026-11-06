@@ -126,8 +126,9 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
                 if (st.audioOnly) ArtworkStage(c, np, Modifier.fillMaxWidth(0.42f).align(Alignment.CenterHorizontally).padding(top = 4.dp))
                 ModeSelector(c, st)
                 Info(c, st, onOpenProfile)
-                Box(Modifier.fillMaxWidth().padding(bottom = 4.dp), contentAlignment = Alignment.Center) {
+                Row(Modifier.fillMaxWidth().padding(bottom = 4.dp), horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)) {
                     SleepTimerChip(c.player.sleep, isNostr = true)
+                    io.github.oluengo.wavestr.player.VolumeBoostChip(np.id)
                 }
                 ChatHeader(activity, c)
                 ChatLines(activity, c, onZapMessage = { l ->
@@ -151,8 +152,9 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
                 np.station?.let { RadioQuality(c, it, np.variantIndex, np.url) }
                 Info(c, st, onOpenProfile)
                 Controls(c, st, compact = false, onZap = null)
-                Box(Modifier.fillMaxWidth().padding(bottom = 8.dp), contentAlignment = Alignment.Center) {
+                Row(Modifier.fillMaxWidth().padding(bottom = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)) {
                     SleepTimerChip(c.player.sleep, isNostr = np.hostPubkey != null)
+                    io.github.oluengo.wavestr.player.VolumeBoostChip(np.id)
                 }
                 np.station?.let { SimilarStations(c, it) }
             }

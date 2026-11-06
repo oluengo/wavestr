@@ -27,11 +27,16 @@ class LiveViewModel(private val c: AppContainer) : ViewModel() {
         val loaded: Boolean = false,
         val failed: Boolean = false,
         val items: List<Item> = emptyList(),
+        /** Próximos directos y eventos de la gente que sigues y de tus streamers favoritos. */
+        val upcoming: List<Upcoming> = emptyList(),
     )
+
+    data class Upcoming(val s: io.github.oluengo.wavestr.nostr.Scheduled, val host: Profile?)
 
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
     private var job: Job? = null
+    private var upJob: Job? = null
 
     init {
         viewModelScope.launch {
@@ -49,7 +54,27 @@ class LiveViewModel(private val c: AppContainer) : ViewModel() {
         load()
     }
 
+    /** Programados: de los seguidos (si hay sesión) y de los streamers favoritos. */
+    private fun loadUpcoming(refresh: Boolean) {
+        upJob?.cancel()
+        upJob = viewModelScope.launch {
+            try {
+                val pk = _state.value.pubkey
+                val favHosts = c.library.library.value.favorites.mapNotNull { it.hostPubkey }
+                val hosts = (favHosts + (pk?.let { c.nostr.follows(it, refresh) }.orEmpty())).distinct()
+                val list = c.nostr.upcoming(hosts, pk)
+                c.reminders.refresh(list)
+                val profiles = c.nostr.profiles(list.map { it.hostPubkey }, pk)
+                _state.update { it.copy(upcoming = list.take(12).map { s -> Upcoming(s, profiles[s.hostPubkey]) }) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+            }
+        }
+    }
+
     fun load(refresh: Boolean = false) {
+        loadUpcoming(refresh)
         job?.cancel()
         job = viewModelScope.launch {
             val st = _state.value
