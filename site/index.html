@@ -183,7 +183,7 @@ footer .links a:hover { color: var(--accent); }
 				<h1><span data-i="title1"></span> <span class="grad-text" data-i="title2"></span></h1>
 				<p data-i="intro"></p>
 				<div class="cta">
-					<a class="btn grad" href="https://github.com/oluengo/wavestr/releases">
+					<a class="btn grad" href="https://github.com/oluengo/wavestr/releases/latest">
 						<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 9.5l1.8-3.1a.4.4 0 0 0-.7-.4l-1.8 3.2A11 11 0 0 0 12 8.2c-1.8 0-3.4.4-4.9 1L5.3 6a.4.4 0 0 0-.7.4l1.8 3.1A10.5 10.5 0 0 0 1 18h22a10.5 10.5 0 0 0-5.4-8.5zM7 15.3a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm10 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
 						<span data-i="download"></span>
 					</a>
@@ -224,7 +224,7 @@ footer .links a:hover { color: var(--accent); }
 				<div class="card">
 					<h3 data-i="apkTitle"></h3>
 					<ol data-list="apkSteps"></ol>
-					<div class="actions"><a class="btn grad" href="https://github.com/oluengo/wavestr/releases" data-i="download"></a></div>
+					<div class="actions"><a class="btn grad" href="https://github.com/oluengo/wavestr/releases/latest" data-i="download"></a></div>
 				</div>
 			</div>
 			<div class="fp">
@@ -282,10 +282,10 @@ footer .links a:hover { color: var(--accent); }
 const I = {
 	es: {
 		navFeatures: "Funciones", navInstall: "Instalar", theme: "Cambiar tema",
-		badge: "Beta · Android",
+		badge: "Android",
 		title1: "Radio online y streams de", title2: "Nostr",
 		intro: "Una sola app para escuchar emisoras de todo el mundo y ver o escuchar los directos de la gente que sigues en Nostr. Con zaps, favoritos en carpetas y Android Auto.",
-		download: "Descargar la beta", how: "Cómo instalar",
+		download: "Descargar", how: "Cómo instalar",
 		meta: ["Gratis y de código abierto", "Sin anuncios", "Català · Castellano · English"],
 		phones: [["live", "Streams en directo"], ["player", "Reproductor"], ["radio", "Radios"]],
 		featTitle: "Todo tu audio en directo, en un sitio",
@@ -300,11 +300,11 @@ const I = {
 		],
 		shotsTitle: "Así se ve", shotsLead: "Capturas de la maqueta interactiva, con datos de ejemplo.",
 		shots: [["live", "Streams"], ["player", "Reproductor"], ["radio", "Radios"], ["fav", "Favoritos"]],
-		installTitle: "Instalar", installLead: "Wavestr se distribuye fuera de Google Play. La beta se instala como otra app, Wavestr Beta, con sus propios datos.",
-		obtSteps: ["Instala Obtainium.", "«Añadir app» y pega <code>https://github.com/oluengo/wavestr</code>.", "Activa «incluir pre-releases». Te avisará de cada nueva beta."],
+		installTitle: "Instalar", installLead: "Wavestr se distribuye fuera de Google Play, en GitHub.",
+		obtSteps: ["Instala Obtainium.", "«Añadir app» y pega <code>https://github.com/oluengo/wavestr</code>.", "Te avisará de cada nueva versión."],
 		getObt: "Conseguir Obtainium",
 		apkTitle: "APK directo",
-		apkSteps: ["Descarga el APK de la pre-release Wavestr Beta.", "Ábrelo y permite instalar desde esa fuente si Android lo pide.", "Para actualizar, repite los pasos con la nueva versión."],
+		apkSteps: ["Descarga el APK de la última versión.", "Ábrelo y permite instalar desde esa fuente si Android lo pide.", "Para actualizar, repite los pasos con la nueva versión."],
 		fpText: "Comprueba que la huella del certificado coincide (también está en Ajustes → Acerca de):",
 		copy: "Copiar huella",
 		autoTitle: "Activar Android Auto (una sola vez)",
@@ -318,7 +318,7 @@ const I = {
 			["¿Necesito una cuenta de Nostr?", "No para escuchar radio ni streams de todo Nostr. Con tu npub ves los directos de quien sigues; con Amber puedes escribir en el chat y guardar favoritos en Nostr."],
 			["¿Por qué no está en Google Play?", "Se publica en GitHub y se instala con Obtainium o el APK. Es la misma decisión que en Usus."],
 			["¿Hay versión para ordenador?", "Linux y Windows están en desarrollo, todavía sin descargas."],
-			["¿Qué es la beta?", "Una versión de pruebas con lo último. Se instala junto a la normal, con sus propios datos, y puede tener fallos."],
+			["¿Hay una beta?", "Sí: Wavestr Beta, con lo último antes de cada versión. Se instala junto a la normal, con sus propios datos, y puede tener fallos. En Obtainium, activa «incluir pre-releases»."],
 			["¿Algo no funciona?", "Abre un aviso en GitHub o usa Ajustes → Acerca de → Informar de un problema."]
 		],
 		releases: "Versiones", changelog: "Historial de cambios", issues: "Informar de un problema", license: "Licencia MIT",
@@ -327,10 +327,10 @@ const I = {
 	},
 	ca: {
 		navFeatures: "Funcions", navInstall: "Instal·lar", theme: "Canvia el tema",
-		badge: "Beta · Android",
+		badge: "Android",
 		title1: "Ràdio en línia i streams de", title2: "Nostr",
 		intro: "Una sola app per escoltar emissores de tot el món i veure o escoltar els directes de la gent que segueixes a Nostr. Amb zaps, preferits en carpetes i Android Auto.",
-		download: "Descarrega la beta", how: "Com instal·lar",
+		download: "Descarrega", how: "Com instal·lar",
 		meta: ["Gratuïta i de codi obert", "Sense anuncis", "Català · Castellano · English"],
 		phones: [["live", "Streams en directe"], ["player", "Reproductor"], ["radio", "Ràdios"]],
 		featTitle: "Tot el teu àudio en directe, en un lloc",
@@ -345,11 +345,11 @@ const I = {
 		],
 		shotsTitle: "Així es veu", shotsLead: "Captures de la maqueta interactiva, amb dades d'exemple.",
 		shots: [["live", "Streams"], ["player", "Reproductor"], ["radio", "Ràdios"], ["fav", "Preferits"]],
-		installTitle: "Instal·lar", installLead: "Wavestr es distribueix fora de Google Play. La beta s'instal·la com una altra app, Wavestr Beta, amb les seves pròpies dades.",
-		obtSteps: ["Instal·la Obtainium.", "«Afegeix app» i enganxa <code>https://github.com/oluengo/wavestr</code>.", "Activa «incloure pre-releases». T'avisarà de cada nova beta."],
+		installTitle: "Instal·lar", installLead: "Wavestr es distribueix fora de Google Play, a GitHub.",
+		obtSteps: ["Instal·la Obtainium.", "«Afegeix app» i enganxa <code>https://github.com/oluengo/wavestr</code>.", "T'avisarà de cada nova versió."],
 		getObt: "Aconsegueix Obtainium",
 		apkTitle: "APK directe",
-		apkSteps: ["Descarrega l'APK de la pre-release Wavestr Beta.", "Obre'l i permet instal·lar des d'aquesta font si Android ho demana.", "Per actualitzar, repeteix els passos amb la nova versió."],
+		apkSteps: ["Descarrega l'APK de l'última versió.", "Obre'l i permet instal·lar des d'aquesta font si Android ho demana.", "Per actualitzar, repeteix els passos amb la nova versió."],
 		fpText: "Comprova que l'empremta del certificat coincideix (també és a Configuració → Quant a):",
 		copy: "Copia l'empremta",
 		autoTitle: "Activar Android Auto (un sol cop)",
@@ -363,7 +363,7 @@ const I = {
 			["Cal un compte de Nostr?", "No per escoltar ràdio ni streams de tot Nostr. Amb el teu npub veus els directes de qui segueixes; amb Amber pots escriure al xat i desar preferits a Nostr."],
 			["Per què no és a Google Play?", "Es publica a GitHub i s'instal·la amb Obtainium o l'APK. És la mateixa decisió que a Usus."],
 			["Hi ha versió per a ordinador?", "Linux i Windows són en desenvolupament, encara sense descàrregues."],
-			["Què és la beta?", "Una versió de proves amb el més nou. S'instal·la al costat de la normal, amb les seves pròpies dades, i pot tenir errors."],
+			["Hi ha una beta?", "Sí: Wavestr Beta, amb el més nou abans de cada versió. S'instal·la al costat de la normal, amb les seves pròpies dades, i pot tenir errors. A Obtainium, activa «incloure pre-releases»."],
 			["Alguna cosa no funciona?", "Obre un avís a GitHub o fes servir Configuració → Quant a → Informa d'un problema."]
 		],
 		releases: "Versions", changelog: "Historial de canvis", issues: "Informa d'un problema", license: "Llicència MIT",
@@ -372,10 +372,10 @@ const I = {
 	},
 	en: {
 		navFeatures: "Features", navInstall: "Install", theme: "Toggle theme",
-		badge: "Beta · Android",
+		badge: "Android",
 		title1: "Online radio and live streams from", title2: "Nostr",
 		intro: "One app to listen to stations from all over the world and to watch or listen to live streams from the people you follow on Nostr. With zaps, favourites in folders and Android Auto.",
-		download: "Download the beta", how: "How to install",
+		download: "Download", how: "How to install",
 		meta: ["Free and open source", "No ads", "Català · Castellano · English"],
 		phones: [["live", "Live streams"], ["player", "Player"], ["radio", "Radio"]],
 		featTitle: "All your live audio in one place",
@@ -390,11 +390,11 @@ const I = {
 		],
 		shotsTitle: "Take a look", shotsLead: "Screenshots of the interactive mockup, with sample data.",
 		shots: [["live", "Streams"], ["player", "Player"], ["radio", "Radio"], ["fav", "Favourites"]],
-		installTitle: "Install", installLead: "Wavestr is distributed outside Google Play. The beta installs as a separate app, Wavestr Beta, with its own data.",
-		obtSteps: ["Install Obtainium.", "“Add app” and paste <code>https://github.com/oluengo/wavestr</code>.", "Turn on “include pre-releases”. You'll be notified of every new beta."],
+		installTitle: "Install", installLead: "Wavestr is distributed outside Google Play, on GitHub.",
+		obtSteps: ["Install Obtainium.", "“Add app” and paste <code>https://github.com/oluengo/wavestr</code>.", "You'll be notified of every new version."],
 		getObt: "Get Obtainium",
 		apkTitle: "Direct APK",
-		apkSteps: ["Download the APK from the Wavestr Beta pre-release.", "Open it and allow installing from that source if Android asks.", "To update, repeat the steps with the new version."],
+		apkSteps: ["Download the APK from the latest release.", "Open it and allow installing from that source if Android asks.", "To update, repeat the steps with the new version."],
 		fpText: "Check that the certificate fingerprint matches (also in Settings → About):",
 		copy: "Copy fingerprint",
 		autoTitle: "Enable Android Auto (once)",
@@ -408,7 +408,7 @@ const I = {
 			["Do I need a Nostr account?", "Not to listen to radio or streams from all of Nostr. With your npub you see live streams from people you follow; with Amber you can chat and store favourites on Nostr."],
 			["Why isn't it on Google Play?", "It's published on GitHub and installed with Obtainium or the APK, the same choice as Usus."],
 			["Is there a desktop version?", "Linux and Windows are in development, with no downloads yet."],
-			["What is the beta?", "A test version with the latest changes. It installs alongside the regular app, with its own data, and may have bugs."],
+			["Is there a beta?", "Yes: Wavestr Beta, with the latest changes before each release. It installs alongside the regular app, with its own data, and may have bugs. In Obtainium, turn on “include pre-releases”."],
 			["Something not working?", "Open an issue on GitHub or use Settings → About → Report a problem."]
 		],
 		releases: "Releases", changelog: "Changelog", issues: "Report a problem", license: "MIT License",
