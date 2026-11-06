@@ -31,19 +31,28 @@ import io.github.oluengo.wavestr.R
 import io.github.oluengo.wavestr.data.AppSettings
 import io.github.oluengo.wavestr.data.FavoritesSync
 import io.github.oluengo.wavestr.data.LoginMethod
+import io.github.oluengo.wavestr.nostr.canSign
 import io.github.oluengo.wavestr.ui.theme.Rs
 import kotlinx.coroutines.launch
 
 /** Abre Amber cuando la sincronización necesita su pantalla (cifrar, descifrar o firmar). */
 @Composable
 fun AmberRequestHost(c: AppContainer) {
-    val call by c.favSync.pending.collectAsStateWithLifecycle()
+    val call by c.signer.pending.collectAsStateWithLifecycle()
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { res ->
         call?.complete(res.data)
     }
     LaunchedEffect(call) {
         val cl = call ?: return@LaunchedEffect
         runCatching { launcher.launch(cl.intent) }.onFailure { cl.complete(null) }
+    }
+    // Firmante remoto (NIP-46): aprobar la conexión o la firma en su web.
+    val auth by c.signer.authUrl.collectAsStateWithLifecycle()
+    val ctx = androidx.compose.ui.platform.LocalContext.current
+    LaunchedEffect(auth) {
+        val url = auth?.takeIf { it.startsWith("https://") } ?: return@LaunchedEffect
+        runCatching { ctx.startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url)).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)) }
+        c.signer.authUrlShown()
     }
 }
 
@@ -52,7 +61,7 @@ fun AmberRequestHost(c: AppContainer) {
 fun SyncAskDialog(c: AppContainer) {
     val s by c.settings.flow.collectAsStateWithLifecycle<AppSettings?>(initialValue = null)
     val st = s ?: return
-    if (st.pubkey == null || st.loginMethod != LoginMethod.AMBER || st.favSync != null) return
+    if (st.pubkey == null || !st.loginMethod.canSign || st.favSync != null) return
     val scope = rememberCoroutineScope()
     AlertDialog(
         onDismissRequest = {},
@@ -91,7 +100,7 @@ fun FavSyncSection(c: AppContainer) {
     val st by c.favSync.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     io.github.oluengo.wavestr.ui.settings.Group {
-        if (s.loginMethod != LoginMethod.AMBER) {
+        if (!s.loginMethod.canSign) {
             Text(stringResource(R.string.fav_sync_toggle), fontWeight = FontWeight.SemiBold)
             Text(stringResource(R.string.fav_sync_needs_login), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
             return@Group

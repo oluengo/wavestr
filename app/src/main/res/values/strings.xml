@@ -372,7 +372,7 @@
     <!-- Chat -->
     <string name="chat_hint">Write in the chat</string>
     <string name="chat_send">Send</string>
-    <string name="chat_needs_amber">Sign in with Amber to write in the chat.</string>
+    <string name="chat_needs_amber">Sign in with Amber or a bunker to write in the chat.</string>
     <string name="chat_failed">The message couldn\'t be sent. Check your connection and try again.</string>
     <string name="auto_recent">Recent</string>
     <string name="share">Share</string>
@@ -409,4 +409,17 @@
         <item quantity="one">%d added to Favorites</item>
         <item quantity="other">%d added to Favorites</item>
     </plurals>
+    <string name="react">React</string>
+    <string name="react_failed">Couldn\'t send the reaction.</string>
+    <string name="react_needs_signer">Sign in with Amber or a bunker to react.</string>
+    <string name="zap_message">Zap %1$s</string>
+    <string name="fullscreen">Full screen</string>
+    <string name="fullscreen_exit">Exit full screen</string>
+    <string name="login_bunker">Sign in with a bunker (NIP-46)</string>
+    <string name="bunker_explain">Paste the bunker:// link from nsecBunker, nsec.app or another remote signer. Your key stays there; Wavestr only asks it to sign.</string>
+    <string name="bunker_bad_uri">That isn\'t a valid bunker:// link (it needs the signer and at least one relay).</string>
+    <string name="bunker_failed">The signer didn\'t answer or refused the connection.</string>
+    <string name="bunker_connecting">Connecting… If the signer asks, approve the connection there.</string>
+    <string name="bunker_connect">Connect</string>
+    <string name="account_bunker">Signed in with a remote signer (bunker)</string>
 </resources>

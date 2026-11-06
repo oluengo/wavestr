@@ -1,5 +1,6 @@
 package io.github.oluengo.wavestr.ui.zap
 
+import io.github.oluengo.wavestr.nostr.canSign
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
@@ -157,7 +158,7 @@ fun ZapSheet(c: AppContainer, target: ZapViewModel.Target, onDismiss: () -> Unit
                 else stringResource(R.string.zap_via_external),
                 color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall,
             )
-            if (settings.loginMethod != LoginMethod.AMBER) {
+            if (!settings.loginMethod.canSign) {
                 Text(stringResource(R.string.zap_anonymous), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
             }
             (step as? ZapViewModel.Step.Failed)?.let { f -> Text(failureText(f.error), color = Rs.colors.live, style = MaterialTheme.typography.bodySmall) }

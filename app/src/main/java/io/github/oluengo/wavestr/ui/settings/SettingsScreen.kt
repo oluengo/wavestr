@@ -108,7 +108,7 @@ private fun SettingsIndex(c: AppContainer, onOpenMe: () -> Unit, onOpen: (Sectio
 
     fun summary(sec: Section): String = when (sec) {
         Section.ACCOUNT -> s.pubkey?.let { pk ->
-            (profile?.bestName ?: Nip19.shortNpub(pk)) + " · " + c.appContext.getString(if (s.loginMethod == LoginMethod.AMBER) R.string.account_amber else R.string.account_readonly)
+            (profile?.bestName ?: Nip19.shortNpub(pk)) + " · " + c.appContext.getString(accountLabel(s.loginMethod))
         } ?: c.appContext.getString(R.string.account_none)
         Section.PLAYBACK -> c.appContext.getString(R.string.sum_buffer, bufferText(c, s.bufferMode))
         Section.WALLET -> w.connection?.let { it.label + " · " + c.appContext.getString(R.string.sum_wallet, fmt.format(w.spentThisMonth), fmt.format(w.budgetSats)) }
@@ -221,7 +221,7 @@ private fun AccountGroup(c: AppContainer, s: AppSettings, onOpenMe: () -> Unit) 
                 Column(Modifier.weight(1f)) {
                     Text(profile?.bestName ?: Nip19.shortNpub(pk), fontWeight = FontWeight.SemiBold)
                     Text(
-                        stringResource(if (s.loginMethod == LoginMethod.AMBER) R.string.account_amber else R.string.account_readonly),
+                        stringResource(accountLabel(s.loginMethod)),
                         color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall,
                     )
                 }
@@ -345,4 +345,11 @@ fun bufferLabel(m: io.github.oluengo.wavestr.player.BufferMode): String = when (
     io.github.oluengo.wavestr.player.BufferMode.AUTO -> stringResource(R.string.buffer_auto)
     io.github.oluengo.wavestr.player.BufferMode.LIVE -> stringResource(R.string.buffer_live)
     else -> stringResource(R.string.buffer_seconds, (io.github.oluengo.wavestr.player.BufferPolicy.marginMs(m) / 1000).toInt())
+}
+
+/** Cómo se entró: Amber, firmante remoto (bunker) o solo lectura. */
+fun accountLabel(m: LoginMethod): Int = when (m) {
+    LoginMethod.AMBER -> R.string.account_amber
+    LoginMethod.BUNKER -> R.string.account_bunker
+    else -> R.string.account_readonly
 }

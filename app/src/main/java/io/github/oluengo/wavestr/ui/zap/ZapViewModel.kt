@@ -11,6 +11,7 @@ import io.github.oluengo.wavestr.nostr.EventSigning
 import io.github.oluengo.wavestr.nostr.Kinds
 import io.github.oluengo.wavestr.nostr.Lnurl
 import io.github.oluengo.wavestr.nostr.ZapClient
+import io.github.oluengo.wavestr.nostr.canSign
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +24,8 @@ import kotlinx.coroutines.launch
  */
 class ZapViewModel(private val c: AppContainer) : ViewModel() {
 
-    data class Target(val hostPubkey: String, val hostName: String, val address: String?, val title: String)
+    /** [eventId]: zap a un mensaje concreto del chat (si no, al stream). */
+    data class Target(val hostPubkey: String, val hostName: String, val address: String?, val title: String, val eventId: String? = null)
 
     sealed interface Step {
         data object Editing : Step
@@ -73,10 +75,12 @@ class ZapViewModel(private val c: AppContainer) : ViewModel() {
                 lnurl = Lnurl.encode(Lnurl.endpointFor(lud16!!)!!)
                 if (!pay.allowsNostr) { finish(null); return@launch }
                 val relays = c.nostr.relaysFor(settings.pubkey).take(5)
-                val tags = Lnurl.zapRequestTags(t.hostPubkey, t.address, msats, lnurl, relays)
+                val tags = Lnurl.zapRequestTags(t.hostPubkey, t.address, msats, lnurl, relays, t.eventId)
                 val me = settings.pubkey
-                if (me != null && settings.loginMethod == LoginMethod.AMBER) {
-                    _step.value = Step.NeedsSignature(EventSigning.unsigned(me, Kinds.ZAP_REQUEST, tags, comment), settings.signerPackage)
+                if (me != null && settings.loginMethod.canSign) {
+                    // Firmado como tú (Amber o firmante remoto); si se cancela, no se envía.
+                    val signed = c.signer.sign(EventSigning.unsigned(me, Kinds.ZAP_REQUEST, tags, comment))
+                    if (signed == null) _step.value = Step.Failed(ZapFailure.SignatureCancelled) else finish(signed)
                 } else {
                     // Sin Amber: zap anónimo, firmado con una clave de un solo uso.
                     finish(EventSigning.sign(Kinds.ZAP_REQUEST, tags, comment, Secp256k1.randomSecret()))

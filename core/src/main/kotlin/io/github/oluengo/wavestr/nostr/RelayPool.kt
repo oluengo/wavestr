@@ -83,9 +83,12 @@ class RelayPool(private val http: OkHttpClient) {
 
     /**
      * Petición y respuesta (NWC): se suscribe a [response] y publica [request] en cada relay;
-     * devuelve el primer evento que llegue o null si se agota el tiempo.
+     * devuelve el primer evento que llegue (y que acepte [accept]) o null si se agota el tiempo.
      */
-    suspend fun roundTrip(relays: Collection<String>, request: Event, response: Filter, timeoutMs: Long = 45_000): Event? =
+    suspend fun roundTrip(
+        relays: Collection<String>, request: Event, response: Filter, timeoutMs: Long = 45_000,
+        accept: (Event) -> Boolean = { true },
+    ): Event? =
         withContext(Dispatchers.IO) {
             val result = CompletableDeferred<Event?>()
             val subId = "rt" + UUID.randomUUID().toString().take(8)
@@ -102,7 +105,7 @@ class RelayPool(private val http: OkHttpClient) {
                         val arr = runCatching { NostrJson.parseToJsonElement(text) as JsonArray }.getOrNull() ?: return
                         if ((arr.getOrNull(0) as? JsonPrimitive)?.contentOrNull == "EVENT" &&
                             (arr.getOrNull(1) as? JsonPrimitive)?.contentOrNull == subId
-                        ) arr.getOrNull(2)?.let(Event::fromJson)?.let { result.complete(it) }
+                        ) arr.getOrNull(2)?.let(Event::fromJson)?.takeIf { runCatching { accept(it) }.getOrDefault(false) }?.let { result.complete(it) }
                     }
                 })
             }

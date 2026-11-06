@@ -29,12 +29,13 @@ import io.github.oluengo.wavestr.nostr.Amber
 import io.github.oluengo.wavestr.nostr.Nip19
 import kotlinx.coroutines.launch
 
-/** Botones de acceso: Amber (NIP-55) o npub en solo lectura. */
+/** Botones de acceso: Amber (NIP-55), firmante remoto (NIP-46, nsecBunker…) o npub en solo lectura. */
 @Composable
 fun LoginButtons(c: AppContainer, modifier: Modifier = Modifier) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
     var askNpub by remember { mutableStateOf(false) }
+    var askBunker by remember { mutableStateOf(false) }
     val failed = stringResource(R.string.amber_failed)
 
     val amber = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { res ->
@@ -55,10 +56,15 @@ fun LoginButtons(c: AppContainer, modifier: Modifier = Modifier) {
             },
             modifier = Modifier.fillMaxWidth(),
         ) { Text(stringResource(R.string.login_amber)) }
+        OutlinedButton(onClick = { askBunker = true }, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.login_bunker))
+        }
         OutlinedButton(onClick = { askNpub = true }, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.login_npub))
         }
     }
+
+    if (askBunker) BunkerDialog(c, onDone = { askBunker = false })
 
     if (askNpub) NpubDialog(
         onDismiss = { askNpub = false },
@@ -94,5 +100,55 @@ private fun NpubDialog(onDismiss: () -> Unit, onSave: (String) -> Unit) {
             }) { Text(stringResource(R.string.save)) }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
+}
+
+/** Pegar el enlace `bunker://…` del firmante remoto y conectar (puede pedir aprobarlo en su web). */
+@Composable
+private fun BunkerDialog(c: AppContainer, onDone: () -> Unit) {
+    val scope = rememberCoroutineScope()
+    val clipboard = androidx.compose.ui.platform.LocalClipboardManager.current
+    var text by remember { mutableStateOf("") }
+    var working by remember { mutableStateOf(false) }
+    var error by remember { mutableStateOf<String?>(null) }
+    val bad = stringResource(R.string.bunker_bad_uri)
+    val failed = stringResource(R.string.bunker_failed)
+    AlertDialog(
+        onDismissRequest = { if (!working) onDone() },
+        title = { Text(stringResource(R.string.login_bunker)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.bunker_explain))
+                OutlinedTextField(
+                    value = text,
+                    onValueChange = { text = it.trim(); error = null },
+                    placeholder = { Text("bunker://…") },
+                    singleLine = true, enabled = !working,
+                    isError = error != null,
+                    supportingText = { error?.let { Text(it) } },
+                    trailingIcon = {
+                        TextButton(onClick = { clipboard.getText()?.text?.let { text = it.trim(); error = null } }, enabled = !working) {
+                            Text(stringResource(R.string.paste))
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                if (working) Text(stringResource(R.string.bunker_connecting), style = androidx.compose.material3.MaterialTheme.typography.bodySmall)
+            }
+        },
+        confirmButton = {
+            TextButton(enabled = !working && text.isNotBlank(), onClick = {
+                working = true
+                scope.launch {
+                    when (val r = c.signer.loginBunker(text)) {
+                        is io.github.oluengo.wavestr.nostr.Signer.BunkerResult.Ok -> onDone()
+                        io.github.oluengo.wavestr.nostr.Signer.BunkerResult.BadUri -> error = bad
+                        is io.github.oluengo.wavestr.nostr.Signer.BunkerResult.Failed -> error = failed + (r.message?.let { " ($it)" } ?: "")
+                    }
+                    working = false
+                }
+            }) { Text(stringResource(R.string.bunker_connect)) }
+        },
+        dismissButton = { TextButton(onClick = onDone, enabled = !working) { Text(stringResource(R.string.cancel)) } },
     )
 }

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 enum class ThemeMode { SYSTEM, LIGHT, DARK }
-enum class LoginMethod { NONE, AMBER, READ_ONLY }
+enum class LoginMethod { NONE, AMBER, READ_ONLY, BUNKER }
 
 /** Colores de acento (los mismos que en la demo). */
 enum class SurpriseKind { RADIO, LIVE, BOTH }

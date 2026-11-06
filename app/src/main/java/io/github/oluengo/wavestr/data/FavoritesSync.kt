@@ -1,5 +1,7 @@
 package io.github.oluengo.wavestr.data
 
+import io.github.oluengo.wavestr.nostr.canSign
+
 import android.content.Context
 import android.content.Intent
 import io.github.oluengo.wavestr.crypto.Secp256k1
@@ -50,6 +52,7 @@ class FavoritesSync(
     private val library: LibraryRepository,
     private val nostr: NostrRepository,
     private val pool: RelayPool,
+    private val signer: io.github.oluengo.wavestr.nostr.Signer,
     private val scope: CoroutineScope,
 ) {
     sealed interface Status {
@@ -65,16 +68,9 @@ class FavoritesSync(
 
     data class State(val status: Status = Status.Off, val lastSync: Long = 0)
 
-    /** Petición a Amber que necesita abrir su pantalla (la lanza la UI). */
-    class AmberCall(val intent: Intent, internal val result: CompletableDeferred<Intent?>) {
-        fun complete(data: Intent?) { result.complete(data) }
-    }
-
     private val prefs = app.getSharedPreferences("favsync", Context.MODE_PRIVATE)
     private val _state = MutableStateFlow(State(lastSync = prefs.getLong(K_LAST, 0)))
     val state: StateFlow<State> = _state.asStateFlow()
-    private val _pending = MutableStateFlow<AmberCall?>(null)
-    val pending: StateFlow<AmberCall?> = _pending.asStateFlow()
     private val mutex = Mutex()
 
     private data class Account(val pubkey: String, val signer: String?)
@@ -82,7 +78,7 @@ class FavoritesSync(
     fun start() {
         scope.launch {
             settings.flow
-                .map { s -> if (s.favSync == true && s.loginMethod == LoginMethod.AMBER && s.pubkey != null) Account(s.pubkey, s.signerPackage) else null }
+                .map { s -> if (s.favSync == true && s.loginMethod.canSign && s.pubkey != null) Account(s.pubkey, s.signerPackage) else null }
                 .distinctUntilChanged()
                 .collectLatest { acc ->
                     if (acc == null) { _state.update { it.copy(status = Status.Off) }; return@collectLatest }
@@ -101,7 +97,7 @@ class FavoritesSync(
     fun syncNow() {
         scope.launch {
             val s = settings.current()
-            if (s.loginMethod != LoginMethod.AMBER || s.pubkey == null) return@launch
+            if (!s.loginMethod.canSign || s.pubkey == null) return@launch
             run(Account(s.pubkey, s.signerPackage), interactive = true)
         }
     }
@@ -157,28 +153,10 @@ class FavoritesSync(
         return Status.Done
     }
 
-    // ---------- Amber: primero en silencio, luego (si se pidió a mano) abriendo su pantalla ----------
-    private suspend fun encrypt(acc: Account, plain: String, interactive: Boolean): String? =
-        withContext(Dispatchers.IO) { Amber.encryptSilently(app, acc.signer, plain, acc.pubkey, acc.pubkey) }
-            ?: if (interactive) ask(Amber.nip44EncryptIntent(plain, acc.pubkey, acc.pubkey, acc.signer))?.getStringExtra("result") else null
-
-    private suspend fun decrypt(acc: Account, cipher: String, interactive: Boolean): String? =
-        withContext(Dispatchers.IO) { Amber.decryptSilently(app, acc.signer, cipher, acc.pubkey, acc.pubkey) }
-            ?: if (interactive) ask(Amber.nip44DecryptIntent(cipher, acc.pubkey, acc.pubkey, acc.signer))?.getStringExtra("result") else null
-
-    private suspend fun sign(acc: Account, unsigned: io.github.oluengo.wavestr.nostr.Event, interactive: Boolean) =
-        withContext(Dispatchers.IO) { Amber.signSilently(app, acc.signer, unsigned, acc.pubkey) }
-            ?: if (interactive) Amber.parseSigned(ask(Amber.signIntent(unsigned, acc.pubkey, acc.signer)), unsigned) else null
-
-    private suspend fun ask(intent: Intent): Intent? {
-        val call = AmberCall(intent, CompletableDeferred())
-        _pending.value = call
-        return try {
-            withTimeoutOrNull(180_000) { call.result.await() }
-        } finally {
-            if (_pending.value === call) _pending.value = null
-        }
-    }
+    // ---------- Firma y cifrado: en silencio; si se pidió a mano, Amber puede abrir su pantalla ----------
+    private suspend fun encrypt(acc: Account, plain: String, interactive: Boolean): String? = signer.nip44Encrypt(plain, acc.pubkey, interactive)
+    private suspend fun decrypt(acc: Account, cipher: String, interactive: Boolean): String? = signer.nip44Decrypt(cipher, acc.pubkey, interactive)
+    private suspend fun sign(acc: Account, unsigned: io.github.oluengo.wavestr.nostr.Event, interactive: Boolean) = signer.sign(unsigned, interactive)
 
     private fun hash(l: Library) = Secp256k1.sha256(l.toJson().toString().toByteArray()).toHex()
     private fun now() = System.currentTimeMillis()

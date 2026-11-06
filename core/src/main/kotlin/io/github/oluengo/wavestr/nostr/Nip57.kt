@@ -28,6 +28,8 @@ data class ZapReceipt(
     val comment: String,
     val streamAddress: String?,
     val createdAt: Long,
+    /** Zap a un mensaje concreto (etiqueta e), no al stream. */
+    val eventId: String? = null,
 ) {
     companion object {
         fun from(e: Event): ZapReceipt? {
@@ -47,7 +49,33 @@ data class ZapReceipt(
                 streamAddress = e.tagValues("a").firstOrNull { it.startsWith("${Kinds.LIVE_EVENT}:") }
                     ?: request?.tagValues("a")?.firstOrNull { it.startsWith("${Kinds.LIVE_EVENT}:") },
                 createdAt = e.createdAt,
+                eventId = e.tag("e") ?: request?.tag("e"),
             )
+        }
+    }
+}
+
+/** Reacción NIP-25 (kind 7) a un mensaje del chat ([eventId]) o al propio stream (sin [eventId]). */
+data class Reaction(val id: String, val pubkey: String, val emoji: String, val eventId: String?, val createdAt: Long) {
+    companion object {
+        fun from(e: Event, streamAddress: String): Reaction? {
+            if (e.kind != Kinds.REACTION) return null
+            val target = e.tagValues("e").lastOrNull()
+            if (target == null && streamAddress !in e.tagValues("a")) return null
+            val emoji = when (val c = e.content.trim()) {
+                "", "+" -> "❤️"
+                "-" -> return null
+                else -> if (c.startsWith(":") && c.endsWith(":")) "❤️" else c.take(8)
+            }
+            return Reaction(e.id, e.pubkey, emoji, target, e.createdAt)
+        }
+
+        /** Etiquetas de una reacción: a un mensaje (con su autor) o al stream (con su anfitrión). */
+        fun tags(streamAddress: String, targetPubkey: String, eventId: String?): List<List<String>> = buildList {
+            eventId?.let { add(listOf("e", it)) }
+            add(listOf("p", targetPubkey))
+            add(listOf("a", streamAddress))
+            add(listOf("k", if (eventId != null) Kinds.LIVE_CHAT.toString() else Kinds.LIVE_EVENT.toString()))
         }
     }
 }

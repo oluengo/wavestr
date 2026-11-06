@@ -146,12 +146,13 @@ object Lnurl {
     fun invoiceMatches(invoice: String, msats: Long): Boolean = Bolt11.amountSats(invoice)?.let { it * 1000 == msats } == true
 
     /** Petición de zap (kind 9734) sin firmar: la firma Amber o una clave temporal (zap anónimo). */
-    fun zapRequestTags(recipient: String, address: String?, msats: Long, lnurl: String, relays: List<String>): List<List<String>> =
+    fun zapRequestTags(recipient: String, address: String?, msats: Long, lnurl: String, relays: List<String>, eventId: String? = null): List<List<String>> =
         buildList {
             add(listOf("relays") + relays.take(5))
             add(listOf("amount", msats.toString()))
             add(listOf("lnurl", lnurl))
             add(listOf("p", recipient))
             address?.let { add(listOf("a", it)) }
+            eventId?.let { add(listOf("e", it)) }
         }
 }

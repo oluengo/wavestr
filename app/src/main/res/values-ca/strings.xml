@@ -371,7 +371,7 @@
     <!-- Chat -->
     <string name="chat_hint">Escriu al xat</string>
     <string name="chat_send">Envia</string>
-    <string name="chat_needs_amber">Inicia sessió amb Amber per escriure al xat.</string>
+    <string name="chat_needs_amber">Entra amb Amber o amb un bunker per escriure al xat.</string>
     <string name="chat_failed">No s\'ha pogut enviar el missatge. Revisa la connexió i torna-ho a provar.</string>
     <string name="auto_recent">Recents</string>
     <string name="share">Comparteix</string>
@@ -408,4 +408,17 @@
         <item quantity="one">%d afegit als Preferits</item>
         <item quantity="other">%d afegits als Preferits</item>
     </plurals>
+    <string name="react">Reacciona</string>
+    <string name="react_failed">No s\'ha pogut enviar la reacció.</string>
+    <string name="react_needs_signer">Entra amb Amber o amb un bunker per reaccionar.</string>
+    <string name="zap_message">Zap a %1$s</string>
+    <string name="fullscreen">Pantalla completa</string>
+    <string name="fullscreen_exit">Surt de la pantalla completa</string>
+    <string name="login_bunker">Entra amb un bunker (NIP-46)</string>
+    <string name="bunker_explain">Enganxa l\'enllaç bunker:// de nsecBunker, nsec.app o un altre signant remot. La teva clau es queda allà; Wavestr només li demana que signi.</string>
+    <string name="bunker_bad_uri">No és un enllaç bunker:// vàlid (necessita el signant i almenys un relay).</string>
+    <string name="bunker_failed">El signant no ha respost o ha rebutjat la connexió.</string>
+    <string name="bunker_connecting">Connectant… Si el signant ho demana, aprova-hi la connexió.</string>
+    <string name="bunker_connect">Connecta</string>
+    <string name="account_bunker">Sessió amb signant remot (bunker)</string>
 </resources>

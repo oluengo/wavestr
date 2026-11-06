@@ -57,7 +57,9 @@ class AppContainer(app: Application) {
     val nostr = NostrRepository(relays)
     val radio = RadioBrowserClient(http, appScope, "Wavestr/${BuildConfig.VERSION_NAME} (github.com/oluengo/wavestr)")
     val library = LibraryRepository(java.io.File(app.filesDir, "library.json"), appScope)
-    val favSync = io.github.oluengo.wavestr.data.FavoritesSync(app, settings, library, nostr, relays, appScope).also { it.start() }
+    /** Firma con Amber o con un firmante remoto (NIP-46). */
+    val signer = io.github.oluengo.wavestr.nostr.Signer(app, settings, relays)
+    val favSync = io.github.oluengo.wavestr.data.FavoritesSync(app, settings, library, nostr, relays, signer, appScope).also { it.start() }
     val artwork = io.github.oluengo.wavestr.radio.ArtworkResolver(io.github.oluengo.wavestr.data.PrefsStore(app, "artwork"), http)
     val wallet = io.github.oluengo.wavestr.data.WalletRepository(app, relays)
     val zaps = io.github.oluengo.wavestr.nostr.ZapClient(http)
@@ -72,6 +74,10 @@ class AppContainer(app: Application) {
             }
         }
         appScope.launch { settings.flow.collect { io.github.oluengo.wavestr.player.BufferPolicy.mode = it.bufferMode } }
+        // Al cerrar sesión (o entrar de otra forma) se olvida la conexión con el firmante remoto.
+        appScope.launch {
+            settings.flow.map { it.loginMethod }.distinctUntilChanged().collect { if (it != io.github.oluengo.wavestr.data.LoginMethod.BUNKER) signer.forgetBunker() }
+        }
     }
 
     val player = PlayerConnection(app, settings, HlsInspector(http), appScope, onStationPlay = radio::countClick, favorites = { library.library.value.favorites })

@@ -112,6 +112,31 @@ class NostrRepository(private val pool: RelayPool) {
             .filter { it.hostPubkey == host }
             .sortedByDescending { it.startsAt ?: it.updatedAt }
 
+    data class Activity(val chat: List<ChatMessage>, val zaps: List<ZapReceipt>, val reactions: List<Reaction>)
+
+    /** Chat, zaps y reacciones (al stream y a los mensajes) de un directo desde [since]. */
+    suspend fun activityFull(address: String, since: Long, viewer: String?): Activity {
+        val relays = relaysFor(viewer)
+        val evs = pool.query(
+            relays,
+            listOf(Filter(kinds = listOf(Kinds.LIVE_CHAT, Kinds.ZAP_RECEIPT, Kinds.REACTION), tags = mapOf("a" to listOf(address)), since = since, limit = 500)),
+            timeoutMs = 5_000,
+        )
+        val chat = evs.mapNotNull(ChatMessage::from).filter { it.streamAddress == address }.sortedBy { it.createdAt }
+        // Hay clientes que reaccionan a un mensaje sin la etiqueta a: se buscan también por #e.
+        val ids = chat.takeLast(60).map { it.id }
+        val extra = if (ids.isEmpty()) emptyList() else runCatching {
+            pool.query(relays, listOf(Filter(kinds = listOf(Kinds.REACTION, Kinds.ZAP_RECEIPT), tags = mapOf("e" to ids), since = since)), timeoutMs = 4_000)
+        }.getOrDefault(emptyList())
+        val all = (evs + extra).distinctBy { it.id }
+        val known = ids.toSet()
+        val zaps = all.mapNotNull(ZapReceipt::from).filter { it.streamAddress == address || it.eventId in known }.sortedBy { it.createdAt }
+        // Una reacción con etiqueta a cuyo e no es un mensaje del chat va al stream (p. ej. al evento 30311).
+        val reactions = all.mapNotNull { Reaction.from(it, address) }.map { if (it.eventId != null && it.eventId !in known) it.copy(eventId = null) else it }
+            .distinctBy { Triple(it.pubkey, it.eventId, it.emoji) }
+        return Activity(chat, zaps, reactions)
+    }
+
     /** Chat (kind 1311) y zaps (kind 9735) de un directo desde [since]. */
     suspend fun activity(address: String, since: Long, viewer: String?): Pair<List<ChatMessage>, List<ZapReceipt>> {
         val evs = pool.query(

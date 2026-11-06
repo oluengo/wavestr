@@ -97,6 +97,10 @@ object Kinds {
     const val APP_DATA = 30078
     const val LIVE_EVENT = 30311
     const val LIVE_CHAT = 1311
+    const val REACTION = 7
+    const val NOSTR_CONNECT = 24133
+    const val CALENDAR_TIME = 31923
+    const val CALENDAR_DATE = 31922
 }
 
 /** Se queda con la versión más reciente de cada evento reemplazable/direccionable. */

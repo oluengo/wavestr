@@ -109,8 +109,8 @@ fun MeScreen(c: AppContainer, onBack: () -> Unit) {
                 Stat(follows?.toString() ?: "…", stringResource(R.string.me_following), Modifier.weight(1f))
                 Stat(relays?.toString() ?: "…", stringResource(R.string.me_relays), Modifier.weight(1f))
                 Stat(
-                    if (s.loginMethod == LoginMethod.AMBER) "Amber" else "npub",
-                    stringResource(if (s.loginMethod == LoginMethod.AMBER) R.string.me_signer else R.string.account_readonly),
+                    when (s.loginMethod) { LoginMethod.AMBER -> "Amber"; LoginMethod.BUNKER -> "Bunker"; else -> "npub" },
+                    stringResource(if (s.loginMethod == LoginMethod.AMBER || s.loginMethod == LoginMethod.BUNKER) R.string.me_signer else R.string.account_readonly),
                     Modifier.weight(1f),
                 )
             }

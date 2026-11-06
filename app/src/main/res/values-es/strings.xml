@@ -371,7 +371,7 @@
     <!-- Chat -->
     <string name="chat_hint">Escribe en el chat</string>
     <string name="chat_send">Enviar</string>
-    <string name="chat_needs_amber">Inicia sesión con Amber para escribir en el chat.</string>
+    <string name="chat_needs_amber">Entra con Amber o con un bunker para escribir en el chat.</string>
     <string name="chat_failed">No se ha podido enviar el mensaje. Revisa la conexión y vuelve a probar.</string>
     <string name="auto_recent">Recientes</string>
     <string name="share">Compartir</string>
@@ -408,4 +408,17 @@
         <item quantity="one">%d añadido a Favoritos</item>
         <item quantity="other">%d añadidos a Favoritos</item>
     </plurals>
+    <string name="react">Reaccionar</string>
+    <string name="react_failed">No se pudo enviar la reacción.</string>
+    <string name="react_needs_signer">Entra con Amber o con un bunker para reaccionar.</string>
+    <string name="zap_message">Zap a %1$s</string>
+    <string name="fullscreen">Pantalla completa</string>
+    <string name="fullscreen_exit">Salir de pantalla completa</string>
+    <string name="login_bunker">Entrar con un bunker (NIP-46)</string>
+    <string name="bunker_explain">Pega el enlace bunker:// de nsecBunker, nsec.app u otro firmante remoto. Tu clave se queda allí; Wavestr solo le pide que firme.</string>
+    <string name="bunker_bad_uri">No es un enlace bunker:// válido (necesita el firmante y al menos un relay).</string>
+    <string name="bunker_failed">El firmante no respondió o rechazó la conexión.</string>
+    <string name="bunker_connecting">Conectando… Si el firmante lo pide, aprueba la conexión allí.</string>
+    <string name="bunker_connect">Conectar</string>
+    <string name="account_bunker">Sesión con firmante remoto (bunker)</string>
 </resources>
