@@ -24,7 +24,7 @@
     <string name="login_prompt_body">Connecta’t amb Amber o enganxa el teu npub per navegar en mode només lectura.</string>
     <string name="login_amber">Entra amb Amber</string>
     <string name="login_npub">Fes servir el meu npub (només lectura)</string>
-    <string name="npub_explain">En mode només lectura veus els streams de la gent que segueixes. Per enviar zaps més endavant necessitaràs Amber.</string>
+    <string name="npub_explain">En mode només lectura veus els streams de la gent que segueixes. Per escriure al xat, reaccionar o enviar zaps, entra amb Amber o amb un bunker.</string>
     <string name="npub_invalid">Això no sembla un npub. Ha de començar per npub1.</string>
     <string name="amber_missing">Amber no està instal·lat. Instal·la’l per iniciar la sessió o fes servir el teu npub.</string>
     <string name="amber_failed">Amber no ha retornat cap clau. Torna-ho a provar o fes servir el teu npub.</string>
@@ -129,7 +129,7 @@
     <string name="fav_move_to">Mou a…</string>
     <string name="fav_kind_station">Ràdio</string>
     <string name="fav_kind_streamer">Streamer de Nostr</string>
-    <string name="fav_sync_note">Es desen en aquest mòbil. La sincronització de carpetes per Nostr (NIP-51) arribarà més endavant.</string>
+    <string name="fav_sync_note">Es desen en aquest mòbil. Pots sincronitzar-los per Nostr, xifrats, a Configuració → Preferits i còpies.</string>
     <string name="radio_sub">Directori mundial + les teves llistes PLS/M3U</string>
     <string name="radio_search_hint">Cerca emissora, país o estil</string>
     <string name="radio_popular">Populars</string>

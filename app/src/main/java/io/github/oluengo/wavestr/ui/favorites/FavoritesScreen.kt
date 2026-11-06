@@ -77,6 +77,7 @@ fun FavoritesScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenProfile: (S
     // Estado de los streamers favoritos (emitiendo o no), cada minuto mientras la pantalla está abierta.
     val live by c.liveStatus.live.collectAsStateWithLifecycle()
     val untitled = stringResource(R.string.untitled_stream)
+    val settingsNow by c.settings.flow.collectAsStateWithLifecycle(initialValue = null)
     val hosts = lib.favorites.mapNotNull { it.hostPubkey }.toSet()
     androidx.compose.runtime.LaunchedEffect(hosts) {
         while (true) {
@@ -143,7 +144,8 @@ fun FavoritesScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenProfile: (S
                 }, onMore = { dialog = Dialog.ItemOptions(item) })
                 HorizontalDivider(color = Rs.colors.line)
             }
-            item { EmptyNote(stringResource(R.string.fav_sync_note)) }
+            // Sin sincronizar: dónde activarlo. Sincronizando, no hace falta nota.
+            if (settingsNow?.favSync != true) item { EmptyNote(stringResource(R.string.fav_sync_note)) }
         }
     }
 

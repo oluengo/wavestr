@@ -168,7 +168,7 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
 @Composable
 private fun NowPlayingBar(c: AppContainer, st: PlayerUiState, onClose: (() -> Unit)?, showArt: Boolean, onShare: (io.github.oluengo.wavestr.data.Shared) -> Unit) {
     val np = st.nowPlaying
-    Row(Modifier.fillMaxWidth().padding(start = 4.dp, end = 4.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row(Modifier.fillMaxWidth().padding(start = 4.dp, end = 4.dp, top = 12.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically) {
         if (onClose != null) IconButton(onClick = onClose) { Icon(Icons.Outlined.ExpandMore, stringResource(R.string.minimize)) }
         else Box(Modifier.size(12.dp))
         if (np != null) {

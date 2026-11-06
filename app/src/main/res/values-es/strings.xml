@@ -24,7 +24,7 @@
     <string name="login_prompt_body">Conéctate con Amber o pega tu npub para navegar en solo lectura.</string>
     <string name="login_amber">Entrar con Amber</string>
     <string name="login_npub">Usar mi npub (solo lectura)</string>
-    <string name="npub_explain">En solo lectura ves los streams de la gente que sigues. Para enviar zaps más adelante necesitarás Amber.</string>
+    <string name="npub_explain">En solo lectura ves los streams de la gente que sigues. Para escribir en el chat, reaccionar o enviar zaps, entra con Amber o con un bunker.</string>
     <string name="npub_invalid">Eso no parece un npub. Debe empezar por npub1.</string>
     <string name="amber_missing">Amber no está instalado. Instálalo para iniciar sesión o usa tu npub.</string>
     <string name="amber_failed">Amber no ha devuelto ninguna clave. Inténtalo de nuevo o usa tu npub.</string>
@@ -129,7 +129,7 @@
     <string name="fav_move_to">Mover a…</string>
     <string name="fav_kind_station">Radio</string>
     <string name="fav_kind_streamer">Streamer de Nostr</string>
-    <string name="fav_sync_note">Se guardan en este móvil. La sincronización de carpetas por Nostr (NIP-51) llegará más adelante.</string>
+    <string name="fav_sync_note">Se guardan en este móvil. Puedes sincronizarlos por Nostr, cifrados, en Ajustes → Favoritos y copias.</string>
     <string name="radio_sub">Directorio mundial + tus listas PLS/M3U</string>
     <string name="radio_search_hint">Busca emisora, país o estilo</string>
     <string name="radio_popular">Populares</string>

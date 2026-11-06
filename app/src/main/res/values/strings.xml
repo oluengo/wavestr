@@ -25,7 +25,7 @@
     <string name="login_prompt_body">Connect with Amber, or paste your npub to browse read-only.</string>
     <string name="login_amber">Sign in with Amber</string>
     <string name="login_npub">Use my npub (read-only)</string>
-    <string name="npub_explain">Read-only shows the streams of people you follow. You’ll need Amber to send zaps later.</string>
+    <string name="npub_explain">Read-only shows the streams of people you follow. To write in the chat, react or zap, sign in with Amber or a bunker.</string>
     <string name="npub_invalid">That doesn’t look like an npub. It should start with npub1.</string>
     <string name="amber_missing">Amber isn’t installed. Install it to sign in, or use your npub.</string>
     <string name="amber_failed">Amber didn’t return a key. Try again or use your npub.</string>
@@ -130,7 +130,7 @@
     <string name="fav_move_to">Move to…</string>
     <string name="fav_kind_station">Radio</string>
     <string name="fav_kind_streamer">Nostr streamer</string>
-    <string name="fav_sync_note">Saved on this phone. Syncing folders through Nostr (NIP-51) comes later.</string>
+    <string name="fav_sync_note">Saved on this phone. You can sync them through Nostr, encrypted, in Settings → Favorites and backups.</string>
     <string name="radio_sub">Worldwide directory + your PLS/M3U lists</string>
     <string name="radio_search_hint">Search station, country or style</string>
     <string name="radio_popular">Popular</string>
