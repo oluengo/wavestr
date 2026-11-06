@@ -6,6 +6,7 @@ import androidx.compose.material.icons.outlined.FullscreenExit
 import androidx.compose.material.icons.outlined.Fullscreen
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.isImeVisible
 import io.github.oluengo.wavestr.data.FavItem
 import io.github.oluengo.wavestr.data.station
@@ -107,8 +108,7 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
 
     // Con el teclado abierto (chat), el contenido se encoge por encima de él en vez de quedar tapado.
     Column(
-        Modifier.fillMaxSize().statusBarsPadding()
-            .windowInsetsPadding(androidx.compose.foundation.layout.WindowInsets.ime.exclude(androidx.compose.foundation.layout.WindowInsets.navigationBars))
+        Modifier.fillMaxSize().statusBarsPadding().imePadding()
     ) {
         NowPlayingBar(c, st, onClose, showArt = st.audioOnly) { shareOpen = it }
         if (np == null) {

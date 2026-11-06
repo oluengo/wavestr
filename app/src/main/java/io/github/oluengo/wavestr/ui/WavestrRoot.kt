@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+
 package io.github.oluengo.wavestr.ui
 
 import androidx.annotation.StringRes
@@ -18,6 +20,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -133,7 +136,8 @@ fun WavestrRoot(c: AppContainer) {
                     }
                 },
             ) { pad ->
-                NavHost(nav, startDestination = Tab.LIVE.route, modifier = Modifier.padding(pad)) {
+                // consumeWindowInsets: las pantallas no vuelven a sumar la barra de estado (el reproductor quedaba bajado).
+                NavHost(nav, startDestination = Tab.LIVE.route, modifier = Modifier.padding(pad).consumeWindowInsets(pad)) {
                     composable(Tab.LIVE.route) {
                         LiveScreen(c, onPlay = { c.player.play(it); openPlayer() }, onSignIn = { nav.navigate("me") }, onOpenMe = { nav.navigate("me") }, onOpenProfile = { nav.navigate("profile/$it") })
                     }
