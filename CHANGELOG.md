@@ -2,9 +2,10 @@
 
 ## 0.11.0
 
+- **Reproductor unificado (radio y streams):** arriba siempre se ve qué suena (miniatura, título y canción o anfitrión) y, debajo, el vídeo si lo hay; en medio lo que se desplaza (carátula, detalles, chat o emisoras parecidas); abajo los mismos controles para todo y, en los directos, la caja del chat.
 - **Próximamente:** los directos programados (NIP-53) y los eventos de calendario con hora (NIP-52) de la gente que sigues y de tus streamers favoritos, en Streams y en cada perfil. Con la hora en tu zona y, si el organizador está en otra, también la suya.
 - **Recordatorios:** avisan al empezar o 5, 15 o 60 minutos antes; al tocar el aviso suena el directo (o se abre el perfil si aún no ha empezado). Sobreviven a reinicios del móvil.
-- **Directos con vídeo:** el vídeo y unos controles compactos se quedan fijos arriba mientras lees o escribes en el chat; sin vídeo, solo los controles. **Pantalla completa** en horizontal.
+- **Directos con vídeo:** el vídeo se queda fijo arriba mientras lees o escribes en el chat. **Pantalla completa** en horizontal.
 - **Reacciones y zaps desde el chat:** toca un mensaje para reaccionar (NIP-25) o hacerle un zap a su autor; también se puede reaccionar al stream. Se ven los recuentos en cada mensaje.
 - **Entrar con un bunker (NIP-46):** nsecBunker, nsec.app y otros firmantes remotos con un enlace `bunker://`. Firma chat, reacciones, zaps y los favoritos cifrados, como Amber.
 - **Refuerzo de volumen** por emisora (+3 a +12 dB) para las que suenan flojo; se recuerda para cada una.
