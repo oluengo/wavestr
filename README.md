@@ -5,7 +5,7 @@
 Radio online y streams de Nostr en una sola app para Android.
 *Online radio and Nostr live streams in one Android app. Català · Español · English.*
 
-**Web:** <https://oluengo.github.io/wavestr/>
+**Web:** <https://oluengo.github.io/wavestr/> · **App web (PWA):** <https://oluengo.github.io/wavestr/app/>
 
 > Estado: **beta** ([Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta)) con lo último.
 
@@ -76,6 +76,14 @@ Si deja de aparecer tras actualizar Android Auto, revisa que **Fuentes desconoci
 
 [`demo/index.html`](demo/index.html) es una maqueta interactiva de la app completa, con datos de ejemplo. Se abre en cualquier navegador.
 
+## App web
+
+<https://oluengo.github.io/wavestr/app/> funciona en el navegador y se puede instalar como app (PWA). Tiene radio, streams con chat, reacciones y zaps, favoritos con carpetas, compartir e importar, próximamente con recordatorios y la sincronización cifrada de favoritos con el móvil y el PC.
+
+- **Entrar:** extensión NIP-07 (Alby, nos2x…), bunker NIP-46 o npub de solo lectura.
+- **Zaps:** NWC, WebLN o QR.
+- **Límites del navegador:** las emisoras que solo emiten por `http` no suenan (se marcan); el refuerzo de volumen solo funciona si la emisora lo permite (CORS); los recordatorios avisan con la web abierta.
+
 ## Compilar (desarrollo)
 
 Requisitos: JDK 17, Android SDK 35 (para `:app`) y VLC (para probar `:desktop`).
@@ -88,7 +96,10 @@ Módulos: `:core` (Nostr, criptografía, radio, favoritos; Kotlin/JVM sin Androi
 ./gradlew :desktop:run                  # abre la app de escritorio
 ./gradlew :desktop:packageDeb           # .deb (en Linux) · :desktop:packageMsi en Windows
 python3 scripts/check_strings.py        # comprueba las traducciones
+cd web && npm install && npm run dev    # app web (TypeScript + Svelte) en local
 ```
+
+La app web está en `web/` (Vite + Svelte + nostr-tools) y usa los mismos textos de `strings.xml`. Cada push a `main` que la toque la compila y la publica en Pages ([`pages.yml`](.github/workflows/pages.yml)).
 
 GitHub Actions ([`android.yml`](.github/workflows/android.yml)):
 

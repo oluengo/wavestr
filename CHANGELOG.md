@@ -1,5 +1,11 @@
 # Cambios
 
+## Web (nueva)
+
+- **App web y PWA** en <https://oluengo.github.io/wavestr/app/>: radio (solo emisoras https), streams con vídeo, chat, reacciones y zaps (NWC, WebLN o QR), favoritos con carpetas y sincronización cifrada, compartir e importar, próximamente con recordatorios, refuerzo de volumen y temporizador.
+- **Entrar** con extensión NIP-07, bunker NIP-46 o npub de solo lectura.
+- **Enlaces compartidos:** la página del enlace ofrece también «Abrir en la web».
+
 ## PC (beta)
 
 - **Descargas de PC en la beta:** Linux (`.deb`, `.tar.gz`) y Windows (`.msi`). Necesita VLC.

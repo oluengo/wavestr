@@ -1,0 +1,23 @@
+{
+  "name": "wavestr-web",
+  "private": true,
+  "version": "0.11.1",
+  "type": "module",
+  "scripts": {
+    "strings": "node scripts/strings.mjs",
+    "dev": "npm run strings && vite",
+    "build": "npm run strings && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "hls.js": "1.7.3",
+    "nostr-tools": "2.25.2",
+    "qrcode-generator": "2.0.4",
+    "@scure/base": "2.0.0"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "7.3.1",
+    "svelte": "5.57.2",
+    "vite": "8.3.4"
+  }
+}

@@ -1,0 +1,52 @@
+/* Wavestr web: claro y limpio por defecto, oscuro si el sistema lo pide o se elige. */
+:root {
+  --bg: #f4f5f7; --surface: #ffffff; --surface2: #eef0f3; --ink: #17161f; --muted: #6b6a78; --line: #e4e3ea;
+  --accent: #6D28D9; --accent-soft: color-mix(in srgb, var(--accent) 12%, transparent);
+  --live: #e5483b; --zap: #a86a00; --zap-soft: #fdf1dc; --radius: 14px; --shadow: 0 1px 2px rgba(20,20,40,.06), 0 4px 16px rgba(20,20,40,.06);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f0e15; --surface: #18171f; --surface2: #211f2a; --ink: #f1f0f6; --muted: #9a99a8; --line: #2a2935;
+    --zap: #f5b342; --zap-soft: #33281a; --live: #ff6b5e; color-scheme: dark; --shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f0e15; --surface: #18171f; --surface2: #211f2a; --ink: #f1f0f6; --muted: #9a99a8; --line: #2a2935;
+  --zap: #f5b342; --zap-soft: #33281a; --live: #ff6b5e; color-scheme: dark; --shadow: none;
+}
+* { box-sizing: border-box; margin: 0; }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.45 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+button:disabled { opacity: .4; cursor: default; }
+input, textarea, select { font: inherit; color: inherit; }
+a { color: var(--accent); }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.tiny { font-size: 12px; }
+.bold { font-weight: 650; }
+.row { display: flex; align-items: center; gap: 10px; }
+.col { display: flex; flex-direction: column; gap: 6px; }
+.grow { flex: 1; min-width: 0; }
+.ellipsis { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+.btn { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 14px; border-radius: 12px; font-weight: 600; border: 1px solid var(--line); background: var(--surface); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.danger { color: var(--live); }
+.btn.text { border-color: transparent; background: none; color: var(--accent); padding: 8px 10px; }
+.icon-btn { width: 40px; height: 40px; border-radius: 50%; display: inline-grid; place-items: center; color: var(--ink); flex: none; }
+.icon-btn:hover:not(:disabled) { background: var(--surface2); }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: 13px; font-weight: 550; white-space: nowrap; }
+.chip.on { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
+.field { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); outline: none; }
+.field:focus { border-color: var(--accent); }
+.section-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 22px 0 8px; }
+.badge-live { background: var(--live); color: #fff; font-size: 10.5px; font-weight: 800; letter-spacing: .06em; padding: 2px 7px; border-radius: 6px; }
+.list { display: flex; flex-direction: column; }
+.list > * + * { border-top: 1px solid var(--line); }
+.toast { position: fixed; left: 50%; bottom: calc(90px + env(safe-area-inset-bottom)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-size: 14px; z-index: 100; max-width: calc(100vw - 32px); }
+.switch { position: relative; width: 44px; height: 26px; border-radius: 999px; background: var(--line); transition: background .15s; flex: none; }
+.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform .15s; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+.switch.on { background: var(--accent); }
+.switch.on::after { transform: translateX(18px); }

@@ -1,11 +1,11 @@
 # Publica la carpeta site/ en GitHub Pages (https://oluengo.github.io/wavestr/).
-# Landing de la app (index.html) y página de los enlaces para compartir (s/). Requiere Settings → Pages → Source: GitHub Actions.
+# Landing (index.html), enlaces para compartir (s/) y la app web (app/, compilada desde web/). Requiere Settings → Pages → Source: GitHub Actions.
 name: Pages
 
 on:
   push:
     branches: [main]
-    paths: ["site/**", ".github/workflows/pages.yml"]
+    paths: ["site/**", "web/**", "app/src/main/res/values*/strings.xml", ".github/workflows/pages.yml"]
   workflow_dispatch:
 
 permissions:
@@ -25,6 +25,15 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Compila la app web
+        working-directory: web
+        run: npm ci && npm run build
+      - run: rm -rf site/app && cp -r web/dist site/app
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
