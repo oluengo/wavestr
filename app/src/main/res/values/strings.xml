@@ -442,4 +442,23 @@
     <string name="boost_on">Volume +%1$d dB</string>
     <string name="boost_explain">Boost for stations that sound quiet. Saved for this station.</string>
     <string name="boost_off">Normal</string>
+    <string name="desk_fav_sync_done">Synced %1$s</string>
+    <string name="desk_fav_sync_failed">Couldn\'t sync. Check your connection and try again.</string>
+    <string name="desk_fav_sync_needs_bunker">Sign in with a bunker to keep them on Nostr.</string>
+    <string name="desk_fav_sync_no_signer">The bunker didn\'t answer. Is it online?</string>
+    <string name="desk_fav_sync_sub">Encrypted with your key (NIP-44). The same ones as on your phone.</string>
+    <string name="desk_fav_sync_too_big">Too many favorites to save on Nostr (limit about 64 KB).</string>
+    <string name="desk_import_link">Import a link</string>
+    <string name="desk_import_link_sub">Paste a Wavestr link (station, folder or favorites) to see what\'s in it and choose what to add.</string>
+    <string name="desk_import_preview">See</string>
+    <string name="desk_reminder_not_live">It hasn\'t started yet. We\'ll play it from Streams when it\'s live.</string>
+    <string name="desk_reminder_note">Reminders work while Wavestr is open (in the tray, too).</string>
+    <string name="desk_share_copied">Copied to the clipboard.</string>
+    <string name="desk_share_link_sub">Copied to the clipboard. Opens in Wavestr on Android, or in the browser.</string>
+    <string name="desk_wallet_none_sub">Without a wallet, zaps show a QR code to pay with your phone\'s wallet. With Nostr Wallet Connect you pay with one click.</string>
+    <string name="desk_wallet_security">The link allows payments, so it\'s stored encrypted on this computer. You can revoke it from your wallet at any time.</string>
+    <string name="desk_zap_anonymous">Without a bunker, the zap is sent anonymously.</string>
+    <string name="desk_zap_err_signature">The bunker didn\'t sign the zap. Nothing was paid.</string>
+    <string name="desk_zap_pay_qr">Scan it with your wallet, or copy the invoice. The zap shows in the chat once paid.</string>
+    <string name="desk_zap_via_qr">No wallet connected: you\'ll get a QR code to pay.</string>
 </resources>

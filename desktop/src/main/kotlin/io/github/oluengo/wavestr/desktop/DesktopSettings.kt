@@ -13,8 +13,12 @@ data class Settings(
     val accent: Accent = Accent.VIOLET,
     /** null = idioma del sistema. */
     val language: String? = null,
-    /** Sesión en solo lectura con npub (en el escritorio aún no hay firmante). */
+    /** Tu clave pública: con npub (solo lectura) o con un bunker (NIP-46, puede firmar). */
     val pubkey: String? = null,
+    /** La sesión es con bunker: se puede firmar (chat, reacciones, zaps, favoritos cifrados). */
+    val bunker: Boolean = false,
+    /** Favoritos sincronizados (cifrados) en Nostr. */
+    val favSync: Boolean = false,
     val appRelays: List<String>? = null,
     /** Al cerrar la ventana, seguir sonando con el icono en la bandeja. */
     val keepInTray: Boolean = true,
@@ -41,6 +45,8 @@ class SettingsRepository(private val store: FileStore) {
         accent = enumOr("accent", Accent.VIOLET),
         language = store.get("language")?.takeIf { it in I18n.supported },
         pubkey = store.get("pubkey"),
+        bunker = store.get("bunker")?.toBoolean() ?: false,
+        favSync = store.get("fav_sync")?.toBoolean() ?: false,
         appRelays = store.get("relays")?.split('\n')?.filter { it.isNotBlank() }?.takeIf { it.isNotEmpty() },
         keepInTray = store.get("keep_in_tray")?.toBoolean() ?: true,
         surpriseKind = enumOr("surprise_kind", SurpriseKind.BOTH),
@@ -58,8 +64,10 @@ class SettingsRepository(private val store: FileStore) {
     fun setTheme(v: ThemeMode) = set("theme", v.name)
     fun setAccent(v: Accent) = set("accent", v.name)
     fun setLanguage(v: String?) { set("language", v); I18n.load(v) }
-    fun login(pubkey: String) = set("pubkey", pubkey)
-    fun logout() = set("pubkey", null)
+    fun login(pubkey: String) { store.put("bunker", null); set("pubkey", pubkey) }
+    fun loginBunker(pubkey: String) { store.put("bunker", "true"); set("pubkey", pubkey) }
+    fun logout() { store.put("bunker", null); store.put("fav_sync", null); set("pubkey", null) }
+    fun setFavSync(v: Boolean) = set("fav_sync", v.toString())
     fun setAppRelays(list: List<String>?) = set("relays", list?.joinToString("\n"))
     fun setKeepInTray(v: Boolean) = set("keep_in_tray", v.toString())
     fun setSurprise(kind: SurpriseKind, fromFavorites: Boolean) { store.put("surprise_kind", kind.name); set("surprise_fav", fromFavorites.toString()) }

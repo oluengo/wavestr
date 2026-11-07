@@ -441,4 +441,23 @@
     <string name="boost_on">Volumen +%1$d dB</string>
     <string name="boost_explain">Refuerzo para emisoras que suenan flojo. Se guarda para esta emisora.</string>
     <string name="boost_off">Normal</string>
+    <string name="desk_fav_sync_done">Sincronizado %1$s</string>
+    <string name="desk_fav_sync_failed">No se pudo sincronizar. Revisa la conexión y vuelve a probar.</string>
+    <string name="desk_fav_sync_needs_bunker">Entra con un bunker para guardarlos en Nostr.</string>
+    <string name="desk_fav_sync_no_signer">El bunker no responde. ¿Está en línea?</string>
+    <string name="desk_fav_sync_sub">Cifrados con tu clave (NIP-44). Los mismos que en el móvil.</string>
+    <string name="desk_fav_sync_too_big">Demasiados favoritos para guardarlos en Nostr (límite de unos 64 KB).</string>
+    <string name="desk_import_link">Importar un enlace</string>
+    <string name="desk_import_link_sub">Pega un enlace de Wavestr (emisora, carpeta o favoritos) para ver qué trae y elegir qué añadir.</string>
+    <string name="desk_import_preview">Ver</string>
+    <string name="desk_reminder_not_live">Aún no ha empezado. Cuando esté en directo, lo tienes en Streams.</string>
+    <string name="desk_reminder_note">Los recordatorios funcionan con Wavestr abierta (también en la bandeja).</string>
+    <string name="desk_share_copied">Copiado al portapapeles.</string>
+    <string name="desk_share_link_sub">Se copia al portapapeles. Se abre en Wavestr para Android o en el navegador.</string>
+    <string name="desk_wallet_none_sub">Sin cartera, los zaps muestran un código QR para pagar con la cartera del móvil. Con Nostr Wallet Connect pagas con un clic.</string>
+    <string name="desk_wallet_security">El enlace permite pagar, así que se guarda cifrado en este ordenador. Puedes revocarlo desde tu cartera cuando quieras.</string>
+    <string name="desk_zap_anonymous">Sin bunker, el zap se envía de forma anónima.</string>
+    <string name="desk_zap_err_signature">El bunker no ha firmado el zap. No se ha pagado nada.</string>
+    <string name="desk_zap_pay_qr">Escanéalo con tu cartera o copia la factura. El zap sale en el chat cuando se pague.</string>
+    <string name="desk_zap_via_qr">Sin cartera conectada: verás un código QR para pagar.</string>
 </resources>

@@ -31,6 +31,8 @@ dependencies {
     implementation(libs.coil3.network.okhttp)
     implementation(libs.coil3.svg)
     implementation(libs.vlcj)
+    // Código QR para pagar zaps con la cartera del móvil.
+    implementation("io.nayuki:qrcodegen:1.8.0")
 }
 
 // Los textos (ca/es/en) salen de los strings.xml de Android: una sola fuente de traducciones.

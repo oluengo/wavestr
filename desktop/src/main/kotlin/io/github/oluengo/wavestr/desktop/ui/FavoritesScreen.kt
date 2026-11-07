@@ -18,7 +18,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AddLink
 import androidx.compose.material.icons.outlined.CreateNewFolder
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.AlertDialog
@@ -62,6 +64,8 @@ fun FavoritesScreen(c: DesktopContainer) {
     var creating by remember { mutableStateOf(false) }
     var deleting by remember { mutableStateOf<Folder?>(null) }
     var note by remember { mutableStateOf<String?>(null) }
+    var sharing by remember { mutableStateOf<io.github.oluengo.wavestr.data.Shared?>(null) }
+    var importing by remember { mutableStateOf(false) }
     if (current != null && lib.folder(current) == null) current = null
     val live by c.liveStatus.live.collectAsState()
     val hosts = lib.favorites.mapNotNull { it.hostPubkey }.toSet()
@@ -85,9 +89,16 @@ fun FavoritesScreen(c: DesktopContainer) {
         }
     }
 
+    sharing?.let { ShareDialog(it, onDismiss = { sharing = null }) }
+    if (importing) ImportLinkDialog(c, onDismiss = { importing = false })
     Column(Modifier.fillMaxSize()) {
         ScreenHeader(t("tab_favorites"), t("fav_sub")) {
             IconButton(onClick = { creating = true }) { Icon(Icons.Outlined.CreateNewFolder, t("fav_new_folder")) }
+            // Compartir lo que se ve (todo o la carpeta abierta) e importar un enlace.
+            IconButton(onClick = {
+                sharing = current?.let { io.github.oluengo.wavestr.data.Shared.ofFolder(lib, it) } ?: io.github.oluengo.wavestr.data.Shared.ofAll(lib, t("tab_favorites"))
+            }, enabled = lib.favorites.isNotEmpty()) { Icon(Icons.Outlined.Share, t(if (current == null) "share_all" else "share_folder")) }
+            IconButton(onClick = { importing = true }) { Icon(Icons.Outlined.AddLink, t("desk_import_link")) }
             HeaderActions(c)
         }
         Row(Modifier.padding(horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically) {

@@ -251,15 +251,24 @@ jobs:
 
   # Publica (beta o versión) solo si todo ha ido bien: tests, compilación, arranque en el emulador e instaladores.
   publish:
-    # El escritorio se compila y se prueba, pero de momento no se publica (sin descargas).
-    needs: [build, android-smoke]
-    if: needs.build.outputs.tag != '' && needs.build.outputs.signed == 'true'
+    # Beta: APK + escritorio (Linux y Windows) si sus compilaciones salieron bien. Estable: de momento solo la APK.
+    needs: [build, android-smoke, desktop]
+    if: >-
+      always() && needs.build.result == 'success' && needs.android-smoke.result == 'success' &&
+      needs.build.outputs.tag != '' && needs.build.outputs.signed == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - uses: actions/download-artifact@v7
         with:
           pattern: "*-android"
+          merge-multiple: true
+          path: dist
+      - uses: actions/download-artifact@v7
+        if: needs.build.outputs.tag == 'wavestr-beta'
+        continue-on-error: true
+        with:
+          pattern: "desktop-*"
           merge-multiple: true
           path: dist
       - name: Release de GitHub
@@ -271,10 +280,14 @@ jobs:
           ls -la dist
           files=$(ls dist/*.apk)
           if [ "$TAG" = "wavestr-beta" ]; then
+            files="$files $(ls dist/*.deb dist/*.tar.gz dist/*.msi 2>/dev/null | tr '\n' ' ')"
             # Beta: una sola pre-release «Wavestr Beta» que se rehace en cada push; no cuenta como última versión.
             gh release delete wavestr-beta --cleanup-tag --yes || true
             printf '%s\n\n%s\n' "**Versión de pruebas** $VERSION · $(git log -1 --format=%s)" \
               "Se instala como otra app, «Wavestr Beta», con sus propios datos: no toca la Wavestr normal. Puede tener fallos." > notas.md
+            if ls dist/*.deb dist/*.msi > /dev/null 2>&1; then
+              printf '\n%s\n' "**PC (beta):** Linux \`.deb\` o \`.tar.gz\` y Windows \`.msi\`. Necesita VLC instalado." >> notas.md
+            fi
             gh release create wavestr-beta $files --prerelease --target "$GITHUB_SHA" --title "Wavestr Beta $VERSION" --notes-file notas.md
           else
             awk -v v="$VERSION" '$0 ~ "^## " v {f=1; next} /^## / && f {exit} f' CHANGELOG.md > notas.md

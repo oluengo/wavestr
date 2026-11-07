@@ -59,6 +59,19 @@ fun LiveScreen(c: DesktopContainer) {
     var items by remember { mutableStateOf<List<LiveItem>>(emptyList()) }
     var loading by remember { mutableStateOf(true) }
     var failed by remember { mutableStateOf(false) }
+    // Próximamente: programados (NIP-53) y calendario (NIP-52) de seguidos y streamers favoritos.
+    var upcoming by remember { mutableStateOf<List<Pair<io.github.oluengo.wavestr.nostr.Scheduled, Profile?>>>(emptyList()) }
+    val lib by c.library.library.collectAsState()
+    LaunchedEffect(s.pubkey, reload) {
+        runCatching {
+            val pk = s.pubkey
+            val hosts = (lib.favorites.mapNotNull { it.hostPubkey } + (pk?.let { c.nostr.follows(it, reload > 0) }.orEmpty())).distinct()
+            val list = c.nostr.upcoming(hosts, pk)
+            c.reminders.refresh(list)
+            val profiles = c.nostr.profiles(list.map { it.hostPubkey }, pk)
+            upcoming = list.take(12).map { it to profiles[it.hostPubkey] }
+        }
+    }
 
     LaunchedEffect(following, s.pubkey, reload) {
         loading = true; failed = false
@@ -92,8 +105,8 @@ fun LiveScreen(c: DesktopContainer) {
                 following && s.pubkey == null -> item(span = { GridItemSpan(maxLineSpan) }) {
                     Column {
                         Text(t("login_prompt_title"), fontWeight = FontWeight.SemiBold)
-                        Text(t("desk_login_npub_only"), color = Rs.colors.muted)
-                        TextButton(onClick = nav.openAccount) { Text(t("login_npub")) }
+                        Text(t("npub_explain"), color = Rs.colors.muted)
+                        TextButton(onClick = nav.openAccount) { Text(t("login_bunker")) }
                     }
                 }
                 loading && items.isEmpty() -> item(span = { GridItemSpan(maxLineSpan) }) {
@@ -109,6 +122,10 @@ fun LiveScreen(c: DesktopContainer) {
                         c.player.play(liveNowPlaying(li.stream, li.host)); nav.openPlayer()
                     }
                 }
+            }
+            if (upcoming.isNotEmpty()) {
+                item(span = { GridItemSpan(maxLineSpan) }) { SectionLabel(t("upcoming")) }
+                items(upcoming, key = { "up:" + it.first.address }) { (sch, host) -> UpcomingCard(c, sch, host) }
             }
         }
     }

@@ -133,6 +133,12 @@ fun SettingsScreen(c: DesktopContainer) {
             SectionLabel(t("settings_account"))
             AccountSection(c, s.pubkey)
 
+            SectionLabel(t("wallet_title"))
+            WalletSection(c)
+
+            SectionLabel(t("fav_sync_title"))
+            FavSyncSection(c)
+
             SectionLabel(t("desk_window"))
             Group {
                 Row(
@@ -156,42 +162,6 @@ fun SettingsScreen(c: DesktopContainer) {
             SectionLabel(t("settings_about"))
             AboutSection()
             Box(Modifier.padding(vertical = 24.dp))
-        }
-    }
-}
-
-@Composable
-private fun AccountSection(c: DesktopContainer, pubkey: String?) {
-    var input by remember { mutableStateOf("") }
-    var invalid by remember { mutableStateOf(false) }
-    Group {
-        if (pubkey == null) {
-            Text(t("account_none"), fontWeight = FontWeight.SemiBold)
-            Text(t("desk_login_npub_only"), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 8.dp)) {
-                OutlinedTextField(
-                    input, { input = it.trim(); invalid = false }, singleLine = true, isError = invalid,
-                    placeholder = { Text("npub1…") }, modifier = Modifier.weight(1f),
-                    supportingText = { if (invalid) Text(t("npub_invalid")) },
-                )
-                TextButton(onClick = {
-                    val hex = Nip19.normalizePubkey(input)
-                    if (hex == null) invalid = true else { c.settings.login(hex); input = "" }
-                }) { Text(t("save")) }
-            }
-        } else {
-            val profile by produceState<io.github.oluengo.wavestr.nostr.Profile?>(null, pubkey) {
-                value = runCatching { c.nostr.profiles(listOf(pubkey), pubkey)[pubkey] }.getOrNull()
-            }
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Artwork(profile?.picture, pubkey, profile?.bestName ?: "?", Modifier.size(44.dp), corner = 22.dp)
-                Column(Modifier.weight(1f)) {
-                    Text(profile?.bestName ?: Nip19.shortNpub(pubkey), fontWeight = FontWeight.SemiBold)
-                    Text(t("account_readonly"), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
-                }
-                OutlinedButton(onClick = { c.settings.logout() }) { Text(t("logout")) }
-            }
-            Text(Nip19.hexToNpub(pubkey), fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodySmall, color = Rs.colors.muted, modifier = Modifier.padding(top = 8.dp))
         }
     }
 }

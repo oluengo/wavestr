@@ -111,6 +111,8 @@ fun WavestrDesktop(c: DesktopContainer) {
                 )
                 val ps by c.player.state.collectAsState()
 
+                IncomingShareHost(c)
+                ReminderHost(c, onOpenPlayer = { if (layout != Layout.EXPANDED) playerOpen = true })
                 CompositionLocalProvider(LocalNav provides nav) {
                     Row(Modifier.fillMaxSize()) {
                         if (layout != Layout.COMPACT) {

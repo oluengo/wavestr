@@ -52,8 +52,28 @@ class DesktopContainer {
     val library = LibraryRepository(File(AppInfo.dataDir, "library.json"), scope)
     val artwork = ArtworkResolver(FileStore(File(AppInfo.dataDir, "artwork.properties")), http)
     val player = VlcPlayer(scope, http, onStationPlay = radio::countClick, favorites = { library.library.value.favorites })
+    val secrets = Secrets(AppInfo.dataDir)
+    init { player.boostStore = FileStore(File(AppInfo.dataDir, "volume_boost.properties")) }
+    val signer = DesktopSigner(settings, relays, secrets)
+    val wallet = DesktopWallet(FileStore(File(AppInfo.dataDir, "wallet.properties")), secrets, relays)
+    val zaps = io.github.oluengo.wavestr.nostr.ZapClient(http)
+    val favSync = DesktopFavSync(settings, library, nostr, relays, signer, FileStore(File(AppInfo.dataDir, "favsync.properties")), scope)
+    val reminders = DesktopReminders(AppInfo.dataDir, scope)
+    /** Enlace compartido pendiente de revisar (vista previa para importarlo). */
+    val incomingShare = kotlinx.coroutines.flow.MutableStateFlow<io.github.oluengo.wavestr.data.Shared?>(null)
+    /** Directo a abrir al pulsar un recordatorio: (dirección, anfitrión). */
+    val openStream = kotlinx.coroutines.flow.MutableStateFlow<Pair<String, String>?>(null)
 
     init {
+        favSync.start()
+        reminders.onFire = { r ->
+            val text = if (r.leadMin == 0) t("reminder_now", r.hostName) else t("reminder_soon", r.leadMin, r.hostName)
+            SystemNotify.show(r.title, text)
+            openStream.value = r.address to r.host
+        }
+        reminders.start()
+        // Al cerrar sesión (o entrar con npub) se olvida la conexión con el bunker.
+        scope.launch { settings.flow.map { it.bunker }.distinctUntilChanged().collect { if (!it) signer.forget() } }
         RelayPool.DEFAULT = settings.current.appRelays ?: RelayPool.BUILTIN
         io.github.oluengo.wavestr.player.BufferPolicy.mode = settings.current.bufferMode
         scope.launch {
@@ -106,7 +126,13 @@ private fun ApplicationScope.WavestrApplication(c: DesktopContainer) {
 
     // Bandeja del sistema solo si el escritorio la tiene (GNOME, por ejemplo, no sin extensión).
     val trayOk = remember { runCatching { java.awt.SystemTray.isSupported() }.getOrDefault(false) }
+    val trayState = androidx.compose.ui.window.rememberTrayState()
+    if (trayOk) LaunchedEffect(Unit) {
+        // Recordatorios: si no hay notify-send (Windows), el aviso sale por la bandeja.
+        SystemNotify.tray = { title, text -> trayState.sendNotification(androidx.compose.ui.window.Notification(title, text)) }
+    }
     if (trayOk) Tray(
+        state = trayState,
         icon = icon,
         tooltip = AppInfo.name,
         onAction = { visible = true },

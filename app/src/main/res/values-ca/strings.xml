@@ -441,4 +441,23 @@
     <string name="boost_on">Volum +%1$d dB</string>
     <string name="boost_explain">Reforç per a emissores que sonen fluix. Es desa per a aquesta emissora.</string>
     <string name="boost_off">Normal</string>
+    <string name="desk_fav_sync_done">Sincronitzat %1$s</string>
+    <string name="desk_fav_sync_failed">No s\'ha pogut sincronitzar. Revisa la connexió i torna-ho a provar.</string>
+    <string name="desk_fav_sync_needs_bunker">Entra amb un bunker per desar-los a Nostr.</string>
+    <string name="desk_fav_sync_no_signer">El bunker no respon. Està en línia?</string>
+    <string name="desk_fav_sync_sub">Xifrats amb la teva clau (NIP-44). Els mateixos que al mòbil.</string>
+    <string name="desk_fav_sync_too_big">Massa preferits per desar-los a Nostr (límit d\'uns 64 KB).</string>
+    <string name="desk_import_link">Importa un enllaç</string>
+    <string name="desk_import_link_sub">Enganxa un enllaç de Wavestr (emissora, carpeta o preferits) per veure què porta i triar què afegir.</string>
+    <string name="desk_import_preview">Mostra</string>
+    <string name="desk_reminder_not_live">Encara no ha començat. Quan sigui en directe, el tens a Streams.</string>
+    <string name="desk_reminder_note">Els recordatoris funcionen amb Wavestr oberta (també a la safata).</string>
+    <string name="desk_share_copied">Copiat al porta-retalls.</string>
+    <string name="desk_share_link_sub">Es copia al porta-retalls. S\'obre a Wavestr per a Android o al navegador.</string>
+    <string name="desk_wallet_none_sub">Sense cartera, els zaps mostren un codi QR per pagar amb la cartera del mòbil. Amb Nostr Wallet Connect pagues amb un clic.</string>
+    <string name="desk_wallet_security">L\'enllaç permet pagar, així que es desa xifrat en aquest ordinador. El pots revocar des de la cartera quan vulguis.</string>
+    <string name="desk_zap_anonymous">Sense bunker, el zap s\'envia de manera anònima.</string>
+    <string name="desk_zap_err_signature">El bunker no ha signat el zap. No s\'ha pagat res.</string>
+    <string name="desk_zap_pay_qr">Escaneja\'l amb la cartera o copia la factura. El zap surt al xat quan es pagui.</string>
+    <string name="desk_zap_via_qr">Sense cartera connectada: veuràs un codi QR per pagar.</string>
 </resources>

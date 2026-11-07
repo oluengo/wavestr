@@ -1,5 +1,16 @@
 package io.github.oluengo.wavestr.desktop.ui
 
+import io.github.oluengo.wavestr.data.FavItem
+import io.github.oluengo.wavestr.data.streamer
+import io.github.oluengo.wavestr.data.station
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.key.key
+import androidx.compose.material.icons.filled.Bolt
+import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.FullscreenExit
+import androidx.compose.material.icons.outlined.Fullscreen
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -72,104 +83,223 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import java.text.NumberFormat
 
-/** Reproductor: a pantalla completa (estrecho) o fijo a la derecha ([onClose] null). */
+/**
+ * Reproductor, igual para radio y streams: arriba, siempre a la vista, qué suena (y el vídeo, si lo hay);
+ * en medio lo que se desplaza (carátula, detalles, chat o emisoras parecidas); abajo los controles y, en
+ * los directos, la caja del chat. [onClose] null = fijo a la derecha (ventana ancha).
+ */
 @Composable
 fun PlayerPanel(c: DesktopContainer, onClose: (() -> Unit)?) {
     val st by c.player.state.collectAsState()
-    val lib by c.library.library.collectAsState()
+    val s by c.settings.flow.collectAsState()
     val np = st.nowPlaying
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    val chat = remember { ChatModel(c, scope) }
+    val liveAddress = np?.takeIf { it.isLive && it.hostPubkey != null }?.id
+    LaunchedEffect(liveAddress) { chat.watch(liveAddress, np?.hostPubkey) }
+    var zap by remember { mutableStateOf<ZapTarget?>(null) }
+    var share by remember { mutableStateOf<io.github.oluengo.wavestr.data.Shared?>(null) }
+    var fullscreen by remember { mutableStateOf(false) }
+    val canSign = s.pubkey != null && s.bunker
 
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-        Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            if (onClose != null) IconButton(onClick = onClose) { Icon(Icons.Outlined.ExpandMore, t("minimize")) } else Box(Modifier.size(48.dp))
-            Spacer(Modifier.weight(1f))
-            if (np?.isLive == true) LiveBadge()
-            Spacer(Modifier.weight(1f))
-            IconButton(onClick = { c.player.stop(); onClose?.invoke() }, enabled = np != null) { Icon(Icons.Outlined.Close, t("stop")) }
-        }
+    Column(Modifier.fillMaxSize()) {
+        NowPlayingBar(c, st, onClose, onShare = { share = it })
         if (np == null) {
             Text(t("nothing_playing"), color = Rs.colors.muted, modifier = Modifier.padding(24.dp))
             return@Column
         }
         val showVideo = np.isLive && !st.audioOnly
-        Box(Modifier.padding(horizontal = 16.dp).fillMaxWidth(), contentAlignment = Alignment.Center) {
-            if (showVideo) {
-                Box(Modifier.fillMaxWidth().aspectRatio(16f / 9f).clip(RoundedCornerShape(14.dp)).background(Color.Black)) {
-                    VideoCanvas(c.player.video, Modifier.fillMaxSize())
+        if (showVideo) Box(Modifier.padding(horizontal = 8.dp).fillMaxWidth().aspectRatio(16f / 9f).clip(RoundedCornerShape(12.dp)).background(Color.Black)) {
+            if (!fullscreen) VideoCanvas(c.player.video, Modifier.fillMaxSize())
+            if (st.isBuffering && st.available) CircularProgressIndicator(Modifier.align(Alignment.Center))
+            IconButton(
+                onClick = { fullscreen = true }, modifier = Modifier.align(Alignment.BottomEnd).padding(4.dp),
+                colors = IconButtonDefaults.iconButtonColors(containerColor = Color.Black.copy(alpha = 0.45f), contentColor = Color.White),
+            ) { Icon(Icons.Outlined.Fullscreen, t("fullscreen")) }
+        }
+
+        val scroll = rememberScrollState()
+        val chatState by chat.state.collectAsState()
+        LaunchedEffect(chatState.lines.size) { if (scroll.maxValue - scroll.value < 400) scroll.animateScrollTo(scroll.maxValue) }
+        Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(scroll)) {
+            if (!showVideo) Box(Modifier.fillMaxWidth().padding(top = 8.dp), contentAlignment = Alignment.Center) {
+                val size = if (liveAddress != null) 0.45f else 0.7f
+                val station = np.station
+                if (station != null) StationArtwork(c, station, Modifier.widthIn(max = 260.dp).fillMaxWidth(size).aspectRatio(1f), corner = 20.dp)
+                else Artwork(np.artworkUrl, np.id, np.title, Modifier.widthIn(max = 260.dp).fillMaxWidth(size).aspectRatio(1f), corner = 20.dp)
+                if (st.isBuffering && st.available) CircularProgressIndicator()
+            }
+            val margin = io.github.oluengo.wavestr.player.BufferPolicy.marginMs()
+            if (st.isBuffering && margin >= 5_000) Text(
+                t("buffer_loading", (margin * st.bufferPercent / 100_000).toInt(), (margin / 1000).toInt()),
+                color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(horizontal = 18.dp, vertical = 6.dp),
+            )
+            if (np.isLive) SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 10.dp)) {
+                SegmentedButton(st.audioOnly, { c.player.setAudioOnly(true) }, SegmentedButtonDefaults.itemShape(0, 2), icon = { Icon(Icons.Outlined.Headphones, null, Modifier.size(18.dp)) }) { Text(t("player_audio")) }
+                SegmentedButton(!st.audioOnly, { c.player.setAudioOnly(false) }, SegmentedButtonDefaults.itemShape(1, 2), icon = { Icon(Icons.Outlined.Videocam, null, Modifier.size(18.dp)) }) { Text(t("player_video")) }
+            }
+            np.station?.let { RadioQuality(c, it, np.variantIndex, np.url) }
+            Column(Modifier.padding(horizontal = 18.dp, vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(np.title, style = MaterialTheme.typography.titleLarge)
+                st.icyTitle?.let { Text("♪ $it", fontWeight = FontWeight.SemiBold) }
+                Text(np.subtitle, color = Rs.colors.muted)
+            }
+            if (st.error) {
+                Column(Modifier.padding(horizontal = 18.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(t(if (np.isRadio) "radio_play_error" else "player_error"), color = Rs.colors.live)
+                    val station = np.station
+                    if (station != null && station.variants.size > 1) OutlinedButton(onClick = {
+                        val cur = station.variants.indexOfFirst { it.url == np.url }
+                        c.player.selectVariant((cur + 1) % station.variants.size)
+                    }) { Text(t("radio_try_other")) }
                 }
-            } else {
-                val station = np.station
-                if (station != null) StationArtwork(c, station, Modifier.widthIn(max = 260.dp).fillMaxWidth(0.7f).aspectRatio(1f), corner = 20.dp)
-                else Artwork(np.artworkUrl, np.id, np.title, Modifier.widthIn(max = 260.dp).fillMaxWidth(0.7f).aspectRatio(1f), corner = 20.dp)
             }
-            if (st.isBuffering && st.available) CircularProgressIndicator()
-        }
-        val margin = io.github.oluengo.wavestr.player.BufferPolicy.marginMs()
-        if (st.isBuffering && margin >= 5_000) Text(
-            t("buffer_loading", (margin * st.bufferPercent / 100_000).toInt(), (margin / 1000).toInt()),
-            color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(horizontal = 18.dp, vertical = 6.dp),
-        )
-
-        if (np.isLive) SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp)) {
-            SegmentedButton(st.audioOnly, { c.player.setAudioOnly(true) }, SegmentedButtonDefaults.itemShape(0, 2), icon = { Icon(Icons.Outlined.Headphones, null, Modifier.size(18.dp)) }) { Text(t("player_audio")) }
-            SegmentedButton(!st.audioOnly, { c.player.setAudioOnly(false) }, SegmentedButtonDefaults.itemShape(1, 2), icon = { Icon(Icons.Outlined.Videocam, null, Modifier.size(18.dp)) }) { Text(t("player_video")) }
-        }
-        np.station?.let { RadioQuality(c, it, np.variantIndex, np.url) }
-
-        Column(Modifier.padding(horizontal = 18.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(np.title, style = MaterialTheme.typography.titleLarge)
-            st.icyTitle?.let { Text("♪ $it", fontWeight = FontWeight.SemiBold) }
-            Text(np.subtitle, color = Rs.colors.muted)
-        }
-        if (st.error) {
-            Column(Modifier.padding(horizontal = 18.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text(t(if (np.isRadio) "radio_play_error" else "player_error"), color = Rs.colors.live)
-                val station = np.station
-                if (station != null && station.variants.size > 1) OutlinedButton(onClick = {
-                    val cur = station.variants.indexOfFirst { it.url == np.url }
-                    c.player.selectVariant((cur + 1) % station.variants.size)
-                }) { Text(t("radio_try_other")) }
+            Row(Modifier.fillMaxWidth().padding(horizontal = 24.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.AutoMirrored.Outlined.VolumeUp, null, tint = Rs.colors.muted, modifier = Modifier.size(18.dp))
+                Slider(st.volume.toFloat(), { c.player.setVolume(it.toInt()) }, valueRange = 0f..150f, modifier = Modifier.weight(1f).padding(start = 8.dp))
             }
+            Row(Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)) {
+                SleepTimerChip(c.player.sleep, isNostr = np.hostPubkey != null)
+                BoostChip(c, np.id)
+            }
+            if (liveAddress != null) {
+                ChatHeader(chat, canSign)
+                ChatLines(chat, canSign, onZap = { l -> l.pubkey?.let { pk -> zap = ZapTarget(pk, l.author, liveAddress, np.title, l.id) } })
+            }
+            np.station?.let { SimilarStations(c, it) }
         }
 
-        Row(
-            Modifier.fillMaxWidth().padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
+        HorizontalDivider(color = Rs.colors.line)
+        Controls(c, st, onZap = np.hostPubkey?.takeIf { np.isLive }?.let { h -> { zap = ZapTarget(h, np.subtitle, liveAddress, np.title) } })
+        if (liveAddress != null) ChatInput(c, chat)
+    }
+
+    if (fullscreen && np != null) FullscreenVideo(c, onExit = { fullscreen = false })
+    zap?.let { z -> ZapDialog(c, z, onDismiss = { zap = null }, onZapped = { chat.refreshNow() }) }
+    share?.let { ShareDialog(it, onDismiss = { share = null }) }
+}
+
+/** Barra de arriba: miniatura, título y canción o anfitrión, compartir y parar. */
+@Composable
+private fun NowPlayingBar(c: DesktopContainer, st: io.github.oluengo.wavestr.desktop.PlayerState, onClose: (() -> Unit)?, onShare: (io.github.oluengo.wavestr.data.Shared) -> Unit) {
+    val np = st.nowPlaying
+    Row(Modifier.fillMaxWidth().padding(start = 4.dp, end = 4.dp, top = 8.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+        if (onClose != null) IconButton(onClick = onClose) { Icon(Icons.Outlined.ExpandMore, t("minimize")) } else Box(Modifier.size(12.dp))
+        if (np != null) {
             val station = np.station
-            val host = np.hostPubkey
-            val favKey = station?.id ?: host?.let { "npub:$it" }
-            FavButton(favKey != null && lib.isFavorite(favKey)) {
-                when {
-                    station != null -> c.library.toggleStation(station)
-                    host != null -> c.library.toggleStreamer(host, np.subtitle, np.artworkUrl)
+            if (station != null) StationArtwork(c, station, Modifier.size(36.dp), corner = 8.dp) else Artwork(np.artworkUrl, np.id, np.title, Modifier.size(36.dp), corner = 8.dp)
+            Spacer(Modifier.size(10.dp))
+            Column(Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    if (np.isLive) LiveBadge()
+                    Text(np.title, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
                 }
+                Text(st.icyTitle?.let { "♪ $it" } ?: np.subtitle, style = MaterialTheme.typography.bodySmall, color = Rs.colors.muted, maxLines = 1,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
             }
-            val canSkip = c.player.canSkip()
-            IconButton(onClick = { c.player.skip(-1) }, enabled = canSkip) { Icon(Icons.Outlined.SkipPrevious, t("skip_previous"), Modifier.size(28.dp)) }
-            FilledIconButton(
-                onClick = c.player::togglePlay, modifier = Modifier.size(60.dp),
-                colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.onSurface, contentColor = MaterialTheme.colorScheme.surface),
-            ) {
-                Icon(if (st.isPlaying) Icons.Outlined.Pause else Icons.Outlined.PlayArrow, t(if (st.isPlaying) "pause" else "play"), Modifier.size(28.dp))
-            }
-            IconButton(onClick = { c.player.skip(+1) }, enabled = canSkip) { Icon(Icons.Outlined.SkipNext, t("skip_next"), Modifier.size(28.dp)) }
-        }
-        Row(Modifier.fillMaxWidth().padding(horizontal = 24.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.AutoMirrored.Outlined.VolumeUp, null, tint = Rs.colors.muted, modifier = Modifier.size(18.dp))
-            Slider(st.volume.toFloat(), { c.player.setVolume(it.toInt()) }, valueRange = 0f..150f, modifier = Modifier.weight(1f).padding(start = 8.dp))
-        }
-
-        Box(Modifier.fillMaxWidth().padding(vertical = 8.dp), contentAlignment = Alignment.Center) {
-            SleepTimerChip(c.player.sleep, isNostr = np.hostPubkey != null)
-        }
-
-        if (np.isLive && np.hostPubkey != null) LiveChat(c, np.id)
-        np.station?.let { SimilarStations(c, it) }
+            val item = np.station?.let { FavItem.station(it) }
+                ?: np.hostPubkey?.let { h -> FavItem.streamer(h, np.subtitle.ifBlank { np.title }, np.artworkUrl) }
+            if (item != null) IconButton(onClick = { onShare(io.github.oluengo.wavestr.data.Shared.ofItem(item)) }) { Icon(Icons.Outlined.Share, t("share")) }
+        } else Spacer(Modifier.weight(1f))
+        IconButton(onClick = { c.player.stop(); onClose?.invoke() }, enabled = np != null) { Icon(Icons.Outlined.Close, t("stop")) }
     }
 }
+
+/** Zap (en directos), favorito, anterior, play/pausa y siguiente: iguales para radio y streams. */
+@Composable
+private fun Controls(c: DesktopContainer, st: io.github.oluengo.wavestr.desktop.PlayerState, onZap: (() -> Unit)?) {
+    val np = st.nowPlaying ?: return
+    val lib by c.library.library.collectAsState()
+    Row(
+        Modifier.fillMaxWidth().padding(vertical = 6.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (onZap != null) IconButton(onClick = onZap, colors = IconButtonDefaults.iconButtonColors(containerColor = Rs.colors.zapSoft, contentColor = Rs.colors.zap)) {
+            Icon(Icons.Filled.Bolt, t("zap_button"))
+        } else Box(Modifier.size(48.dp))
+        val canSkip = c.player.canSkip()
+        IconButton(onClick = { c.player.skip(-1) }, enabled = canSkip) { Icon(Icons.Outlined.SkipPrevious, t("skip_previous"), Modifier.size(28.dp)) }
+        FilledIconButton(
+            onClick = c.player::togglePlay, modifier = Modifier.size(56.dp),
+            colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.onSurface, contentColor = MaterialTheme.colorScheme.surface),
+        ) { Icon(if (st.isPlaying) Icons.Outlined.Pause else Icons.Outlined.PlayArrow, t(if (st.isPlaying) "pause" else "play"), Modifier.size(28.dp)) }
+        IconButton(onClick = { c.player.skip(+1) }, enabled = canSkip) { Icon(Icons.Outlined.SkipNext, t("skip_next"), Modifier.size(28.dp)) }
+        val station = np.station
+        val host = np.hostPubkey
+        val favKey = station?.id ?: host?.let { "npub:$it" }
+        FavButton(favKey != null && lib.isFavorite(favKey)) {
+            when {
+                station != null -> c.library.toggleStation(station)
+                host != null -> c.library.toggleStreamer(host, np.subtitle, np.artworkUrl)
+            }
+        }
+    }
+}
+
+/** Refuerzo por emisora o stream (+3 a +12 dB), para las que suenan flojo. */
+@Composable
+private fun BoostChip(c: DesktopContainer, id: String) {
+    var db by remember(id) { mutableStateOf(c.player.boostFor(id)) }
+    var open by remember { mutableStateOf(false) }
+    Box {
+        AssistChip(onClick = { open = true }, label = { Text(if (db == 0) t("boost") else t("boost_on", db)) },
+            leadingIcon = { Icon(Icons.AutoMirrored.Outlined.VolumeUp, null, Modifier.size(18.dp)) })
+        DropdownMenu(open, { open = false }) {
+            Text(t("boost_explain"), style = MaterialTheme.typography.bodySmall, color = Rs.colors.muted, modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp).widthIn(max = 260.dp))
+            listOf(0, 3, 6, 9, 12).forEach { v ->
+                DropdownMenuItem(text = { Text(if (v == 0) t("boost_off") else "+$v dB", fontWeight = if (v == db) FontWeight.Bold else FontWeight.Normal) },
+                    onClick = { open = false; db = v; c.player.setBoost(id, v) })
+            }
+        }
+    }
+}
+
+/** Vídeo a pantalla completa en su propia ventana. Esc, doble clic o el botón salen. */
+@Composable
+private fun FullscreenVideo(c: DesktopContainer, onExit: () -> Unit) {
+    val st by c.player.state.collectAsState()
+    val state = androidx.compose.ui.window.rememberWindowState(placement = androidx.compose.ui.window.WindowPlacement.Fullscreen)
+    androidx.compose.ui.window.Window(
+        onCloseRequest = onExit, state = state, title = st.nowPlaying?.title ?: "", undecorated = true,
+        onPreviewKeyEvent = { e ->
+            if (e.type == androidx.compose.ui.input.key.KeyEventType.KeyDown) when (e.key) {
+                androidx.compose.ui.input.key.Key.Escape -> { onExit(); true }
+                androidx.compose.ui.input.key.Key.Spacebar -> { c.player.togglePlay(); true }
+                else -> false
+            } else false
+        },
+    ) {
+        var controls by remember { mutableStateOf(true) }
+        LaunchedEffect(controls) { if (controls) { delay(3_000); controls = false } }
+        Box(
+            Modifier.fillMaxSize().background(Color.Black)
+                .androidx_pointer { controls = true }
+                .combinedClickableCompat(onClick = { controls = !controls }, onDoubleClick = onExit),
+        ) {
+            VideoCanvas(c.player.video, Modifier.fillMaxSize())
+            if (controls) Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.3f))) {
+                Text(st.nowPlaying?.title ?: "", color = Color.White, style = MaterialTheme.typography.titleMedium, modifier = Modifier.align(Alignment.TopStart).padding(20.dp))
+                IconButton(onClick = onExit, modifier = Modifier.align(Alignment.TopEnd).padding(8.dp)) { Icon(Icons.Outlined.FullscreenExit, t("fullscreen_exit"), tint = Color.White) }
+                FilledIconButton(onClick = c.player::togglePlay, modifier = Modifier.align(Alignment.Center).size(72.dp),
+                    colors = IconButtonDefaults.filledIconButtonColors(containerColor = Color.White.copy(alpha = 0.9f), contentColor = Color.Black)) {
+                    Icon(if (st.isPlaying) Icons.Outlined.Pause else Icons.Outlined.PlayArrow, t(if (st.isPlaying) "pause" else "play"), Modifier.size(36.dp))
+                }
+            }
+        }
+    }
+}
+
+@OptIn(androidx.compose.ui.ExperimentalComposeUiApi::class)
+private fun Modifier.androidx_pointer(onMove: () -> Unit) =
+    this.then(Modifier.onPointerEvent(androidx.compose.ui.input.pointer.PointerEventType.Move) { onMove() })
+
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+private fun Modifier.combinedClickableCompat(onClick: () -> Unit, onDoubleClick: () -> Unit) =
+    this.then(Modifier.combinedClickable(
+        interactionSource = null, indication = null, onClick = onClick, onDoubleClick = onDoubleClick,
+    ))
 
 /** Pinta el último fotograma de VLC encajado (sin deformar) en el espacio disponible. */
 @Composable
@@ -204,55 +334,6 @@ private fun RadioQuality(c: DesktopContainer, station: Station, chosen: Int?, cu
                 station.variants.forEachIndexed { i, v -> DropdownMenuItem(text = { Text(v.label ?: unknown) }, onClick = { open = false; c.player.selectVariant(i) }) }
             }
         }
-    }
-}
-
-private data class ChatLine(val time: Long, val author: String, val text: String, val sats: Long?)
-
-/** Chat y zaps del directo (lectura), cada 15 s. */
-@Composable
-private fun LiveChat(c: DesktopContainer, address: String) {
-    var lines by remember(address) { mutableStateOf<List<ChatLine>>(emptyList()) }
-    var total by remember(address) { mutableStateOf(0L) }
-    var loaded by remember(address) { mutableStateOf(false) }
-    val names = remember(address) { HashMap<String, Profile>() }
-    val fmt = remember { NumberFormat.getIntegerInstance(I18n.locale) }
-    LaunchedEffect(address) {
-        val since = System.currentTimeMillis() / 1000 - 12 * 3600
-        while (isActive) {
-            try {
-                val viewer = c.settings.current.pubkey
-                val (chat, zaps) = c.nostr.activity(address, since, viewer)
-                val who = (chat.map { it.pubkey } + zaps.mapNotNull { it.senderPubkey }).distinct().filter { it !in names }
-                if (who.isNotEmpty()) names.putAll(c.nostr.profiles(who, viewer))
-                fun name(pk: String?) = pk?.let { names[it]?.bestName ?: Nip19.shortNpub(it) } ?: "?"
-                lines = (chat.map { ChatLine(it.createdAt, name(it.pubkey), it.content, null) } +
-                    zaps.map { ChatLine(it.createdAt, name(it.senderPubkey), it.comment, it.amountSats) }).sortedBy { it.time }.takeLast(60)
-                total = zaps.totalSats()
-            } catch (e: CancellationException) {
-                throw e
-            } catch (_: Exception) {
-            }
-            loaded = true
-            delay(15_000)
-        }
-    }
-    Column(Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        HorizontalDivider(color = Rs.colors.line)
-        Text(t("live_chat_title") + if (total > 0) " · ⚡ " + fmt.format(total) + " sats" else "", color = Rs.colors.muted, style = MaterialTheme.typography.labelSmall)
-        if (loaded && lines.isEmpty()) Text(t("live_chat_empty"), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
-        lines.forEach { l ->
-            val zap = l.sats != null
-            Row(
-                if (zap) Modifier.fillMaxWidth().background(Rs.colors.zapSoft, RoundedCornerShape(8.dp)).padding(horizontal = 8.dp, vertical = 4.dp) else Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                Text(l.author, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodySmall)
-                if (zap) Text("⚡ " + fmt.format(l.sats), color = Rs.colors.zap, fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodySmall)
-                if (l.text.isNotBlank()) Text(l.text, style = MaterialTheme.typography.bodySmall, modifier = Modifier.weight(1f))
-            }
-        }
-        Text(t("desk_zaps_soon"), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(bottom = 8.dp))
     }
 }
 

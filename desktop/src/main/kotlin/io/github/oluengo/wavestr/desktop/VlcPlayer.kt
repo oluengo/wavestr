@@ -110,6 +110,10 @@ class VlcPlayer(
     private var icyJob: kotlinx.coroutines.Job? = null
     /** Factor 0..1 del temporizador sobre el volumen elegido. */
     @Volatile private var fade = 1f
+    /** Refuerzo de volumen por emisora o stream (dB), para las que suenan flojo. Se guarda en [boostStore]. */
+    var boostStore: io.github.oluengo.wavestr.data.KeyValueStore? = null
+    fun boostFor(id: String?): Int = id?.let { boostStore?.get(it)?.toIntOrNull() } ?: 0
+    fun setBoost(id: String, db: Int) { boostStore?.put(id, db.takeIf { it != 0 }?.toString()); applyVolume() }
     /** Temporizador de apagado: por tiempo (todo) o al terminar el stream (solo Nostr). */
     val sleep = io.github.oluengo.wavestr.player.SleepTimer(scope, setVolume = { f -> fade = f; applyVolume() }, stop = { stop() })
 
@@ -162,6 +166,7 @@ class VlcPlayer(
         _state.update { it.copy(nowPlaying = item, error = false, icyTitle = null, isBuffering = true, audioOnly = it.audioOnly && !item.isRadio) }
         // Las llamadas a libVLC, fuera del hilo de la UI y de sus propios eventos.
         scope.launch(Dispatchers.IO) { p.media().play(item.url, *mediaOptions(item.url)) }
+        applyVolume()
         watchIcy(item)
     }
 
@@ -217,7 +222,8 @@ class VlcPlayer(
     }
 
     private fun applyVolume() {
-        val vol = (_state.value.volume * fade).toInt()
+        val gain = Math.pow(10.0, boostFor(_state.value.nowPlaying?.id) / 20.0)
+        val vol = (_state.value.volume * fade * gain).toInt().coerceIn(0, 200)
         mp?.let { p -> scope.launch(Dispatchers.IO) { p.audio().setVolume(vol) } }
     }
 
