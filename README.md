@@ -68,9 +68,9 @@ Si deja de aparecer tras actualizar Android Auto, revisa que **Fuentes desconoci
 - **Próximamente y recordatorios:** directos programados (NIP-53) y eventos de calendario (NIP-52), con tu hora y la del organizador, y aviso al empezar o antes.
 - **Vídeo fijo con el chat** y **pantalla completa** en los streams con vídeo.
 - **Refuerzo de volumen** por emisora para las que suenan flojo.
-- **Escritorio (Linux y Windows):** en desarrollo, todavía sin descargas.
+- **PC (Linux y Windows), en beta:** lo mismo que en Android: radio, streams con vídeo y pantalla completa, chat con reacciones y zaps (NWC o código QR para pagar con el móvil), favoritos cifrados en Nostr, próximamente con recordatorios, compartir e importar enlaces y refuerzo de volumen. Se entra con un **bunker** (NIP-46) o con npub en solo lectura. Descargas (`.deb`, `.tar.gz`, `.msi`) en la [Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta); necesita [VLC](https://www.videolan.org/vlc/) instalado.
 
-**Próximamente:** radiodespertador y la versión de escritorio. El orden está en el [plan técnico](docs/plan-tecnico.md).
+**Próximamente:** radiodespertador y la versión estable de PC. El orden está en el [plan técnico](docs/plan-tecnico.md).
 
 ## Demo de la interfaz
 

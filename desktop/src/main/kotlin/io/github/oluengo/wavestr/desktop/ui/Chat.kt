@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+
 package io.github.oluengo.wavestr.desktop.ui
 
 import androidx.compose.foundation.background

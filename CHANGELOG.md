@@ -1,5 +1,10 @@
 # Cambios
 
+## PC (beta)
+
+- **Descargas de PC en la beta:** Linux (`.deb`, `.tar.gz`) y Windows (`.msi`). Necesita VLC.
+- **A la par con Android:** entrar con bunker (NIP-46), chat con reacciones y zaps a mensajes y al stream (NWC o QR), favoritos cifrados en Nostr (los mismos que en el móvil), próximamente con recordatorios (aviso del sistema), compartir (enlace, M3U, texto) e importar enlaces con vista previa, refuerzo de volumen por emisora, reproductor unificado con vídeo fijo y pantalla completa.
+
 ## 0.11.1
 
 - **Favoritos:** la nota ya no dice que la sincronización por Nostr llegará más adelante; si no sincronizas, indica dónde activarla.
