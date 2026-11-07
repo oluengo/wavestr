@@ -1,128 +1,154 @@
-<p align="center"><img src="docs/brand/wavestr-icon.png" width="112" alt="Wavestr"></p>
+<p align="center"><img src="docs/brand/wavestr-icon.png" width="96" alt="Wavestr"></p>
 
-# Wavestr
+<h1 align="center">Wavestr</h1>
 
-Radio online y streams de Nostr en una sola app para Android.
-*Online radio and Nostr live streams in one Android app. Català · Español · English.*
+<p align="center"><b>Radio online y streams de Nostr en una sola app.</b><br><i>Online radio and Nostr live streams in one app.</i></p>
 
-**Web:** <https://oluengo.github.io/wavestr/> · **App web (PWA):** <https://oluengo.github.io/wavestr/app/>
+<p align="center"><a href="https://oluengo.github.io/wavestr/">Web</a> · <a href="https://oluengo.github.io/wavestr/app/">Abrir la app</a> · <a href="https://github.com/oluengo/wavestr/releases/latest">Descargar para Android</a> · <a href="#english">English</a></p>
 
-> Estado: **beta** ([Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta)) con lo último.
+<table><tr>
+<td width="25%"><img src="site/img/live-es-dark.webp" alt="Streams"></td>
+<td width="25%"><img src="site/img/player-es-dark.webp" alt="Reproductor"></td>
+<td width="25%"><img src="site/img/radio-es.webp" alt="Radios"></td>
+<td width="25%"><img src="site/img/fav-es-dark.webp" alt="Favoritos"></td>
+</tr></table>
 
-## Instalar la beta
-
-La beta se instala como otra app, **Wavestr Beta**, junto a la normal y con sus propios datos. Puede tener fallos.
-
-- **Obtainium:** añade `https://github.com/oluengo/wavestr` y activa «incluir pre-releases». Te avisará de cada nueva beta.
-- **Directo:** descarga el APK de la [pre-release Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta).
-
-Comprueba que la huella del certificado coincide (también está en Ajustes → Acerca de):
-`06:23:37:6B:0C:75:09:50:D7:E5:F1:4E:ED:06:C3:B3:C4:86:8B:B2:64:8B:8F:34:34:76:E2:DE:90:70:0F:89`
-
-## Android Auto
-
-Wavestr aparece en el coche con Favoritos (y sus carpetas), Streams que están emitiendo, Radios (populares y cerca de ti) y Recientes, con búsqueda por voz y anterior/siguiente.
-
-Como no viene de Google Play, Android Auto la oculta hasta que lo permitas. Solo hay que hacerlo una vez:
-
-1. Instala Wavestr (0.10.0 o posterior) y ábrela una vez.
-2. Abre los ajustes de Android Auto en el móvil: *Ajustes → Dispositivos conectados → Preferencias de conexión → Android Auto* (o busca «Android Auto» en los ajustes).
-3. Baja hasta **Versión** y tócala unas 10 veces seguidas; acepta el aviso para activar el modo desarrollador.
-4. Menú **⋮** (arriba a la derecha) → **Ajustes de desarrollador** → activa **Fuentes desconocidas**.
-5. Desconecta el móvil del coche, fuerza la detención de Android Auto (*Ajustes → Aplicaciones → Android Auto → Forzar detención*) y vuelve a conectar.
-6. Si no sale en el menú del coche: ajustes de Android Auto → **Personalizar menú de aplicaciones** → marca Wavestr.
-
-Si deja de aparecer tras actualizar Android Auto, revisa que **Fuentes desconocidas** siga activado.
-
-¿Algo no va? [Abre un aviso](https://github.com/oluengo/wavestr/issues/new?labels=bug) o usa Ajustes → Acerca de → Informar de un problema.
+**Wavestr** junta en un sitio las emisoras de radio de todo el mundo y los directos de la gente que sigues en Nostr, con los mismos favoritos y el mismo reproductor. Para Android, en el navegador (PWA) y, en beta, en PC. Gratis, sin anuncios. En català, castellano e inglés.
 
 ## Qué hace
 
-- **Streams de Nostr (NIP-53)** de la gente que sigues, o de todo Nostr.
-- **Solo audio o vídeo**, sin cortar el stream. Pasa a audio sola al apagar la pantalla y vuelve al vídeo cuando regresas.
-- **Solo audio con datos móviles** (opcional) y calidad de vídeo seleccionable.
-- **Perfil del streamer** con sus grabaciones.
-- **Tres idiomas:** català, castellano e inglés. Usa el del dispositivo; si no es ninguno de ellos, inglés.
-- **Tema** claro, oscuro o automático.
-- Inicio de sesión con **Amber** (NIP-55), con un **bunker** (NIP-46: nsecBunker, nsec.app…) o con tu **npub** en solo lectura. La app nunca ve tu clave privada.
+- **Streams de Nostr (NIP-53)** de la gente que sigues, o de todo Nostr: solo audio o vídeo sin cortar el stream, con chat, reacciones y zaps.
+- **Radio online** con el directorio libre Radio Browser (populares, por país, por estilo y búsqueda) e importación de listas PLS/M3U.
+- **Favoritos en carpetas y subcarpetas**, para radios y streamers. Opcional: guardados en Nostr, cifrados (NIP-78 + NIP-44).
+- **Compartir** una emisora, una carpeta o todos los favoritos, por enlace, M3U o texto.
+- **Próximamente y recordatorios:** directos programados (NIP-53) y eventos de calendario (NIP-52), con aviso al empezar o antes.
+- **Zaps con NWC**, con límite mensual.
+- **Android Auto**, widgets, anterior/siguiente, temporizador de apagado, margen contra cortes y refuerzo de volumen por emisora.
+- **Botón sorpresa:** radio, stream o ambos.
+- Tema claro, oscuro o automático, color de acento y navegación lateral en tablets.
 
-- **Radio online** con el directorio libre Radio Browser: populares, por país, por estilo y búsqueda; calidad seleccionable y canción que suena.
-- **Importar listas PLS/M3U** (enlace, contenido o archivo).
-- **Favoritos en carpetas y subcarpetas**, para radios y streamers de Nostr.
-- **Tu perfil de Nostr** (solo lectura).
-- **Zaps con NWC** a los streams, con límite mensual; chat y zaps del stream en el reproductor.
-- **Carátulas** de las radios buscadas en su web.
-- **Exportar e importar favoritos** (JSON con carpetas o M3U).
-- **Compartir** una emisora, una carpeta o todos los favoritos: por enlace (se abre en Wavestr para elegir qué añadir, o en el navegador si no la tienen), lista M3U o texto.
-- **Color de acento** a elegir.
-- **Favoritos en Nostr**, cifrados (NIP-78 + NIP-44, con Amber o bunker).
-- **Botón sorpresa:** radio, stream o ambos; de tus favoritos o de todo.
-- **Relays de Wavestr** editables, además de tu lista NIP-65.
-- **Tablets y pantallas anchas:** navegación lateral y reproductor fijo con chat.
-- **Widgets** para la pantalla de inicio de Android: barra, reproductor, favoritos y cuadrado.
-- **Emisora anterior / siguiente** (favoritos o la lista de origen), también desde la notificación, los auriculares y el coche.
-- **Margen contra cortes:** Auto, Directo, 10, 20 o 30 s.
-- **Temporizador de apagado:** 15 a 90 minutos con bajada de volumen al final, o al terminar el stream de Nostr.
-- **Android Auto:** Favoritos, Streams, Radios y Recientes en el coche, con búsqueda por voz y anterior/siguiente.
-- **Chat de los streams:** leer y escribir, reaccionar a mensajes y al stream, y zaps a mensajes (con Amber o bunker).
-- **Próximamente y recordatorios:** directos programados (NIP-53) y eventos de calendario (NIP-52), con tu hora y la del organizador, y aviso al empezar o antes.
-- **Vídeo fijo con el chat** y **pantalla completa** en los streams con vídeo.
-- **Refuerzo de volumen** por emisora para las que suenan flojo.
-- **PC (Linux y Windows), en beta:** lo mismo que en Android: radio, streams con vídeo y pantalla completa, chat con reacciones y zaps (NWC o código QR para pagar con el móvil), favoritos cifrados en Nostr, próximamente con recordatorios, compartir e importar enlaces y refuerzo de volumen. Se entra con un **bunker** (NIP-46) o con npub en solo lectura. Descargas (`.deb`, `.tar.gz`, `.msi`) en la [Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta); necesita [VLC](https://www.videolan.org/vlc/) instalado.
+## Instalar
 
-**Próximamente:** radiodespertador y la versión estable de PC. El orden está en el [plan técnico](docs/plan-tecnico.md).
+| | Cómo |
+|---|---|
+| **Android** | APK de la [última versión](https://github.com/oluengo/wavestr/releases/latest), o añade `https://github.com/oluengo/wavestr` en [Obtainium](https://github.com/ImranR98/Obtainium) para recibir las actualizaciones. También en Zapstore. |
+| **Web y PWA** | Abre <https://oluengo.github.io/wavestr/app/> y, si quieres, instálala desde el navegador. Entras con una extensión NIP-07, un bunker o tu npub; zaps con NWC, WebLN o QR. |
+| **PC (Linux y Windows)** | En beta: `.deb`, `.tar.gz` y `.msi` en [Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta). Necesita [VLC](https://www.videolan.org/vlc/). |
+| **Beta** | Pre-release [Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta) (en Obtainium, «incluir pre-releases»). Se instala aparte, como Wavestr Beta, con sus propios datos. |
 
-## Demo de la interfaz
+Huella SHA-256 del certificado del APK (también en Ajustes → Acerca de): `06:23:37:6B:0C:75:09:50:D7:E5:F1:4E:ED:06:C3:B3:C4:86:8B:B2:64:8B:8F:34:34:76:E2:DE:90:70:0F:89`
 
-[`demo/index.html`](demo/index.html) es una maqueta interactiva de la app completa, con datos de ejemplo. Se abre en cualquier navegador.
+En el navegador, las emisoras que solo emiten por `http` no suenan (se marcan), el refuerzo de volumen depende de la emisora y los recordatorios avisan con la web abierta.
 
-## App web
+## Android Auto
 
-<https://oluengo.github.io/wavestr/app/> funciona en el navegador y se puede instalar como app (PWA). Tiene radio, streams con chat, reacciones y zaps, favoritos con carpetas, compartir e importar, próximamente con recordatorios y la sincronización cifrada de favoritos con el móvil y el PC.
+Como Wavestr no viene de Google Play, Android Auto la oculta hasta que lo permitas. Solo hay que hacerlo una vez:
 
-- **Entrar:** extensión NIP-07 (Alby, nos2x…), bunker NIP-46 o npub de solo lectura.
-- **Zaps:** NWC, WebLN o QR.
-- **Límites del navegador:** las emisoras que solo emiten por `http` no suenan (se marcan); el refuerzo de volumen solo funciona si la emisora lo permite (CORS); los recordatorios avisan con la web abierta.
+1. Instala Wavestr (0.10.0 o posterior) y ábrela una vez.
+2. Abre los ajustes de Android Auto en el móvil (*Ajustes → Dispositivos conectados → Preferencias de conexión → Android Auto*, o busca «Android Auto»).
+3. Toca **Versión** unas 10 veces seguidas y acepta el aviso para activar el modo desarrollador.
+4. Menú **⋮** → **Ajustes de desarrollador** → activa **Fuentes desconocidas**.
+5. Desconecta el móvil del coche, fuerza la detención de Android Auto y vuelve a conectar.
+6. Si no sale: ajustes de Android Auto → **Personalizar menú de aplicaciones** → marca Wavestr.
 
-## Compilar (desarrollo)
+Si deja de aparecer tras actualizar Android Auto, revisa que **Fuentes desconocidas** siga activado.
 
-Requisitos: JDK 17, Android SDK 35 (para `:app`) y VLC (para probar `:desktop`).
+## Privacidad
 
-Módulos: `:core` (Nostr, criptografía, radio, favoritos; Kotlin/JVM sin Android), `:app` (Android) y `:desktop` (Compose Desktop + VLC). El escritorio usa los textos de `app/src/main/res/values*/strings.xml`.
+- **Nunca ve tu clave privada:** firmas con Amber (NIP-55) o un bunker (NIP-46), o entras con tu npub en solo lectura.
+- Sin cuentas propias ni servidor, y sin librerías de seguimiento. Se conecta a los relays de Nostr, al directorio de radios y a las emisoras que escuchas.
+- Los favoritos se guardan en tu dispositivo; guardarlos en Nostr es opcional y van cifrados.
 
-```bash
-./gradlew :core:test testDebugUnitTest  # tests
-./gradlew assembleDebug                 # APK en app/build/outputs/apk/debug/
-./gradlew :desktop:run                  # abre la app de escritorio
-./gradlew :desktop:packageDeb           # .deb (en Linux) · :desktop:packageMsi en Windows
-python3 scripts/check_strings.py        # comprueba las traducciones
-cd web && npm install && npm run dev    # app web (TypeScript + Svelte) en local
-```
+## Desarrollo
 
-La app web está en `web/` (Vite + Svelte + nostr-tools) y usa los mismos textos de `strings.xml`. Cada push a `main` que la toque la compila y la publica en Pages ([`pages.yml`](.github/workflows/pages.yml)).
+Kotlin + Jetpack Compose (`:core`, `:app` y `:desktop`) y la app web en `web/` (TypeScript + Svelte). [`demo/index.html`](demo/index.html) es una maqueta interactiva con datos de ejemplo.
 
-GitHub Actions ([`android.yml`](.github/workflows/android.yml)):
+- Compilar, publicar y firmar: [docs/desarrollo.md](docs/desarrollo.md)
+- Plan técnico: [docs/plan-tecnico.md](docs/plan-tecnico.md) · Decisiones: [docs/decisiones](docs/decisiones/README.md)
 
-- **Push a `main`:** tests, traducciones, APK (y, para pruebas, los instaladores de escritorio) en «Artifacts», una prueba de arranque del APK en un emulador Android y otra del escritorio (xvfb + VLC: radio y vídeo HLS). La beta y las versiones solo se publican si todo eso pasa.
-- **Versión normal:** en GitHub, Actions → Build → *Run workflow* (rama `main`) → marcar «Publicar versión». Crea la etiqueta `vX.Y.Z` (la de `wavestrVersion`) y la Release con el APK firmado y las notas de [CHANGELOG.md](CHANGELOG.md). De ahí lo recogen Obtainium y Zapstore. También sirve empujar una etiqueta `v*`.
-- **Versión de pruebas (beta):** cada push a la rama `beta` publica la pre-release **Wavestr Beta** (`X.Y.Z-beta.N`). Se instala como otra app (`io.github.oluengo.wavestr.beta`), junto a la normal y con sus propios datos. En Obtainium se añade aparte activando «incluir pre-releases». Cuando la beta está bien, se pasa a `main` y se publica la versión normal.
+## Apoya el proyecto
 
-Firma: secrets `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` y `ANDROID_KEY_PASSWORD` (mismos nombres que en Usus; la clave es propia del proyecto; su alias es `radiostr`, del nombre anterior, y no hace falta cambiarlo). Sin ellos se genera un APK de depuración y no se publica nada.
+Si Wavestr te resulta útil:
 
-## Traducir
-
-Los textos están en `app/src/main/res/values/strings.xml` (inglés), `values-es/` y `values-ca/`. Para añadir un idioma, sigue los pasos del [ADR 0004](docs/decisiones/0004-idiomas.md).
-
-## Documentación
-
-- [Plan técnico](docs/plan-tecnico.md)
-- [Decisiones (ADR)](docs/decisiones/README.md)
-
-## Licencia y apoyo
-
-[MIT](LICENSE). Hecha con IA · probada por humanos.
-
-Si te resulta útil, puedes apoyar el proyecto:
-
-- **Bitcoin:** `bc1pnvdct6hfnh67p7dcg2e5mdveyz8jlxuzv4yflkxqccc72qkuc8ls8raspa`
 - **Lightning / zaps:** `oluengo@rizful.com`
+- **Bitcoin:** `bc1pnvdct6hfnh67p7dcg2e5mdveyz8jlxuzv4yflkxqccc72qkuc8ls8raspa`
+- **Nostr:** [npub1vuf2g6s0mcjr34lhkg2vvtj4x65w29xn28nznw9fhcqcpyr4zc9q6myguj](https://njump.me/npub1vuf2g6s0mcjr34lhkg2vvtj4x65w29xn28nznw9fhcqcpyr4zc9q6myguj)
+
+---
+
+[Novedades](CHANGELOG.md) · [Informar de un problema](https://github.com/oluengo/wavestr/issues/new?labels=bug) · [Licencia MIT](LICENSE)
+
+<sub>Hecha con IA · probada por humanos.</sub>
+
+---
+
+<h2 id="english">English</h2>
+
+**Wavestr** brings together radio stations from all over the world and live streams from the people you follow on Nostr, with the same favourites and the same player. For Android, in the browser (PWA) and, in beta, on desktop. Free, no ads. In Catalan, Spanish and English.
+
+**[Website](https://oluengo.github.io/wavestr/)** · **[Open the app](https://oluengo.github.io/wavestr/app/)** · **[Download for Android](https://github.com/oluengo/wavestr/releases/latest)**
+
+### What it does
+
+- **Nostr streams (NIP-53)** from people you follow, or from all of Nostr: audio-only or video without cutting the stream, with chat, reactions and zaps.
+- **Online radio** with the free Radio Browser directory (popular, by country, by style and search) and PLS/M3U playlist import.
+- **Favourites in folders and subfolders**, for stations and streamers. Optional: stored on Nostr, encrypted (NIP-78 + NIP-44).
+- **Share** a station, a folder or all favourites, by link, M3U or text.
+- **Upcoming and reminders:** scheduled streams (NIP-53) and calendar events (NIP-52), with an alert when they start or before.
+- **Zaps with NWC**, with a monthly limit.
+- **Android Auto**, widgets, previous/next, sleep timer, buffer against dropouts and per-station volume boost.
+- **Surprise button:** radio, stream or both.
+- Light, dark or automatic theme, accent colour and side navigation on tablets.
+
+### Install
+
+| | How |
+|---|---|
+| **Android** | The APK from the [latest release](https://github.com/oluengo/wavestr/releases/latest), or add `https://github.com/oluengo/wavestr` to [Obtainium](https://github.com/ImranR98/Obtainium) to get updates. Also on Zapstore. |
+| **Web and PWA** | Open <https://oluengo.github.io/wavestr/app/> and, if you like, install it from the browser. Sign in with a NIP-07 extension, a bunker or your npub; zaps with NWC, WebLN or QR. |
+| **Desktop (Linux and Windows)** | In beta: `.deb`, `.tar.gz` and `.msi` in [Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta). Needs [VLC](https://www.videolan.org/vlc/). |
+| **Beta** | The [Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta) pre-release (in Obtainium, “include pre-releases”). Installs separately, as Wavestr Beta, with its own data. |
+
+APK certificate SHA-256 fingerprint (also in Settings → About): `06:23:37:6B:0C:75:09:50:D7:E5:F1:4E:ED:06:C3:B3:C4:86:8B:B2:64:8B:8F:34:34:76:E2:DE:90:70:0F:89`
+
+In the browser, stations that only stream over `http` don't play (they're marked), volume boost depends on the station and reminders alert while the page is open.
+
+### Android Auto
+
+Because Wavestr doesn't come from Google Play, Android Auto hides it until you allow it. You only need to do this once:
+
+1. Install Wavestr (0.10.0 or later) and open it once.
+2. Open the Android Auto settings on your phone (search “Android Auto” in Settings).
+3. Tap **Version** about 10 times and accept the prompt to enable developer mode.
+4. **⋮** menu → **Developer settings** → turn on **Unknown sources**.
+5. Disconnect the phone from the car, force stop Android Auto and reconnect.
+6. If it doesn't show up: Android Auto settings → **Customise app menu** → tick Wavestr.
+
+If it disappears after an Android Auto update, check that **Unknown sources** is still on.
+
+### Privacy
+
+- **Never sees your private key:** sign with Amber (NIP-55) or a bunker (NIP-46), or sign in read-only with your npub.
+- No accounts of its own, no server and no tracking libraries. It connects to Nostr relays, the radio directory and the stations you listen to.
+- Favourites are stored on your device; storing them on Nostr is optional and they're encrypted.
+
+### Development
+
+Kotlin + Jetpack Compose (`:core`, `:app` and `:desktop`) and the web app in `web/` (TypeScript + Svelte). [`demo/index.html`](demo/index.html) is an interactive mockup with sample data.
+
+- Build, release and signing (in Spanish): [docs/desarrollo.md](docs/desarrollo.md)
+- Technical plan: [docs/plan-tecnico.md](docs/plan-tecnico.md) · Decisions: [docs/decisiones](docs/decisiones/README.md)
+
+### Support the project
+
+If you find Wavestr useful:
+
+- **Lightning / zaps:** `oluengo@rizful.com`
+- **Bitcoin:** `bc1pnvdct6hfnh67p7dcg2e5mdveyz8jlxuzv4yflkxqccc72qkuc8ls8raspa`
+- **Nostr:** [npub1vuf2g6s0mcjr34lhkg2vvtj4x65w29xn28nznw9fhcqcpyr4zc9q6myguj](https://njump.me/npub1vuf2g6s0mcjr34lhkg2vvtj4x65w29xn28nznw9fhcqcpyr4zc9q6myguj)
+
+---
+
+[Changelog](CHANGELOG.md) · [Report a problem](https://github.com/oluengo/wavestr/issues/new?labels=bug) · [MIT License](LICENSE)
+
+<sub>Built with AI · tested by humans. Screenshots from the interactive mockup.</sub>

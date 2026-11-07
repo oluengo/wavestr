@@ -106,7 +106,7 @@ code { font: .86em var(--mono); background: var(--accent-bg); padding: .1rem .35
 .gallery img { border-radius: 28px; }
 .gallery figcaption { font-size: .88rem; color: var(--muted); margin-top: .6rem; text-align: center; }
 
-.install { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr)); }
+.install { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 1.5rem; }
 .card h3 { font-size: 1.25rem; margin-bottom: .8rem; }
 .card ol { margin: 0 0 1.2rem; padding-left: 1.2rem; }
@@ -187,7 +187,7 @@ footer .links a:hover { color: var(--accent); }
 						<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 9.5l1.8-3.1a.4.4 0 0 0-.7-.4l-1.8 3.2A11 11 0 0 0 12 8.2c-1.8 0-3.4.4-4.9 1L5.3 6a.4.4 0 0 0-.7.4l1.8 3.1A10.5 10.5 0 0 0 1 18h22a10.5 10.5 0 0 0-5.4-8.5zM7 15.3a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm10 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
 						<span data-i="download"></span>
 					</a>
-					<a class="btn dark" href="#install" data-i="how"></a>
+					<a class="btn dark" href="app/" data-i="openWeb"></a>
 				</div>
 				<ul class="meta" data-list="meta"></ul>
 			</div>
@@ -220,6 +220,11 @@ footer .links a:hover { color: var(--accent); }
 					<h3>Obtainium</h3>
 					<ol data-list="obtSteps"></ol>
 					<div class="actions"><a class="btn line" href="https://github.com/ImranR98/Obtainium" data-i="getObt"></a></div>
+				</div>
+				<div class="card">
+					<h3 data-i="webTitle"></h3>
+					<ol data-list="webSteps"></ol>
+					<div class="actions"><a class="btn line" href="app/" data-i="openWeb"></a></div>
 				</div>
 				<div class="card">
 					<h3 data-i="apkTitle"></h3>
@@ -282,10 +287,10 @@ footer .links a:hover { color: var(--accent); }
 const I = {
 	es: {
 		navFeatures: "Funciones", navInstall: "Instalar", theme: "Cambiar tema",
-		badge: "Android",
+		badge: "Android · Web",
 		title1: "Radio online y streams de", title2: "Nostr",
 		intro: "Una sola app para escuchar emisoras de todo el mundo y ver o escuchar los directos de la gente que sigues en Nostr. Con zaps, favoritos en carpetas y Android Auto.",
-		download: "Descargar", how: "Cómo instalar",
+		download: "Descargar", openWeb: "Abrir en el navegador",
 		meta: ["Gratis y de código abierto", "Sin anuncios", "Català · Castellano · English"],
 		phones: [["live", "Streams en directo"], ["player", "Reproductor"], ["radio", "Radios"]],
 		featTitle: "Todo tu audio en directo, en un sitio",
@@ -300,7 +305,7 @@ const I = {
 		],
 		shotsTitle: "Así se ve", shotsLead: "Capturas de la maqueta interactiva, con datos de ejemplo.",
 		shots: [["live", "Streams"], ["player", "Reproductor"], ["radio", "Radios"], ["fav", "Favoritos"]],
-		installTitle: "Instalar", installLead: "Wavestr se distribuye fuera de Google Play, en GitHub.",
+		installTitle: "Instalar", installLead: "En Android se instala desde GitHub, fuera de Google Play. Y en cualquier otro dispositivo, en el navegador.", webTitle: "Web y PWA", webSteps: ["Abre Wavestr en el navegador: no hace falta instalar nada.", "Si quieres, instálala como app desde el navegador (Chrome o Edge: icono de instalar; Safari: Compartir → «Añadir a pantalla de inicio»).", "Entras con una extensión NIP-07, un bunker o tu npub; zaps con NWC, WebLN o QR."],
 		obtSteps: ["Instala Obtainium.", "«Añadir app» y pega <code>https://github.com/oluengo/wavestr</code>.", "Te avisará de cada nueva versión."],
 		getObt: "Conseguir Obtainium",
 		apkTitle: "APK directo",
@@ -317,7 +322,7 @@ const I = {
 			["¿Cuánto cuesta?", "Nada. Wavestr es gratis, sin anuncios ni compras. Los zaps son opcionales y van directos a quien emite."],
 			["¿Necesito una cuenta de Nostr?", "No para escuchar radio ni streams de todo Nostr. Con tu npub ves los directos de quien sigues; con Amber puedes escribir en el chat y guardar favoritos en Nostr."],
 			["¿Por qué no está en Google Play?", "Se publica en GitHub y se instala con Obtainium o el APK. Es la misma decisión que en Usus."],
-			["¿Hay versión para ordenador?", "Linux y Windows están en desarrollo, todavía sin descargas."],
+			["¿Hay versión para ordenador?", "Sí: la app web funciona en cualquier navegador. Y en beta hay versión para Linux y Windows (necesita VLC), en Wavestr Beta."],
 			["¿Hay una beta?", "Sí: Wavestr Beta, con lo último antes de cada versión. Se instala junto a la normal, con sus propios datos, y puede tener fallos. En Obtainium, activa «incluir pre-releases»."],
 			["¿Algo no funciona?", "Abre un aviso en GitHub o usa Ajustes → Acerca de → Informar de un problema."]
 		],
@@ -327,10 +332,10 @@ const I = {
 	},
 	ca: {
 		navFeatures: "Funcions", navInstall: "Instal·lar", theme: "Canvia el tema",
-		badge: "Android",
+		badge: "Android · Web",
 		title1: "Ràdio en línia i streams de", title2: "Nostr",
 		intro: "Una sola app per escoltar emissores de tot el món i veure o escoltar els directes de la gent que segueixes a Nostr. Amb zaps, preferits en carpetes i Android Auto.",
-		download: "Descarrega", how: "Com instal·lar",
+		download: "Descarrega", openWeb: "Obre al navegador",
 		meta: ["Gratuïta i de codi obert", "Sense anuncis", "Català · Castellano · English"],
 		phones: [["live", "Streams en directe"], ["player", "Reproductor"], ["radio", "Ràdios"]],
 		featTitle: "Tot el teu àudio en directe, en un lloc",
@@ -345,7 +350,7 @@ const I = {
 		],
 		shotsTitle: "Així es veu", shotsLead: "Captures de la maqueta interactiva, amb dades d'exemple.",
 		shots: [["live", "Streams"], ["player", "Reproductor"], ["radio", "Ràdios"], ["fav", "Preferits"]],
-		installTitle: "Instal·lar", installLead: "Wavestr es distribueix fora de Google Play, a GitHub.",
+		installTitle: "Instal·lar", installLead: "A Android s'instal·la des de GitHub, fora de Google Play. I a qualsevol altre dispositiu, al navegador.", webTitle: "Web i PWA", webSteps: ["Obre Wavestr al navegador: no cal instal·lar res.", "Si vols, instal·la-la com a app des del navegador (Chrome o Edge: icona d'instal·lar; Safari: Comparteix → «Afegeix a la pantalla d'inici»).", "Entres amb una extensió NIP-07, un bunker o el teu npub; zaps amb NWC, WebLN o QR."],
 		obtSteps: ["Instal·la Obtainium.", "«Afegeix app» i enganxa <code>https://github.com/oluengo/wavestr</code>.", "T'avisarà de cada nova versió."],
 		getObt: "Aconsegueix Obtainium",
 		apkTitle: "APK directe",
@@ -362,7 +367,7 @@ const I = {
 			["Quant costa?", "Res. Wavestr és gratuïta, sense anuncis ni compres. Els zaps són opcionals i van directes a qui emet."],
 			["Cal un compte de Nostr?", "No per escoltar ràdio ni streams de tot Nostr. Amb el teu npub veus els directes de qui segueixes; amb Amber pots escriure al xat i desar preferits a Nostr."],
 			["Per què no és a Google Play?", "Es publica a GitHub i s'instal·la amb Obtainium o l'APK. És la mateixa decisió que a Usus."],
-			["Hi ha versió per a ordinador?", "Linux i Windows són en desenvolupament, encara sense descàrregues."],
+			["Hi ha versió per a ordinador?", "Sí: l'app web funciona a qualsevol navegador. I en beta hi ha versió per a Linux i Windows (cal VLC), a Wavestr Beta."],
 			["Hi ha una beta?", "Sí: Wavestr Beta, amb el més nou abans de cada versió. S'instal·la al costat de la normal, amb les seves pròpies dades, i pot tenir errors. A Obtainium, activa «incloure pre-releases»."],
 			["Alguna cosa no funciona?", "Obre un avís a GitHub o fes servir Configuració → Quant a → Informa d'un problema."]
 		],
@@ -372,10 +377,10 @@ const I = {
 	},
 	en: {
 		navFeatures: "Features", navInstall: "Install", theme: "Toggle theme",
-		badge: "Android",
+		badge: "Android · Web",
 		title1: "Online radio and live streams from", title2: "Nostr",
 		intro: "One app to listen to stations from all over the world and to watch or listen to live streams from the people you follow on Nostr. With zaps, favourites in folders and Android Auto.",
-		download: "Download", how: "How to install",
+		download: "Download", openWeb: "Open in the browser",
 		meta: ["Free and open source", "No ads", "Català · Castellano · English"],
 		phones: [["live", "Live streams"], ["player", "Player"], ["radio", "Radio"]],
 		featTitle: "All your live audio in one place",
@@ -390,7 +395,7 @@ const I = {
 		],
 		shotsTitle: "Take a look", shotsLead: "Screenshots of the interactive mockup, with sample data.",
 		shots: [["live", "Streams"], ["player", "Player"], ["radio", "Radio"], ["fav", "Favourites"]],
-		installTitle: "Install", installLead: "Wavestr is distributed outside Google Play, on GitHub.",
+		installTitle: "Install", installLead: "On Android it installs from GitHub, outside Google Play. On any other device, it runs in the browser.", webTitle: "Web and PWA", webSteps: ["Open Wavestr in your browser: nothing to install.", "If you like, install it as an app from the browser (Chrome or Edge: install icon; Safari: Share → “Add to Home Screen”).", "Sign in with a NIP-07 extension, a bunker or your npub; zaps with NWC, WebLN or QR."],
 		obtSteps: ["Install Obtainium.", "“Add app” and paste <code>https://github.com/oluengo/wavestr</code>.", "You'll be notified of every new version."],
 		getObt: "Get Obtainium",
 		apkTitle: "Direct APK",
@@ -407,7 +412,7 @@ const I = {
 			["How much does it cost?", "Nothing. Wavestr is free, with no ads or purchases. Zaps are optional and go straight to the streamer."],
 			["Do I need a Nostr account?", "Not to listen to radio or streams from all of Nostr. With your npub you see live streams from people you follow; with Amber you can chat and store favourites on Nostr."],
 			["Why isn't it on Google Play?", "It's published on GitHub and installed with Obtainium or the APK, the same choice as Usus."],
-			["Is there a desktop version?", "Linux and Windows are in development, with no downloads yet."],
+			["Is there a desktop version?", "Yes: the web app runs in any browser. And Linux and Windows versions are in beta (they need VLC), in Wavestr Beta."],
 			["Is there a beta?", "Yes: Wavestr Beta, with the latest changes before each release. It installs alongside the regular app, with its own data, and may have bugs. In Obtainium, turn on “include pre-releases”."],
 			["Something not working?", "Open an issue on GitHub or use Settings → About → Report a problem."]
 		],
