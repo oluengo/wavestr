@@ -171,6 +171,16 @@
     <a class="btn" href="https://github.com/oluengo/wavestr/releases" target="_blank" rel="noopener">{t('web_get_apps')}</a>
     <a class="btn" href="https://github.com/oluengo/wavestr/issues" target="_blank" rel="noopener">{t('about_bug')}</a>
   </div>
+  <hr />
+  <p class="bold">{t('support_title')}</p>
+  <p class="muted small">{t('support_body')}</p>
+  {#each [['₿ Bitcoin', 'bc1pnvdct6hfnh67p7dcg2e5mdveyz8jlxuzv4yflkxqccc72qkuc8ls8raspa', ''], ['⚡ Lightning / zaps', 'oluengo@rizful.com', 'lightning:oluengo@rizful.com']] as [label, addr, href]}
+    <button class="donate" onclick={() => { navigator.clipboard.writeText(addr); app.notify(t('copied')) }}>
+      <span class="bold">{label}</span>
+      <code>{addr}</code>
+    </button>
+    {#if href}<a class="btn" href={href}>{t('zap_open_wallet')}</a>{/if}
+  {/each}
   <p class="muted tiny">{t('about_ai')}</p>
 </div>
 
@@ -198,4 +208,7 @@
   .dot.on { box-shadow: 0 0 0 2px var(--ink); }
   .opt { text-align: left; padding: 8px; border-radius: 10px; }
   .opt:hover { background: var(--surface2); }
+  .donate { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; padding: 8px 10px; border-radius: 10px; width: 100%; }
+  .donate:hover { background: var(--surface2); }
+  .donate code { font-size: 12px; color: var(--muted); word-break: break-all; }
 </style>
