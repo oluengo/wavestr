@@ -1,8 +1,8 @@
 # Cambios
 
-## Próxima versión
+## 0.12.0
 
-- **Reproductor más compacto:** una sola barra fina abajo con zap, caja del chat, anterior, play, siguiente y favorito, para dejar más sitio al chat. El selector audio/vídeo es más pequeño.
+- **Reproductor más compacto:** una barra fina abajo con zap, anterior, play, siguiente y favorito, y debajo la caja del chat a todo el ancho, para dejar más sitio al chat.
 - **Seguir y dejar de seguir** a quien emite, desde el reproductor y desde su perfil (NIP-02, con Amber o bunker). Se conserva el resto de tu lista; si no aparece en tus relays, pregunta antes de crear una nueva.
 - **Arreglado:** si Android cerraba la app en segundo plano (por ejemplo, al abrir YouTube), al volver salía el reproductor con «No suena nada». Ahora vuelve atrás y deja preparada la última emisora para darle a play.
 

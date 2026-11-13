@@ -246,21 +246,20 @@ private fun ArtworkStage(c: AppContainer, np: io.github.oluengo.wavestr.player.N
 private fun ModeSelector(c: AppContainer, st: PlayerUiState) {
     val np = st.nowPlaying ?: return
     if (np.isRadio) return
-    // Pequeño y a la izquierda, para que el chat tenga más sitio.
-    SingleChoiceSegmentedButtonRow(Modifier.padding(start = 16.dp, top = 10.dp, bottom = 2.dp).height(34.dp)) {
+    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp)) {
         SegmentedButton(
             selected = st.audioOnly,
             onClick = { c.player.setWantsVideo(false) },
             shape = SegmentedButtonDefaults.itemShape(0, 2),
-            icon = { Icon(Icons.Outlined.Headphones, null, Modifier.size(16.dp)) },
-        ) { Text(stringResource(R.string.player_audio), style = MaterialTheme.typography.labelMedium) }
+            icon = { Icon(Icons.Outlined.Headphones, null, Modifier.size(18.dp)) },
+        ) { Text(stringResource(R.string.player_audio)) }
         SegmentedButton(
             selected = !st.audioOnly,
             onClick = { c.player.setWantsVideo(true) },
             shape = SegmentedButtonDefaults.itemShape(1, 2),
             enabled = np.hasVideo,
-            icon = { Icon(Icons.Outlined.Videocam, null, Modifier.size(16.dp)) },
-        ) { Text(stringResource(R.string.player_video), style = MaterialTheme.typography.labelMedium) }
+            icon = { Icon(Icons.Outlined.Videocam, null, Modifier.size(18.dp)) },
+        ) { Text(stringResource(R.string.player_video)) }
     }
 }
 
