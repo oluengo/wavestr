@@ -1,5 +1,5 @@
-# Publica la carpeta site/ en GitHub Pages (https://oluengo.github.io/wavestr/).
-# Landing (index.html), enlaces para compartir (s/) y la app web (app/, compilada desde web/). Requiere Settings → Pages → Source: GitHub Actions.
+# Publishes the site/ folder on GitHub Pages (https://oluengo.github.io/wavestr/).
+# Landing (index.html), share links (s/) and the web app (app/, built from web/). Requires Settings → Pages → Source: GitHub Actions.
 name: Pages
 
 on:
@@ -30,7 +30,7 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: web/package-lock.json
-      - name: Compila la app web
+      - name: Build the web app
         working-directory: web
         run: npm ci && npm run build
       - run: rm -rf site/app && cp -r web/dist site/app

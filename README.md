@@ -63,8 +63,8 @@ If it disappears after an Android Auto update, check that **Unknown sources** is
 
 Kotlin + Jetpack Compose (`:core`, `:app` and `:desktop`) and the web app in `web/` (TypeScript + Svelte). [`demo/index.html`](demo/index.html) is an interactive mockup with sample data.
 
-- Build, release and signing (in Spanish): [docs/desarrollo.md](docs/desarrollo.md)
-- Technical plan: [docs/plan-tecnico.md](docs/plan-tecnico.md) · Decisions: [docs/decisiones](docs/decisiones/README.md)
+- Build, release and signing: [docs/development.md](docs/development.md)
+- Technical plan: [docs/technical-plan.md](docs/technical-plan.md) · Decisions: [docs/decisions](docs/decisions/README.md)
 
 ## Support the project
 

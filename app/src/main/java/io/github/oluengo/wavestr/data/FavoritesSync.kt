@@ -35,7 +35,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.json.JsonObject
 
 /**
- * Favoritos en Nostr (ver docs/decisiones/0008): toda la biblioteca, cifrada con NIP-44 para uno mismo,
+ * Favoritos en Nostr (ver docs/decisions/0008): toda la biblioteca, cifrada con NIP-44 para uno mismo,
  * en un evento reemplazable kind 30078 (NIP-78). Solo con Amber, que cifra y firma.
  *
  * - Al activar o al abrir la app: se trae la copia de Nostr. Si aquí no ha cambiado nada desde la
