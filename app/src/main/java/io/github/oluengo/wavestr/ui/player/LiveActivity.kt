@@ -314,8 +314,8 @@ fun ChatNeedsSigner() {
 }
 
 /**
- * Caja del chat compacta (kind 1311), firmada con Amber o con el firmante remoto: una píldora con el
- * botón de enviar dentro, para que quepa en la barra del reproductor junto a los controles.
+ * Caja del chat (kind 1311), firmada con Amber o con el firmante remoto: una píldora a todo el ancho
+ * con el botón de enviar dentro; crece hasta tres líneas.
  */
 @Composable
 fun ChatField(vm: LiveActivityViewModel, c: AppContainer, modifier: Modifier = Modifier) {
@@ -353,19 +353,19 @@ fun ChatField(vm: LiveActivityViewModel, c: AppContainer, modifier: Modifier = M
         decorationBox = { inner ->
             Row(
                 Modifier
-                    .heightIn(min = 38.dp)
-                    .background(MaterialTheme.colorScheme.surfaceContainer, RoundedCornerShape(19.dp))
-                    .border(1.dp, Rs.colors.line, RoundedCornerShape(19.dp))
-                    .padding(start = 14.dp, end = 2.dp),
+                    .heightIn(min = 44.dp)
+                    .background(MaterialTheme.colorScheme.surfaceContainer, RoundedCornerShape(22.dp))
+                    .border(1.dp, Rs.colors.line, RoundedCornerShape(22.dp))
+                    .padding(start = 16.dp, end = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Box(Modifier.weight(1f).padding(vertical = 8.dp)) {
+                Box(Modifier.weight(1f).padding(vertical = 10.dp)) {
                     if (text.isEmpty()) Text(stringResource(R.string.chat_hint), color = Rs.colors.muted, style = MaterialTheme.typography.bodyMedium, maxLines = 1)
                     inner()
                 }
-                IconButton(onClick = send, enabled = text.isNotBlank() && !sending, modifier = Modifier.size(34.dp)) {
+                IconButton(onClick = send, enabled = text.isNotBlank() && !sending, modifier = Modifier.size(40.dp)) {
                     Icon(
-                        Icons.AutoMirrored.Outlined.Send, stringResource(R.string.chat_send), Modifier.size(18.dp),
+                        Icons.AutoMirrored.Outlined.Send, stringResource(R.string.chat_send), Modifier.size(20.dp),
                         tint = if (text.isNotBlank() && !sending) MaterialTheme.colorScheme.primary else Rs.colors.muted,
                     )
                 }

@@ -155,14 +155,15 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
             }
             np.station?.let { SimilarStations(c, it) }
         }
-        // Una sola barra fina, igual para radio y streams: zap, caja del chat (en directos), anterior,
-        // play, siguiente y favorito. Mientras escribes solo queda la caja del chat.
+        // Barra fina, igual para radio y streams: zap, anterior, play, siguiente y favorito. Debajo, en
+        // los directos, la caja del chat a todo el ancho y siempre en el mismo sitio (si cambiara de
+        // sitio al abrirse el teclado perdería el foco). Mientras escribes, la barra se esconde.
         val canWrite = rememberCanWriteChat(activity, c)
         val canChat = liveAddress != null && canWrite == true
         if (liveAddress != null && canWrite == false) ChatNeedsSigner()
         HorizontalDivider(color = Rs.colors.line)
-        PlayerBar(c, st, onZap = streamZap, typing = typing && canChat, hasChat = canChat,
-            chat = { m -> ChatField(activity, c, m) })
+        if (!(typing && canChat)) PlayerBar(c, st, onZap = streamZap)
+        if (canChat) ChatField(activity, c, Modifier.fillMaxWidth().padding(start = 12.dp, end = 12.dp, bottom = 8.dp))
     }
 
     if (fullscreen && np != null && !st.audioOnly) FullscreenVideo(c, onExit = { fullscreen = false })
@@ -307,19 +308,18 @@ private fun Info(c: AppContainer, st: PlayerUiState, onOpenProfile: (String) -> 
 }
 
 /**
- * Barra de abajo: zap (en directos), caja del chat (si se puede escribir), anterior, play/pausa,
- * siguiente y favorito. Fina y en gris para dejar sitio al chat; igual para radio y streams.
+ * Barra de abajo: zap (en directos), anterior, play/pausa, siguiente y favorito. Fina y en gris para
+ * dejar sitio al chat; igual para radio y streams.
  */
 @Composable
-private fun PlayerBar(c: AppContainer, st: PlayerUiState, onZap: (() -> Unit)?, typing: Boolean, hasChat: Boolean, chat: @Composable (Modifier) -> Unit) {
+private fun PlayerBar(c: AppContainer, st: PlayerUiState, onZap: (() -> Unit)?) {
     val np = st.nowPlaying ?: return
     val lib by c.library.library.collectAsStateWithLifecycle()
     Row(
         Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 6.dp),
-        horizontalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterHorizontally),
+        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (typing && hasChat) { chat(Modifier.weight(1f)); return@Row }
         val station = np.station
         val host = np.hostPubkey
         val favKey = station?.id ?: host?.let { "npub:$it" }
@@ -328,8 +328,7 @@ private fun PlayerBar(c: AppContainer, st: PlayerUiState, onZap: (() -> Unit)?, 
         if (onZap != null) IconButton(onClick = onZap, modifier = small) {
             Icon(Icons.Filled.Bolt, stringResource(R.string.zap_button), Modifier.size(22.dp), tint = Rs.colors.zap)
         }
-        if (hasChat) chat(Modifier.weight(1f).padding(horizontal = 4.dp))
-        else if (onZap != null) Spacer(Modifier.size(12.dp))
+        if (onZap != null) Spacer(Modifier.size(8.dp))
         // Anterior / siguiente: siempre visibles; desactivados si no hay lista por la que moverse.
         val canSkip = c.player.canSkip()
         IconButton(onClick = { c.player.skip(-1) }, enabled = canSkip, modifier = small) {
