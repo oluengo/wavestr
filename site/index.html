@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -51,9 +51,7 @@ code { font: .86em var(--mono); background: var(--accent-bg); padding: .1rem .35
 .brand img { width: 1.8rem; height: 1.8rem; border-radius: 24%; }
 .top nav { margin-left: auto; display: flex; align-items: center; gap: 1.1rem; font-size: .92rem; }
 .navlink { opacity: .75; } .navlink:hover { opacity: 1; }
-.lang { display: flex; gap: .15rem; font-size: .8rem; }
-.lang button, .theme { font: inherit; background: none; border: 0; color: inherit; opacity: .65; cursor: pointer; padding: .25rem .35rem; border-radius: 6px; }
-.lang button[aria-pressed="true"] { opacity: 1; font-weight: 600; background: rgba(255,255,255,.12); }
+.theme { font: inherit; background: none; border: 0; color: inherit; opacity: .65; cursor: pointer; padding: .25rem .35rem; border-radius: 6px; }
 .theme { opacity: .8; display: grid; place-items: center; }
 .theme svg { width: 1.1rem; height: 1.1rem; }
 .i-sun { display: none; }
@@ -164,9 +162,6 @@ footer .links a:hover { color: var(--accent); }
 			<a class="navlink" href="#features" data-i="navFeatures"></a>
 			<a class="navlink" href="#install" data-i="navInstall"></a>
 			<a class="navlink" href="https://oluengo.github.io/">oluengo</a>
-			<div class="lang" role="group" aria-label="Language">
-				<button data-lang="ca">CA</button><button data-lang="es">ES</button><button data-lang="en">EN</button>
-			</div>
 			<button class="theme" id="theme" type="button" data-i-aria="theme">
 				<svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
 				<svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
@@ -285,96 +280,6 @@ footer .links a:hover { color: var(--accent); }
 
 <script>
 const I = {
-	es: {
-		navFeatures: "Funciones", navInstall: "Instalar", theme: "Cambiar tema",
-		badge: "Android · Web",
-		title1: "Radio online y streams de", title2: "Nostr",
-		intro: "Una sola app para escuchar emisoras de todo el mundo y ver o escuchar los directos de la gente que sigues en Nostr. Con zaps, favoritos en carpetas y Android Auto.",
-		download: "Descargar", openWeb: "Abrir en el navegador",
-		meta: ["Gratis y de código abierto", "Sin anuncios", "Sin cuenta de Nostr también", "Català · Castellano · English"],
-		phones: [["live", "Streams en directo"], ["player", "Reproductor"], ["radio", "Radios"]],
-		featTitle: "Todo tu audio en directo, en un sitio",
-		featLead: "Lo que suena en Nostr y lo que emiten las radios, con los mismos favoritos y el mismo reproductor.",
-		features: [
-			["live", "Streams de Nostr", ["Directos (NIP-53) de la gente que sigues, o de todo Nostr.", "Solo audio o vídeo sin cortar el stream; pasa a audio al apagar la pantalla.", "Chat y zaps del stream en el reproductor."]],
-			["radio", "Radio online", ["Directorio libre Radio Browser: populares, cerca de ti, por estilo y búsqueda.", "Importa listas PLS y M3U por enlace, texto o archivo.", "Calidad seleccionable, canción que suena y carátulas."]],
-			["fav", "Favoritos a tu manera", ["Carpetas y subcarpetas para radios y streamers.", "Compártelos por enlace, M3U o texto; impórtalos o expórtalos.", "Opcional: guardados en Nostr y cifrados (NIP-78 + NIP-44)."]],
-			["car", "En el coche y en casa", ["Android Auto con búsqueda por voz y anterior/siguiente.", "Widgets para la pantalla de inicio y controles en la notificación.", "Temporizador de apagado y margen contra cortes."]],
-			["zap", "Zaps", ["Apoya a quien emite con zaps vía NWC.", "Límite mensual para no llevarte sorpresas.", "Inicio de sesión con Amber (NIP-55) o con tu npub en solo lectura."]],
-			["dice", "Y además", ["Botón sorpresa: radio, stream o ambos.", "Tema claro, oscuro o automático y color de acento a elegir.", "Navegación lateral en tablets y pantallas anchas."]]
-		],
-		shotsTitle: "Así se ve", shotsLead: "Capturas de la maqueta interactiva, con datos de ejemplo.",
-		shots: [["live", "Streams"], ["player", "Reproductor"], ["radio", "Radios"], ["fav", "Favoritos"]],
-		installTitle: "Instalar", installLead: "En Android se instala desde GitHub, fuera de Google Play. Y en cualquier otro dispositivo, en el navegador.", webTitle: "Web y PWA", webSteps: ["Abre Wavestr en el navegador: no hace falta instalar nada.", "Si quieres, instálala como app desde el navegador (Chrome o Edge: icono de instalar; Safari: Compartir → «Añadir a pantalla de inicio»).", "Entras con una extensión NIP-07, un bunker o tu npub; zaps con NWC, WebLN o QR."],
-		obtSteps: ["Instala Obtainium.", "«Añadir app» y pega <code>https://github.com/oluengo/wavestr</code>.", "Te avisará de cada nueva versión."],
-		getObt: "Conseguir Obtainium",
-		apkTitle: "APK directo",
-		apkSteps: ["Descarga el APK de la última versión.", "Ábrelo y permite instalar desde esa fuente si Android lo pide.", "Para actualizar, repite los pasos con la nueva versión."],
-		fpText: "Comprueba que la huella del certificado coincide (también está en Ajustes → Acerca de):",
-		copy: "Copiar huella",
-		autoTitle: "Activar Android Auto (una sola vez)",
-		autoLead: "Como no viene de Google Play, Android Auto la oculta hasta que lo permitas.",
-		autoSteps: ["Instala Wavestr (0.10.0 o posterior) y ábrela una vez.", "Abre los ajustes de Android Auto en el móvil (busca «Android Auto» en Ajustes).", "Toca «Versión» unas 10 veces y acepta el aviso para activar el modo desarrollador.", "Menú ⋮ → Ajustes de desarrollador → activa «Fuentes desconocidas».", "Desconecta el móvil, fuerza la detención de Android Auto y vuelve a conectar.", "Si no aparece: ajustes de Android Auto → Personalizar menú de aplicaciones → marca Wavestr."],
-		privTitle: "Tus claves, contigo", privLead: "Wavestr no tiene cuentas propias ni servidor. Se conecta directamente a los relays de Nostr, al directorio de radios y a las emisoras que escuchas.",
-		privacy: [["Nunca ve tu clave privada", "Firmas con Amber (NIP-55) o entras con tu npub en solo lectura."], ["Sin librerías de seguimiento", "Ni analítica ni publicidad dentro de la app."], ["Favoritos en tu móvil", "Guardarlos en Nostr es opcional, y van cifrados."], ["Zaps con límite", "Tú decides el tope mensual que puede gastar la app con NWC."]],
-		faqTitle: "Preguntas frecuentes",
-		faq: [
-			["¿Cuánto cuesta?", "Nada. Wavestr es gratis, sin anuncios ni compras. Los zaps son opcionales y van directos a quien emite."],
-			["¿Necesito una cuenta de Nostr?", "No para escuchar radio ni streams de todo Nostr. Con tu npub ves los directos de quien sigues; con Amber puedes escribir en el chat y guardar favoritos en Nostr."],
-			["¿Por qué no está en Google Play?", "Se publica en GitHub y se instala con Obtainium o el APK. Es la misma decisión que en Usus."],
-			["¿Hay versión para ordenador?", "Sí: la app web funciona en cualquier navegador. Y en beta hay versión para Linux y Windows (necesita VLC), en Wavestr Beta."],
-			["¿Hay una beta?", "Sí: Wavestr Beta, con lo último antes de cada versión. Se instala junto a la normal, con sus propios datos, y puede tener fallos. En Obtainium, activa «incluir pre-releases»."],
-			["¿Algo no funciona?", "Abre un aviso en GitHub o usa Ajustes → Acerca de → Informar de un problema."]
-		],
-		releases: "Versiones", changelog: "Historial de cambios", issues: "Informar de un problema", license: "Licencia MIT",
-		support: "Apoya el proyecto · toca para copiar", copied: "copiado",
-		made: "Hecha con IA · probada por humanos"
-	},
-	ca: {
-		navFeatures: "Funcions", navInstall: "Instal·lar", theme: "Canvia el tema",
-		badge: "Android · Web",
-		title1: "Ràdio en línia i streams de", title2: "Nostr",
-		intro: "Una sola app per escoltar emissores de tot el món i veure o escoltar els directes de la gent que segueixes a Nostr. Amb zaps, preferits en carpetes i Android Auto.",
-		download: "Descarrega", openWeb: "Obre al navegador",
-		meta: ["Gratuïta i de codi obert", "Sense anuncis", "També sense compte de Nostr", "Català · Castellano · English"],
-		phones: [["live", "Streams en directe"], ["player", "Reproductor"], ["radio", "Ràdios"]],
-		featTitle: "Tot el teu àudio en directe, en un lloc",
-		featLead: "El que sona a Nostr i el que emeten les ràdios, amb els mateixos preferits i el mateix reproductor.",
-		features: [
-			["live", "Streams de Nostr", ["Directes (NIP-53) de la gent que segueixes, o de tot Nostr.", "Només àudio o vídeo sense tallar el stream; passa a àudio en apagar la pantalla.", "Xat i zaps del stream al reproductor."]],
-			["radio", "Ràdio en línia", ["Directori lliure Radio Browser: populars, a prop teu, per estil i cerca.", "Importa llistes PLS i M3U per enllaç, text o fitxer.", "Qualitat seleccionable, cançó que sona i caràtules."]],
-			["fav", "Preferits a la teva manera", ["Carpetes i subcarpetes per a ràdios i streamers.", "Comparteix-los per enllaç, M3U o text; importa'ls o exporta'ls.", "Opcional: desats a Nostr i xifrats (NIP-78 + NIP-44)."]],
-			["car", "Al cotxe i a casa", ["Android Auto amb cerca per veu i anterior/següent.", "Ginys per a la pantalla d'inici i controls a la notificació.", "Temporitzador d'apagada i marge contra talls."]],
-			["zap", "Zaps", ["Dona suport a qui emet amb zaps via NWC.", "Límit mensual per no endur-te sorpreses.", "Inici de sessió amb Amber (NIP-55) o amb el teu npub només de lectura."]],
-			["dice", "I a més", ["Botó sorpresa: ràdio, stream o tots dos.", "Tema clar, fosc o automàtic i color d'accent a triar.", "Navegació lateral en tauletes i pantalles amples."]]
-		],
-		shotsTitle: "Així es veu", shotsLead: "Captures de la maqueta interactiva, amb dades d'exemple.",
-		shots: [["live", "Streams"], ["player", "Reproductor"], ["radio", "Ràdios"], ["fav", "Preferits"]],
-		installTitle: "Instal·lar", installLead: "A Android s'instal·la des de GitHub, fora de Google Play. I a qualsevol altre dispositiu, al navegador.", webTitle: "Web i PWA", webSteps: ["Obre Wavestr al navegador: no cal instal·lar res.", "Si vols, instal·la-la com a app des del navegador (Chrome o Edge: icona d'instal·lar; Safari: Comparteix → «Afegeix a la pantalla d'inici»).", "Entres amb una extensió NIP-07, un bunker o el teu npub; zaps amb NWC, WebLN o QR."],
-		obtSteps: ["Instal·la Obtainium.", "«Afegeix app» i enganxa <code>https://github.com/oluengo/wavestr</code>.", "T'avisarà de cada nova versió."],
-		getObt: "Aconsegueix Obtainium",
-		apkTitle: "APK directe",
-		apkSteps: ["Descarrega l'APK de l'última versió.", "Obre'l i permet instal·lar des d'aquesta font si Android ho demana.", "Per actualitzar, repeteix els passos amb la nova versió."],
-		fpText: "Comprova que l'empremta del certificat coincideix (també és a Configuració → Quant a):",
-		copy: "Copia l'empremta",
-		autoTitle: "Activar Android Auto (un sol cop)",
-		autoLead: "Com que no ve de Google Play, Android Auto l'amaga fins que ho permetis.",
-		autoSteps: ["Instal·la Wavestr (0.10.0 o posterior) i obre-la un cop.", "Obre la configuració d'Android Auto al mòbil (cerca «Android Auto» a Configuració).", "Toca «Versió» unes 10 vegades i accepta l'avís per activar el mode desenvolupador.", "Menú ⋮ → Configuració de desenvolupador → activa «Fonts desconegudes».", "Desconnecta el mòbil, força l'aturada d'Android Auto i torna a connectar.", "Si no apareix: configuració d'Android Auto → Personalitza el menú d'aplicacions → marca Wavestr."],
-		privTitle: "Les teves claus, amb tu", privLead: "Wavestr no té comptes propis ni servidor. Es connecta directament als relays de Nostr, al directori de ràdios i a les emissores que escoltes.",
-		privacy: [["Mai veu la teva clau privada", "Signes amb Amber (NIP-55) o entres amb el teu npub només de lectura."], ["Sense biblioteques de seguiment", "Ni analítica ni publicitat dins l'app."], ["Preferits al teu mòbil", "Desar-los a Nostr és opcional, i van xifrats."], ["Zaps amb límit", "Tu decideixes el topall mensual que pot gastar l'app amb NWC."]],
-		faqTitle: "Preguntes freqüents",
-		faq: [
-			["Quant costa?", "Res. Wavestr és gratuïta, sense anuncis ni compres. Els zaps són opcionals i van directes a qui emet."],
-			["Cal un compte de Nostr?", "No per escoltar ràdio ni streams de tot Nostr. Amb el teu npub veus els directes de qui segueixes; amb Amber pots escriure al xat i desar preferits a Nostr."],
-			["Per què no és a Google Play?", "Es publica a GitHub i s'instal·la amb Obtainium o l'APK. És la mateixa decisió que a Usus."],
-			["Hi ha versió per a ordinador?", "Sí: l'app web funciona a qualsevol navegador. I en beta hi ha versió per a Linux i Windows (cal VLC), a Wavestr Beta."],
-			["Hi ha una beta?", "Sí: Wavestr Beta, amb el més nou abans de cada versió. S'instal·la al costat de la normal, amb les seves pròpies dades, i pot tenir errors. A Obtainium, activa «incloure pre-releases»."],
-			["Alguna cosa no funciona?", "Obre un avís a GitHub o fes servir Configuració → Quant a → Informa d'un problema."]
-		],
-		releases: "Versions", changelog: "Historial de canvis", issues: "Informa d'un problema", license: "Llicència MIT",
-		support: "Dona suport al projecte · toca per copiar", copied: "copiat",
-		made: "Feta amb IA · provada per humans"
-	},
 	en: {
 		navFeatures: "Features", navInstall: "Install", theme: "Toggle theme",
 		badge: "Android · Web",
@@ -429,17 +334,10 @@ const ICONS = {
 	zap: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
 	dice: '<rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.2"/><circle cx="15.5" cy="15.5" r="1.2"/><circle cx="12" cy="12" r="1.2"/>'
 };
-const LANGS = ["ca", "es", "en"], root = document.documentElement;
+const root = document.documentElement;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const SHOT = { live: "live-%-dark", player: "player-%-dark", radio: "radio-%", fav: "fav-%-dark" };
 const shot = (k, lang) => "img/" + SHOT[k].replace("%", lang) + ".webp";
-function pickLang() {
-	const q = new URLSearchParams(location.search).get("lang");
-	if (LANGS.includes(q)) return q;
-	try { const s = localStorage.getItem("lang"); if (LANGS.includes(s)) return s; } catch (e) {}
-	const n = (navigator.languages || [navigator.language || ""]).map(x => String(x).slice(0, 2));
-	return n.find(x => LANGS.includes(x)) || "en";
-}
 let L;
 function render(lang) {
 	L = lang; const t = I[lang]; root.lang = lang;
@@ -453,12 +351,7 @@ function render(lang) {
 		`<figure><img src="${shot(k, lang)}" width="540" height="1169" loading="lazy" alt="${esc(c)}"><figcaption>${esc(c)}</figcaption></figure>`).join("");
 	document.getElementById("privacy-list").innerHTML = t.privacy.map(([b, s]) => `<li><b>${esc(b)}</b><span>${esc(s)}</span></li>`).join("");
 	document.getElementById("faq-list").innerHTML = t.faq.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join("");
-	document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === lang));
 }
-document.querySelectorAll("[data-lang]").forEach(b => b.addEventListener("click", () => {
-	try { localStorage.setItem("lang", b.dataset.lang); } catch (e) {}
-	render(b.dataset.lang);
-}));
 try { const th = localStorage.getItem("theme"); if (th) root.dataset.theme = th; } catch (e) {}
 document.getElementById("theme").addEventListener("click", () => {
 	const cur = root.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
@@ -479,7 +372,7 @@ document.querySelectorAll("[data-copy-el]").forEach(b => b.addEventListener("cli
 	const prev = b.textContent; b.textContent = ok ? "✓ " + I[L].copied : prev;
 	setTimeout(() => { b.textContent = I[L].copy; }, 1800);
 }));
-render(pickLang());
+render("en");
 </script>
 </body>
 </html>

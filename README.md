@@ -2,93 +2,20 @@
 
 <h1 align="center">Wavestr</h1>
 
-<p align="center"><b>Radio online y streams de Nostr en una sola app.</b><br><i>Online radio and Nostr live streams in one app.</i></p>
+<p align="center"><b>Online radio and Nostr live streams in one app.</b></p>
 
-<p align="center"><a href="https://oluengo.github.io/wavestr/">Web</a> · <a href="https://oluengo.github.io/wavestr/app/">Abrir la app</a> · <a href="https://github.com/oluengo/wavestr/releases/latest">Descargar para Android</a> · <a href="#english">English</a></p>
+<p align="center"><a href="https://oluengo.github.io/wavestr/">Website</a> · <a href="https://oluengo.github.io/wavestr/app/">Open the app</a> · <a href="https://github.com/oluengo/wavestr/releases/latest">Download for Android</a></p>
 
 <table><tr>
-<td width="25%"><img src="site/img/live-es-dark.webp" alt="Streams"></td>
-<td width="25%"><img src="site/img/player-es-dark.webp" alt="Reproductor"></td>
-<td width="25%"><img src="site/img/radio-es.webp" alt="Radios"></td>
-<td width="25%"><img src="site/img/fav-es-dark.webp" alt="Favoritos"></td>
+<td width="25%"><img src="site/img/live-en-dark.webp" alt="Streams"></td>
+<td width="25%"><img src="site/img/player-en-dark.webp" alt="Player"></td>
+<td width="25%"><img src="site/img/radio-en.webp" alt="Radios"></td>
+<td width="25%"><img src="site/img/fav-en-dark.webp" alt="Favourites"></td>
 </tr></table>
-
-**Wavestr** junta en un sitio las emisoras de radio de todo el mundo y los directos de la gente que sigues en Nostr, con los mismos favoritos y el mismo reproductor. Para Android, en el navegador (PWA) y, en beta, en PC. Gratis, sin anuncios. En català, castellano e inglés.
-
-## Qué hace
-
-- **Streams de Nostr (NIP-53)** de la gente que sigues, o de todo Nostr: solo audio o vídeo sin cortar el stream, con chat, reacciones y zaps.
-- **Radio online** con el directorio libre Radio Browser (populares, por país, por estilo y búsqueda) e importación de listas PLS/M3U.
-- **Favoritos en carpetas y subcarpetas**, para radios y streamers. Opcional: guardados en Nostr, cifrados (NIP-78 + NIP-44).
-- **Compartir** una emisora, una carpeta o todos los favoritos, por enlace, M3U o texto.
-- **Próximamente y recordatorios:** directos programados (NIP-53) y eventos de calendario (NIP-52), con aviso al empezar o antes.
-- **Zaps con NWC**, con límite mensual.
-- **Android Auto**, widgets, anterior/siguiente, temporizador de apagado, margen contra cortes y refuerzo de volumen por emisora.
-- **Botón sorpresa:** radio, stream o ambos.
-- Tema claro, oscuro o automático, color de acento y navegación lateral en tablets.
-
-## Instalar
-
-| | Cómo |
-|---|---|
-| **Android** | APK de la [última versión](https://github.com/oluengo/wavestr/releases/latest), o añade `https://github.com/oluengo/wavestr` en [Obtainium](https://github.com/ImranR98/Obtainium) para recibir las actualizaciones. También en Zapstore. |
-| **Web y PWA** | Abre <https://oluengo.github.io/wavestr/app/> y, si quieres, instálala desde el navegador. Entras con una extensión NIP-07, un bunker o tu npub; zaps con NWC, WebLN o QR. |
-| **PC (Linux y Windows)** | En beta: `.deb`, `.tar.gz` y `.msi` en [Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta). Necesita [VLC](https://www.videolan.org/vlc/). |
-| **Beta** | Pre-release [Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta) (en Obtainium, «incluir pre-releases»). Se instala aparte, como Wavestr Beta, con sus propios datos. |
-
-Huella SHA-256 del certificado del APK (también en Ajustes → Acerca de): `06:23:37:6B:0C:75:09:50:D7:E5:F1:4E:ED:06:C3:B3:C4:86:8B:B2:64:8B:8F:34:34:76:E2:DE:90:70:0F:89`
-
-En el navegador, las emisoras que solo emiten por `http` no suenan (se marcan), el refuerzo de volumen depende de la emisora y los recordatorios avisan con la web abierta.
-
-## Android Auto
-
-Como Wavestr no viene de Google Play, Android Auto la oculta hasta que lo permitas. Solo hay que hacerlo una vez:
-
-1. Instala Wavestr (0.10.0 o posterior) y ábrela una vez.
-2. Abre los ajustes de Android Auto en el móvil (*Ajustes → Dispositivos conectados → Preferencias de conexión → Android Auto*, o busca «Android Auto»).
-3. Toca **Versión** unas 10 veces seguidas y acepta el aviso para activar el modo desarrollador.
-4. Menú **⋮** → **Ajustes de desarrollador** → activa **Fuentes desconocidas**.
-5. Desconecta el móvil del coche, fuerza la detención de Android Auto y vuelve a conectar.
-6. Si no sale: ajustes de Android Auto → **Personalizar menú de aplicaciones** → marca Wavestr.
-
-Si deja de aparecer tras actualizar Android Auto, revisa que **Fuentes desconocidas** siga activado.
-
-## Privacidad
-
-- **Nunca ve tu clave privada:** firmas con Amber (NIP-55) o un bunker (NIP-46), o entras con tu npub en solo lectura.
-- Sin cuentas propias ni servidor, y sin librerías de seguimiento. Se conecta a los relays de Nostr, al directorio de radios y a las emisoras que escuchas.
-- Los favoritos se guardan en tu dispositivo; guardarlos en Nostr es opcional y van cifrados.
-
-## Desarrollo
-
-Kotlin + Jetpack Compose (`:core`, `:app` y `:desktop`) y la app web en `web/` (TypeScript + Svelte). [`demo/index.html`](demo/index.html) es una maqueta interactiva con datos de ejemplo.
-
-- Compilar, publicar y firmar: [docs/desarrollo.md](docs/desarrollo.md)
-- Plan técnico: [docs/plan-tecnico.md](docs/plan-tecnico.md) · Decisiones: [docs/decisiones](docs/decisiones/README.md)
-
-## Apoya el proyecto
-
-Si Wavestr te resulta útil:
-
-- **Lightning / zaps:** `oluengo@rizful.com`
-- **Bitcoin:** `bc1pnvdct6hfnh67p7dcg2e5mdveyz8jlxuzv4yflkxqccc72qkuc8ls8raspa`
-- **Nostr:** [npub1vuf2g6s0mcjr34lhkg2vvtj4x65w29xn28nznw9fhcqcpyr4zc9q6myguj](https://njump.me/npub1vuf2g6s0mcjr34lhkg2vvtj4x65w29xn28nznw9fhcqcpyr4zc9q6myguj)
-
----
-
-[Novedades](CHANGELOG.md) · [Informar de un problema](https://github.com/oluengo/wavestr/issues/new?labels=bug) · [Licencia MIT](LICENSE)
-
-<sub>Hecha con IA · probada por humanos.</sub>
-
----
-
-<h2 id="english">English</h2>
 
 **Wavestr** brings together radio stations from all over the world and live streams from the people you follow on Nostr, with the same favourites and the same player. For Android, in the browser (PWA) and, in beta, on desktop. Free, no ads. In Catalan, Spanish and English.
 
-**[Website](https://oluengo.github.io/wavestr/)** · **[Open the app](https://oluengo.github.io/wavestr/app/)** · **[Download for Android](https://github.com/oluengo/wavestr/releases/latest)**
-
-### What it does
+## What it does
 
 - **Nostr streams (NIP-53)** from people you follow, or from all of Nostr: audio-only or video without cutting the stream, with chat, reactions and zaps.
 - **Online radio** with the free Radio Browser directory (popular, by country, by style and search) and PLS/M3U playlist import.
@@ -100,7 +27,7 @@ Si Wavestr te resulta útil:
 - **Surprise button:** radio, stream or both.
 - Light, dark or automatic theme, accent colour and side navigation on tablets.
 
-### Install
+## Install
 
 | | How |
 |---|---|
@@ -113,7 +40,7 @@ APK certificate SHA-256 fingerprint (also in Settings → About): `06:23:37:6B:0
 
 In the browser, stations that only stream over `http` don't play (they're marked), volume boost depends on the station and reminders alert while the page is open.
 
-### Android Auto
+## Android Auto
 
 Because Wavestr doesn't come from Google Play, Android Auto hides it until you allow it. You only need to do this once:
 
@@ -126,20 +53,20 @@ Because Wavestr doesn't come from Google Play, Android Auto hides it until you a
 
 If it disappears after an Android Auto update, check that **Unknown sources** is still on.
 
-### Privacy
+## Privacy
 
 - **Never sees your private key:** sign with Amber (NIP-55) or a bunker (NIP-46), or sign in read-only with your npub.
 - No accounts of its own, no server and no tracking libraries. It connects to Nostr relays, the radio directory and the stations you listen to.
 - Favourites are stored on your device; storing them on Nostr is optional and they're encrypted.
 
-### Development
+## Development
 
 Kotlin + Jetpack Compose (`:core`, `:app` and `:desktop`) and the web app in `web/` (TypeScript + Svelte). [`demo/index.html`](demo/index.html) is an interactive mockup with sample data.
 
 - Build, release and signing (in Spanish): [docs/desarrollo.md](docs/desarrollo.md)
 - Technical plan: [docs/plan-tecnico.md](docs/plan-tecnico.md) · Decisions: [docs/decisiones](docs/decisiones/README.md)
 
-### Support the project
+## Support the project
 
 If you find Wavestr useful:
 
