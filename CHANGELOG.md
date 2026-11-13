@@ -1,5 +1,11 @@
 # Cambios
 
+## Próxima versión
+
+- **Reproductor más compacto:** una sola barra fina abajo con zap, caja del chat, anterior, play, siguiente y favorito, para dejar más sitio al chat. El selector audio/vídeo es más pequeño.
+- **Seguir y dejar de seguir** a quien emite, desde el reproductor y desde su perfil (NIP-02, con Amber o bunker). Se conserva el resto de tu lista; si no aparece en tus relays, pregunta antes de crear una nueva.
+- **Arreglado:** si Android cerraba la app en segundo plano (por ejemplo, al abrir YouTube), al volver salía el reproductor con «No suena nada». Ahora vuelve atrás y deja preparada la última emisora para darle a play.
+
 ## Web (nueva)
 
 - **App web y PWA** en <https://oluengo.github.io/wavestr/app/>: radio (solo emisoras https), streams con vídeo, chat, reacciones y zaps (NWC, WebLN o QR), favoritos con carpetas y sincronización cifrada, compartir e importar, próximamente con recordatorios, refuerzo de volumen y temporizador.

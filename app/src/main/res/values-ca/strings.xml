@@ -492,4 +492,11 @@
     <string name="web_open_web">Obre al web</string>
     <string name="web_login_prompt">Entra per veure els streams de la gent que segueixes, o mira Global.</string>
     <string name="web_npub_explain">O només mirar amb el teu npub (només lectura).</string>
+    <string name="follow_button">Segueix</string>
+    <string name="following_button">Seguint</string>
+    <string name="follow_needs_signer">Entra amb Amber o amb un bunker per seguir gent.</string>
+    <string name="follow_failed">No s\'ha pogut actualitzar la teva llista de seguits. Torna-ho a provar.</string>
+    <string name="follow_new_list_title">Crear la llista de seguits?</string>
+    <string name="follow_new_list_body">No es troba la teva llista de seguits als teus relays. Si continues, se\'n crearà una de nova només amb aquest compte; si segueixes gent des d\'una altra app, aquesta llista es podria substituir.</string>
+    <string name="follow_create">Crea i segueix</string>
 </resources>

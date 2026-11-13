@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -112,6 +113,12 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
     ) {
         NowPlayingBar(c, st, onClose, showArt = st.audioOnly) { shareOpen = it }
         if (np == null) {
+            // Android cerró la app en segundo plano y, al volver, se restauró esta pantalla sin nada
+            // cargado: se deja preparada la última emisora (play en el mini reproductor) y se vuelve atrás.
+            androidx.compose.runtime.LaunchedEffect(Unit) {
+                c.player.restoreLast()
+                onClose?.invoke()
+            }
             Text(stringResource(R.string.nothing_playing), color = Rs.colors.muted, modifier = Modifier.padding(24.dp))
             return@Column
         }
@@ -148,12 +155,14 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
             }
             np.station?.let { SimilarStations(c, it) }
         }
-        // Mismos controles y en el mismo sitio para radio y streams; mientras escribes se esconden.
-        if (!typing) {
-            HorizontalDivider(color = Rs.colors.line)
-            Controls(c, st, onZap = streamZap)
-        }
-        if (liveAddress != null) ChatInput(activity, c)
+        // Una sola barra fina, igual para radio y streams: zap, caja del chat (en directos), anterior,
+        // play, siguiente y favorito. Mientras escribes solo queda la caja del chat.
+        val canWrite = rememberCanWriteChat(activity, c)
+        val canChat = liveAddress != null && canWrite == true
+        if (liveAddress != null && canWrite == false) ChatNeedsSigner()
+        HorizontalDivider(color = Rs.colors.line)
+        PlayerBar(c, st, onZap = streamZap, typing = typing && canChat, hasChat = canChat,
+            chat = { m -> ChatField(activity, c, m) })
     }
 
     if (fullscreen && np != null && !st.audioOnly) FullscreenVideo(c, onExit = { fullscreen = false })
@@ -236,20 +245,21 @@ private fun ArtworkStage(c: AppContainer, np: io.github.oluengo.wavestr.player.N
 private fun ModeSelector(c: AppContainer, st: PlayerUiState) {
     val np = st.nowPlaying ?: return
     if (np.isRadio) return
-    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp)) {
+    // Pequeño y a la izquierda, para que el chat tenga más sitio.
+    SingleChoiceSegmentedButtonRow(Modifier.padding(start = 16.dp, top = 10.dp, bottom = 2.dp).height(34.dp)) {
         SegmentedButton(
             selected = st.audioOnly,
             onClick = { c.player.setWantsVideo(false) },
             shape = SegmentedButtonDefaults.itemShape(0, 2),
-            icon = { Icon(Icons.Outlined.Headphones, null, Modifier.size(18.dp)) },
-        ) { Text(stringResource(R.string.player_audio)) }
+            icon = { Icon(Icons.Outlined.Headphones, null, Modifier.size(16.dp)) },
+        ) { Text(stringResource(R.string.player_audio), style = MaterialTheme.typography.labelMedium) }
         SegmentedButton(
             selected = !st.audioOnly,
             onClick = { c.player.setWantsVideo(true) },
             shape = SegmentedButtonDefaults.itemShape(1, 2),
             enabled = np.hasVideo,
-            icon = { Icon(Icons.Outlined.Videocam, null, Modifier.size(18.dp)) },
-        ) { Text(stringResource(R.string.player_video)) }
+            icon = { Icon(Icons.Outlined.Videocam, null, Modifier.size(16.dp)) },
+        ) { Text(stringResource(R.string.player_video), style = MaterialTheme.typography.labelMedium) }
     }
 }
 
@@ -261,12 +271,26 @@ private fun Info(c: AppContainer, st: PlayerUiState, onOpenProfile: (String) -> 
         Text(np.title, style = MaterialTheme.typography.titleLarge)
         st.icyTitle?.let { Text("♪ $it", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold) }
         val host = np.hostPubkey
-        Text(
-            if (host != null) "${np.subtitle} · " + stringResource(R.string.view_profile) else np.subtitle,
-            color = if (host != null) MaterialTheme.colorScheme.primary else Rs.colors.muted,
-            fontWeight = if (host != null) FontWeight.SemiBold else FontWeight.Normal,
-            modifier = if (host != null) Modifier.clickable { onOpenProfile(host) } else Modifier,
-        )
+        if (host != null) {
+            // Quién emite: avatar, nombre y «Ver perfil», con el botón de seguir al lado.
+            Row(Modifier.fillMaxWidth().padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    Modifier.weight(1f).clip(RoundedCornerShape(10.dp)).clickable { onOpenProfile(host) }.padding(vertical = 2.dp),
+                    verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    var pic by remember(host) { mutableStateOf(c.nostr.cachedProfile(host)?.picture) }
+                    androidx.compose.runtime.LaunchedEffect(host) {
+                        if (pic == null) pic = runCatching { c.nostr.profiles(listOf(host))[host]?.picture }.getOrNull()
+                    }
+                    Artwork(pic ?: np.artworkUrl, host, Modifier.size(34.dp), corner = 17.dp)
+                    Column(Modifier.weight(1f)) {
+                        Text(np.subtitle, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                        Text(stringResource(R.string.view_profile), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.bodySmall)
+                    }
+                }
+                io.github.oluengo.wavestr.ui.common.FollowButton(c, host)
+            }
+        } else Text(np.subtitle, color = Rs.colors.muted)
     }
     if (st.error) {
         Column(Modifier.padding(horizontal = 18.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -282,34 +306,38 @@ private fun Info(c: AppContainer, st: PlayerUiState, onOpenProfile: (String) -> 
     }
 }
 
-/** Zap (en directos), anterior, play/pausa, siguiente y favorito: iguales para radio y streams. */
+/**
+ * Barra de abajo: zap (en directos), caja del chat (si se puede escribir), anterior, play/pausa,
+ * siguiente y favorito. Fina y en gris para dejar sitio al chat; igual para radio y streams.
+ */
 @Composable
-private fun Controls(c: AppContainer, st: PlayerUiState, onZap: (() -> Unit)?) {
+private fun PlayerBar(c: AppContainer, st: PlayerUiState, onZap: (() -> Unit)?, typing: Boolean, hasChat: Boolean, chat: @Composable (Modifier) -> Unit) {
     val np = st.nowPlaying ?: return
     val lib by c.library.library.collectAsStateWithLifecycle()
     Row(
-        Modifier.fillMaxWidth().padding(vertical = 6.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+        Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 6.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        if (typing && hasChat) { chat(Modifier.weight(1f)); return@Row }
         val station = np.station
         val host = np.hostPubkey
         val favKey = station?.id ?: host?.let { "npub:$it" }
         val isFav = favKey != null && lib.isFavorite(favKey)
-        if (onZap != null) {
-            IconButton(
-                onClick = onZap, modifier = Modifier.size(44.dp),
-                colors = IconButtonDefaults.iconButtonColors(containerColor = Rs.colors.zapSoft, contentColor = Rs.colors.zap),
-            ) { Icon(Icons.Filled.Bolt, stringResource(R.string.zap_button)) }
-        } else Box(Modifier.size(44.dp))
+        val small = Modifier.size(36.dp)
+        if (onZap != null) IconButton(onClick = onZap, modifier = small) {
+            Icon(Icons.Filled.Bolt, stringResource(R.string.zap_button), Modifier.size(22.dp), tint = Rs.colors.zap)
+        }
+        if (hasChat) chat(Modifier.weight(1f).padding(horizontal = 4.dp))
+        else if (onZap != null) Spacer(Modifier.size(12.dp))
         // Anterior / siguiente: siempre visibles; desactivados si no hay lista por la que moverse.
         val canSkip = c.player.canSkip()
-        IconButton(onClick = { c.player.skip(-1) }, enabled = canSkip, modifier = Modifier.size(44.dp)) {
-            Icon(Icons.Outlined.SkipPrevious, stringResource(R.string.skip_previous), Modifier.size(28.dp))
+        IconButton(onClick = { c.player.skip(-1) }, enabled = canSkip, modifier = small) {
+            Icon(Icons.Outlined.SkipPrevious, stringResource(R.string.skip_previous), Modifier.size(22.dp), tint = if (canSkip) Rs.colors.muted else Rs.colors.line)
         }
         FilledIconButton(
             onClick = c.player::togglePlay,
-            modifier = Modifier.size(56.dp),
+            modifier = Modifier.padding(horizontal = 2.dp).size(40.dp),
             colors = IconButtonDefaults.filledIconButtonColors(
                 containerColor = MaterialTheme.colorScheme.onSurface,
                 contentColor = MaterialTheme.colorScheme.surface,
@@ -318,21 +346,22 @@ private fun Controls(c: AppContainer, st: PlayerUiState, onZap: (() -> Unit)?) {
             Icon(
                 if (st.isPlaying) Icons.Outlined.Pause else Icons.Outlined.PlayArrow,
                 stringResource(if (st.isPlaying) R.string.pause else R.string.play),
-                Modifier.size(28.dp),
+                Modifier.size(22.dp),
             )
         }
-        IconButton(onClick = { c.player.skip(+1) }, enabled = canSkip, modifier = Modifier.size(44.dp)) {
-            Icon(Icons.Outlined.SkipNext, stringResource(R.string.skip_next), Modifier.size(28.dp))
+        IconButton(onClick = { c.player.skip(+1) }, enabled = canSkip, modifier = small) {
+            Icon(Icons.Outlined.SkipNext, stringResource(R.string.skip_next), Modifier.size(22.dp), tint = if (canSkip) Rs.colors.muted else Rs.colors.line)
         }
         IconButton(onClick = {
             when {
                 station != null -> c.library.toggleStation(station)
                 host != null -> c.library.toggleStreamer(host, np.subtitle, np.artworkUrl)
             }
-        }, enabled = favKey != null, modifier = Modifier.size(44.dp)) {
+        }, enabled = favKey != null, modifier = small) {
             Icon(
                 if (isFav) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                 stringResource(if (isFav) R.string.fav_remove else R.string.fav_add),
+                Modifier.size(20.dp),
                 tint = if (isFav) Rs.colors.live else Rs.colors.muted,
             )
         }

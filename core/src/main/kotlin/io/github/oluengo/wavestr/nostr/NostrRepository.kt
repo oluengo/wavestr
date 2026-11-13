@@ -72,6 +72,18 @@ class NostrRepository(private val pool: RelayPool) {
         return list
     }
 
+    /**
+     * Lista de seguidos (kind 3) completa y lo más reciente posible, para editarla: se busca en los
+     * indexadores y en los relays de lectura y de escritura del usuario. null si no aparece en ninguno.
+     */
+    suspend fun contactList(pubkey: String): Event? = pool.query(
+        (RelayPool.INDEXERS + relaysFor(pubkey) + ownRelays(pubkey)).distinct(),
+        listOf(Filter(kinds = listOf(Kinds.CONTACTS), authors = listOf(pubkey), limit = 1)),
+    ).filter { it.pubkey == pubkey && it.kind == Kinds.CONTACTS }.maxByOrNull { it.createdAt }
+
+    /** Tras publicar una lista nueva, la caché pasa a ser esa. */
+    fun rememberFollows(pubkey: String, list: Event) { followCache[pubkey] = list.followedPubkeys() }
+
     /** Directos de la gente que sigues: como anfitrión (#p) o como autor del evento. */
     suspend fun liveFromFollows(pubkey: String, refresh: Boolean = false): List<LiveStream> {
         val follows = follows(pubkey, refresh)
