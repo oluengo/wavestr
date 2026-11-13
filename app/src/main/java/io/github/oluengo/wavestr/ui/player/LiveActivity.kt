@@ -4,6 +4,7 @@ package io.github.oluengo.wavestr.ui.player
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,12 +21,10 @@ import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.outlined.AddReaction
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -294,9 +294,31 @@ fun ReactButton(vm: LiveActivityViewModel, line: LiveActivityViewModel.Line?, mo
     }
 }
 
-/** Escribir en el chat del stream (kind 1311), firmado con Amber o con el firmante remoto. */
+/** ¿Se puede escribir en el chat de este stream? (con Amber o bunker). null mientras se cargan los ajustes. */
 @Composable
-fun ChatInput(vm: LiveActivityViewModel, c: AppContainer) {
+fun rememberCanWriteChat(vm: LiveActivityViewModel, c: AppContainer): Boolean? {
+    val st by vm.state.collectAsStateWithLifecycle()
+    val s by c.settings.flow.collectAsStateWithLifecycle(initialValue = null)
+    val loaded = s ?: return null
+    return loaded.pubkey != null && loaded.loginMethod.canSign && st.address != null
+}
+
+/** Aviso, en pequeño, de que para escribir hace falta Amber o bunker. */
+@Composable
+fun ChatNeedsSigner() {
+    Text(
+        stringResource(R.string.chat_needs_amber),
+        color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall,
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 4.dp),
+    )
+}
+
+/**
+ * Caja del chat (kind 1311), firmada con Amber o con el firmante remoto: una píldora a todo el ancho
+ * con el botón de enviar dentro; crece hasta tres líneas.
+ */
+@Composable
+fun ChatField(vm: LiveActivityViewModel, c: AppContainer, modifier: Modifier = Modifier) {
     val st by vm.state.collectAsStateWithLifecycle()
     val address = st.address
     val s by c.settings.flow.collectAsStateWithLifecycle(initialValue = null)
@@ -305,43 +327,49 @@ fun ChatInput(vm: LiveActivityViewModel, c: AppContainer) {
     var text by rememberSaveable { mutableStateOf("") }
     var sending by remember { mutableStateOf(false) }
     val me = s?.pubkey
-    val canWrite = me != null && s?.loginMethod?.canSign == true && address != null
     val failed = stringResource(R.string.chat_failed)
     val myName = io.github.oluengo.wavestr.ui.common.rememberMyProfile(c).second?.bestName ?: me?.let { Nip19.shortNpub(it) } ?: ""
-
-    if (!canWrite) {
-        if (s != null && address != null) Text(
-            stringResource(R.string.chat_needs_amber),
-            color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 10.dp),
-        )
-        return
-    }
-    Row(
-        Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface).padding(horizontal = 12.dp, vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        OutlinedTextField(
-            value = text, onValueChange = { text = it.take(500) },
-            placeholder = { Text(stringResource(R.string.chat_hint)) }, singleLine = false, maxLines = 3,
-            textStyle = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f),
-        )
-        FilledIconButton(
-            enabled = text.isNotBlank() && !sending,
-            onClick = {
-                val content = text.trim()
-                val unsigned = EventSigning.unsigned(me!!, Kinds.LIVE_CHAT, listOf(listOf("a", address!!, "", "root")), content)
-                sending = true
-                scope.launch {
-                    val signed = c.signer.sign(unsigned)
-                    val ok = signed != null && vm.publish(signed, me)
-                    sending = false
-                    if (ok) { vm.addLocal(signed!!, myName); text = "" }
-                    else if (signed != null) Toast.makeText(ctx, failed, Toast.LENGTH_LONG).show()
-                }
-            },
-        ) {
-            Icon(Icons.AutoMirrored.Outlined.Send, stringResource(R.string.chat_send))
+    val send = {
+        if (me != null && address != null && text.isNotBlank() && !sending) {
+            val content = text.trim()
+            val unsigned = EventSigning.unsigned(me, Kinds.LIVE_CHAT, listOf(listOf("a", address, "", "root")), content)
+            sending = true
+            scope.launch {
+                val signed = c.signer.sign(unsigned)
+                val ok = signed != null && vm.publish(signed, me)
+                sending = false
+                if (ok) { vm.addLocal(signed!!, myName); text = "" }
+                else if (signed != null) Toast.makeText(ctx, failed, Toast.LENGTH_LONG).show()
+            }
         }
     }
+    val ink = MaterialTheme.colorScheme.onSurface
+    androidx.compose.foundation.text.BasicTextField(
+        value = text, onValueChange = { text = it.take(500) },
+        maxLines = 3,
+        textStyle = MaterialTheme.typography.bodyMedium.copy(color = ink),
+        cursorBrush = androidx.compose.ui.graphics.SolidColor(MaterialTheme.colorScheme.primary),
+        modifier = modifier,
+        decorationBox = { inner ->
+            Row(
+                Modifier
+                    .heightIn(min = 44.dp)
+                    .background(MaterialTheme.colorScheme.surfaceContainer, RoundedCornerShape(22.dp))
+                    .border(1.dp, Rs.colors.line, RoundedCornerShape(22.dp))
+                    .padding(start = 16.dp, end = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(Modifier.weight(1f).padding(vertical = 10.dp)) {
+                    if (text.isEmpty()) Text(stringResource(R.string.chat_hint), color = Rs.colors.muted, style = MaterialTheme.typography.bodyMedium, maxLines = 1)
+                    inner()
+                }
+                IconButton(onClick = send, enabled = text.isNotBlank() && !sending, modifier = Modifier.size(40.dp)) {
+                    Icon(
+                        Icons.AutoMirrored.Outlined.Send, stringResource(R.string.chat_send), Modifier.size(20.dp),
+                        tint = if (text.isNotBlank() && !sending) MaterialTheme.colorScheme.primary else Rs.colors.muted,
+                    )
+                }
+            }
+        },
+    )
 }

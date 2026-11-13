@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.12.0
+
+- **More compact player:** a slim bar at the bottom with zap, previous, play, next and favourite, and the full-width chat box below it, leaving more room for the chat.
+- **Follow and unfollow** the streamer from the player and from their profile (NIP-02, with Amber or a bunker). The rest of your follow list is kept; if it isn't found on your relays, the app asks before creating a new one.
+- **Fixed:** if Android closed the app in the background (for example, when opening YouTube), coming back showed the player with "Nothing playing". It now goes back and leaves the last station ready to play.
+
 ## Web (new)
 
 - **Web app and PWA** at <https://oluengo.github.io/wavestr/app/>: radio (https stations only), streams with video, chat, reactions and zaps (NWC, WebLN or QR), favourites with folders and encrypted sync, sharing and import, upcoming with reminders, volume boost and sleep timer.

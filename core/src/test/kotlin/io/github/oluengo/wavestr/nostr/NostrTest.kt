@@ -103,4 +103,16 @@ class NostrTest {
         assertEquals(null, RelayPool.normalize("relay"))
         assertEquals(null, RelayPool.normalize("wss://a b.com"))
     }
+
+    @Test fun followEditKeepsTheRestOfTheList() {
+        val a = "a".repeat(64); val b = "b".repeat(64); val c = "c".repeat(64)
+        val cur = Event("id", "f".repeat(64), 1, Kinds.CONTACTS,
+            listOf(listOf("p", a, "wss://r", "ana"), listOf("t", "music"), listOf("p", b)), "{\"wss://x\":{}}")
+        val (tags, content) = followEdit(cur, c, true)
+        assertEquals(cur.tags + listOf(listOf("p", c)), tags)
+        assertEquals(cur.content, content)
+        assertEquals(cur.tags, followEdit(cur, a.uppercase(), true).first)
+        assertEquals(listOf(listOf("t", "music"), listOf("p", b)), followEdit(cur, a, false).first)
+        assertEquals(listOf(listOf("p", c)) to "", followEdit(null, c, true))
+    }
 }

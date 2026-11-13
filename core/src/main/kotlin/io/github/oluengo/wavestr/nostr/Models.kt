@@ -108,3 +108,16 @@ fun Event.writeRelays(): List<String> =
 /** Pubkeys seguidas de una lista kind 3. */
 fun Event.followedPubkeys(): List<String> =
     tagValues("p").map { it.lowercase() }.filter { it.length == 64 }.distinct()
+
+/**
+ * Seguir o dejar de seguir a [target] partiendo de la lista actual ([current], kind 3): se conservan
+ * el resto de etiquetas (seguidos con relay y apodo, hashtags…) y el contenido (relays antiguos).
+ * Devuelve las etiquetas y el contenido de la lista nueva.
+ */
+fun followEdit(current: Event?, target: String, follow: Boolean): Pair<List<List<String>>, String> {
+    val t = target.lowercase()
+    val tags = current?.tags.orEmpty()
+    val isTarget = { tag: List<String> -> tag.size > 1 && tag[0] == "p" && tag[1].lowercase() == t }
+    val out = if (follow) (if (tags.any(isTarget)) tags else tags + listOf(listOf("p", t))) else tags.filterNot(isTarget)
+    return out to current?.content.orEmpty()
+}

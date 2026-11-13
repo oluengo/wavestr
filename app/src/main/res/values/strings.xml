@@ -493,4 +493,11 @@
     <string name="web_open_web">Open in the web app</string>
     <string name="web_login_prompt">Sign in to see the streams of people you follow, or browse Global.</string>
     <string name="web_npub_explain">Or just look around with your npub (read-only).</string>
+    <string name="follow_button">Follow</string>
+    <string name="following_button">Following</string>
+    <string name="follow_needs_signer">Sign in with Amber or a bunker to follow people.</string>
+    <string name="follow_failed">Couldn\'t update your follow list. Try again.</string>
+    <string name="follow_new_list_title">Create a follow list?</string>
+    <string name="follow_new_list_body">Your follow list wasn\'t found on your relays. If you continue, a new one will be created with just this account; if you follow people from another app, that list could be replaced.</string>
+    <string name="follow_create">Create and follow</string>
 </resources>

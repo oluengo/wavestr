@@ -279,8 +279,14 @@ class PlayerConnection(
     fun togglePlay() {
         scope.launch {
             val c = ensureController()
-            if (_state.value.nowPlaying == null && c.mediaItemCount == 0) {
-                lastStation()?.let { playStation(it) }
+            if (c.mediaItemCount == 0) {
+                // Nada cargado (p. ej. Android cerró la app): la radio preparada o, si no, la última.
+                val np = _state.value.nowPlaying
+                when {
+                    np?.station != null -> playStation(np.station)
+                    np == null -> lastStation()?.let { playStation(it) }
+                    else -> play(np)
+                }
                 return@launch
             }
             if (c.isPlaying) c.pause() else {
@@ -309,6 +315,23 @@ class PlayerConnection(
     /** Última emisora escuchada (para el widget cuando no suena nada). */
     fun lastStation(): Station? = lastPrefs.getString("last_station", null)?.let { s ->
         runCatching { io.github.oluengo.wavestr.data.Library.stationFrom(io.github.oluengo.wavestr.nostr.NostrJson.parseToJsonElement(s)) }.getOrNull()
+    }
+
+    /**
+     * Tras cerrar Android la app en segundo plano no queda nada cargado. Deja preparada (en pausa)
+     * la última emisora para reanudarla con play. Devuelve si había alguna.
+     */
+    fun restoreLast(): Boolean {
+        if (_state.value.nowPlaying != null) return true
+        val st = lastStation() ?: return false
+        _state.update {
+            it.copy(nowPlaying = NowPlaying(
+                id = st.id, url = Stations.pick(st, variantChoice[st.id], isCellular()).url, title = st.name,
+                subtitle = st.country.orEmpty(), artworkUrl = st.favicon, hostPubkey = null,
+                hasVideo = false, isLive = false, station = st,
+            ), isPlaying = false)
+        }
+        return true
     }
 
     fun stop() {

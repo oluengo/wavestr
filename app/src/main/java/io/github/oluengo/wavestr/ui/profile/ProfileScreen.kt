@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -136,11 +137,15 @@ fun ProfileScreen(c: AppContainer, pubkey: String, onBack: () -> Unit, onPlay: (
         }
         item {
             Column(Modifier.padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Artwork(
-                    p?.picture, pubkey,
-                    Modifier.offset(y = (-40).dp).size(84.dp).border(4.dp, MaterialTheme.colorScheme.background, CircleShape),
-                    corner = 42.dp,
-                )
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
+                    Artwork(
+                        p?.picture, pubkey,
+                        Modifier.offset(y = (-40).dp).size(84.dp).border(4.dp, MaterialTheme.colorScheme.background, CircleShape),
+                        corner = 42.dp,
+                    )
+                    Spacer(Modifier.weight(1f))
+                    io.github.oluengo.wavestr.ui.common.FollowButton(c, pubkey, Modifier.padding(top = 10.dp))
+                }
                 Column(Modifier.offset(y = (-40).dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(name, style = MaterialTheme.typography.headlineMedium)
                     p?.nip05?.let { Text("✓ $it", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold) }
