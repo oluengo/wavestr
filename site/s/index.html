@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Wavestr · Compartido</title>
+<title>Wavestr · Shared</title>
 <link rel="icon" href="../icon.svg">
 <style>
   :root { --bg:#f6f6f9; --card:#fff; --ink:#16151d; --mute:#6b6a78; --line:#e7e6ee; --acc:#e0457b; --acc2:#f59e0b; --btn:#16151d; --btnInk:#fff; }
@@ -41,23 +41,10 @@
   <main id="app"></main>
 </div>
 <script>
-const L = (navigator.language || 'es').slice(0, 2);
-const D = {
-  es: { title: 'Te han compartido', open: 'Abrir en Wavestr', web: 'Abrir en la web', m3u: 'Descargar M3U', get: 'Instalar Wavestr', station: 'Radio', streamer: 'Streamer de Nostr',
-        st: n => n === 1 ? '1 emisora' : n + ' emisoras', sm: n => n === 1 ? '1 streamer' : n + ' streamers', and: ' y ',
-        note: 'Con Wavestr instalada (Android), «Abrir en Wavestr» te deja elegir qué añadir a tus favoritos. La lista M3U funciona en VLC y otros reproductores.',
-        bad: 'Este enlace no se puede leer. Puede que esté incompleto: pide que te lo vuelvan a enviar.', favs: 'Favoritos' },
-  ca: { title: 'T’han compartit', open: 'Obre a Wavestr', web: 'Obre al web', m3u: 'Baixa la M3U', get: 'Instal·la Wavestr', station: 'Ràdio', streamer: 'Streamer de Nostr',
-        st: n => n === 1 ? '1 emissora' : n + ' emissores', sm: n => n === 1 ? '1 streamer' : n + ' streamers', and: ' i ',
-        note: 'Amb Wavestr instal·lada (Android), «Obre a Wavestr» et deixa triar què afegir als preferits. La llista M3U funciona amb VLC i altres reproductors.',
-        bad: 'Aquest enllaç no es pot llegir. Potser està incomplet: demana que te’l tornin a enviar.', favs: 'Preferits' },
-  en: { title: 'Shared with you', open: 'Open in Wavestr', web: 'Open on the web', m3u: 'Download M3U', get: 'Get Wavestr', station: 'Radio', streamer: 'Nostr streamer',
-        st: n => n === 1 ? '1 radio station' : n + ' radio stations', sm: n => n === 1 ? '1 streamer' : n + ' streamers', and: ' and ',
-        note: 'With Wavestr installed (Android), “Open in Wavestr” lets you pick what to add to your favorites. The M3U playlist works in VLC and other players.',
-        bad: 'This link can’t be read. It may be incomplete: ask for it to be sent again.', favs: 'Favorites' },
-};
-const tr = D[L] || D.en;
-document.documentElement.lang = D[L] ? L : 'en';
+const tr = { title: 'Shared with you', open: 'Open in Wavestr', web: 'Open on the web', m3u: 'Download M3U', get: 'Get Wavestr', station: 'Radio', streamer: 'Nostr streamer',
+  st: n => n === 1 ? '1 radio station' : n + ' radio stations', sm: n => n === 1 ? '1 streamer' : n + ' streamers', and: ' and ',
+  note: 'With Wavestr installed (Android), “Open in Wavestr” lets you pick what to add to your favourites. The M3U playlist works in VLC and other players.',
+  bad: 'This link can’t be read. It may be incomplete: ask for it to be sent again.', favs: 'Favourites' };
 
 const app = document.getElementById('app');
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -103,7 +90,7 @@ function row(x) {
   const ns = d.x.filter(x => x.s).length, nh = d.x.length - ns;
   const summary = [ns ? tr.st(ns) : null, nh ? tr.sm(nh) : null].filter(Boolean).join(tr.and);
 
-  // Sueltos primero; luego cada carpeta (con su ruta) en orden de árbol.
+  // Loose items first, then each folder (with its path) in tree order.
   const folders = d.f || [];
   const byParent = p => folders.filter(f => (f.p || null) === p).sort((a, b) => a.n.localeCompare(b.n));
   const pathOf = id => { const out = []; let x = folders.find(f => f.i === id); const seen = new Set(); while (x && !seen.has(x.i)) { seen.add(x.i); out.unshift(x.n); x = folders.find(f => f.i === x.p); } return out.join(' / '); };
