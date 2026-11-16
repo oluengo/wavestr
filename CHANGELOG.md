@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.13.1
+
+- **Remove a streamer from favourites while they're offline:** the item options now show Share, View profile and Remove from favourites at the top, with the folders below. The streamer's profile also has a favourite button next to Follow.
+
 ## 0.13.0
 
 - **Post on Nostr when sharing:** if you're signed in with Amber or a bunker, sharing a station, a folder or your favourites can write the note directly from your account, in the app's language, with the link (and a mention if it's a streamer). You can edit it before posting.
