@@ -34,6 +34,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -144,6 +146,19 @@ fun ProfileScreen(c: AppContainer, pubkey: String, onBack: () -> Unit, onPlay: (
                         corner = 42.dp,
                     )
                     Spacer(Modifier.weight(1f))
+                    // Favorito (emita o no) y seguir.
+                    val lib by c.library.library.collectAsStateWithLifecycle()
+                    val isFav = lib.isFavorite("npub:$pubkey")
+                    androidx.compose.material3.IconButton(
+                        onClick = { c.library.toggleStreamer(pubkey, name, p?.picture) },
+                        modifier = Modifier.padding(top = 4.dp, end = 4.dp),
+                    ) {
+                        androidx.compose.material3.Icon(
+                            if (isFav) androidx.compose.material.icons.Icons.Filled.Favorite else androidx.compose.material.icons.Icons.Outlined.FavoriteBorder,
+                            stringResource(if (isFav) R.string.fav_remove else R.string.fav_add),
+                            tint = if (isFav) Rs.colors.live else Rs.colors.muted,
+                        )
+                    }
                     io.github.oluengo.wavestr.ui.common.FollowButton(c, pubkey, Modifier.padding(top = 10.dp))
                 }
                 Column(Modifier.offset(y = (-40).dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {

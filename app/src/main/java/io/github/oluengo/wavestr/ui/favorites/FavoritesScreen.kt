@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CreateNewFolder
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Share
@@ -281,21 +282,26 @@ private fun FolderOptionsDialog(f: Folder, onRename: (String) -> Unit, onDelete:
 
 @Composable
 private fun MoveDialog(lib: Library, item: FavItem, onMove: (String?) -> Unit, onRemove: () -> Unit, onShare: () -> Unit, onProfile: (() -> Unit)?, onDismiss: () -> Unit) {
+    // Opciones del favorito: arriba compartir, ver perfil y quitar (siempre a la vista, emita o no);
+    // debajo, a qué carpeta moverlo.
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.fav_move_to)) },
+        title = { Text(item.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         text = {
-            Column(Modifier.heightIn(max = 420.dp).verticalScroll(rememberScrollState())) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(item.title, color = Rs.colors.muted, modifier = Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Column(Modifier.heightIn(max = 460.dp).verticalScroll(rememberScrollState())) {
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     TextButton(onClick = onShare) {
-                        Icon(Icons.Outlined.Share, null, Modifier.size(18.dp)); Text(stringResource(R.string.share), Modifier.padding(start = 8.dp))
+                        Icon(Icons.Outlined.Share, null, Modifier.size(18.dp)); Text(stringResource(R.string.share), Modifier.padding(start = 6.dp))
                     }
+                    if (onProfile != null) TextButton(onClick = onProfile) { Text(stringResource(R.string.view_profile)) }
                 }
-                if (onProfile != null) TextButton(onClick = onProfile) { Text(stringResource(R.string.view_profile)) }
+                TextButton(onClick = onRemove) {
+                    Icon(Icons.Outlined.Delete, null, Modifier.size(18.dp), tint = Rs.colors.live)
+                    Text(stringResource(R.string.fav_remove), Modifier.padding(start = 6.dp), color = Rs.colors.live)
+                }
+                Text(stringResource(R.string.fav_move_to), color = Rs.colors.muted, style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(start = 12.dp, top = 10.dp, bottom = 2.dp))
                 DestRow(stringResource(R.string.fav_no_folder), 0, item.folderId == null) { onMove(null) }
                 lib.tree().forEach { (f, depth) -> DestRow(f.name, depth + 1, item.folderId == f.id) { onMove(f.id) } }
-                TextButton(onClick = onRemove, modifier = Modifier.padding(top = 8.dp)) { Text(stringResource(R.string.fav_remove), color = Rs.colors.live) }
             }
         },
         confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
