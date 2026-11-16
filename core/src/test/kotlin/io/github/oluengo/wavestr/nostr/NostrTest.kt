@@ -115,4 +115,10 @@ class NostrTest {
         assertEquals(listOf(listOf("t", "music"), listOf("p", b)), followEdit(cur, a, false).first)
         assertEquals(listOf(listOf("p", c)) to "", followEdit(null, c, true))
     }
+
+    @Test fun noteTagsFromText() {
+        val pk = "a".repeat(64); val npub = Nip19.hexToNpub(pk)
+        val tags = noteTags("Radio Paradise on Wavestr https://x.y/s/#ab12 nostr:$npub #Wavestr #radio #wavestr")
+        assertEquals(listOf(listOf("p", pk), listOf("t", "wavestr"), listOf("t", "radio")), tags)
+    }
 }

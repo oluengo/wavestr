@@ -121,3 +121,13 @@ fun followEdit(current: Event?, target: String, follow: Boolean): Pair<List<List
     val out = if (follow) (if (tags.any(isTarget)) tags else tags + listOf(listOf("p", t))) else tags.filterNot(isTarget)
     return out to current?.content.orEmpty()
 }
+
+/**
+ * Etiquetas de una nota (kind 1) a partir de su texto: cada #hashtag como «t» (en minúsculas) y cada
+ * mención nostr:npub… como «p» (NIP-27), sin repetir.
+ */
+fun noteTags(content: String): List<List<String>> {
+    val t = Regex("""(?<![\p{L}\p{N}_/#])#([\p{L}\p{N}_]+)""").findAll(content).map { it.groupValues[1].lowercase() }.distinct()
+    val p = Regex("""nostr:(npub1[02-9ac-hj-np-z]+)""").findAll(content).mapNotNull { Nip19.npubToHex(it.groupValues[1]) }.distinct()
+    return p.map { listOf("p", it) }.toList() + t.map { listOf("t", it) }.toList()
+}

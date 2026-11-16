@@ -184,7 +184,7 @@ fun FavoritesScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenProfile: (S
             onProfile = d.item.hostPubkey?.let { h -> { dialog = null; onOpenProfile(h) } },
             onDismiss = { dialog = null },
         )
-        is Dialog.Share -> io.github.oluengo.wavestr.ui.common.ShareDialog(d.shared, onDismiss = { dialog = null })
+        is Dialog.Share -> io.github.oluengo.wavestr.ui.common.ShareDialog(c, d.shared, onDismiss = { dialog = null })
     }
 }
 

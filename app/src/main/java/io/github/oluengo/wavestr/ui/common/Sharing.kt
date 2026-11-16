@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.QueueMusic
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material.icons.automirrored.outlined.Notes
@@ -23,12 +24,14 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,7 +49,14 @@ import io.github.oluengo.wavestr.AppContainer
 import io.github.oluengo.wavestr.R
 import io.github.oluengo.wavestr.data.FavItem
 import io.github.oluengo.wavestr.data.Shared
+import io.github.oluengo.wavestr.nostr.EventSigning
+import io.github.oluengo.wavestr.nostr.Kinds
+import io.github.oluengo.wavestr.nostr.Nip19
+import io.github.oluengo.wavestr.nostr.RelayPool
+import io.github.oluengo.wavestr.nostr.canSign
+import io.github.oluengo.wavestr.nostr.noteTags
 import io.github.oluengo.wavestr.ui.theme.Rs
+import kotlinx.coroutines.launch
 import java.io.File
 import java.util.UUID
 
@@ -60,10 +70,13 @@ fun sharedSummary(sh: Shared): String {
     return parts.joinToString(stringResource(R.string.share_and))
 }
 
-/** Elegir cómo compartir: enlace, lista M3U o texto. */
+/** Elegir cómo compartir: en Nostr (si hay cuenta), enlace, lista M3U o texto. */
 @Composable
-fun ShareDialog(shared: Shared, onDismiss: () -> Unit) {
+fun ShareDialog(c: AppContainer, shared: Shared, onDismiss: () -> Unit) {
     val ctx = LocalContext.current
+    val settings by c.settings.flow.collectAsStateWithLifecycle(initialValue = null)
+    var composing by remember { mutableStateOf(false) }
+    if (composing) { NostrPostDialog(c, shared, onDismiss); return }
     if (shared.items.isEmpty()) {
         AlertDialog(
             onDismissRequest = onDismiss,
@@ -79,6 +92,15 @@ fun ShareDialog(shared: Shared, onDismiss: () -> Unit) {
         text = {
             Column {
                 Text(sharedSummary(shared), color = Rs.colors.muted, modifier = Modifier.padding(bottom = 8.dp))
+                // Con cuenta de Nostr: escribir la nota directamente, sin copiar y pegar.
+                settings?.takeIf { it.pubkey != null }?.let { s ->
+                    val canSign = s.loginMethod.canSign
+                    ShareOption(
+                        Icons.Outlined.Edit, R.string.share_nostr,
+                        stringResource(if (canSign) R.string.share_nostr_sub else R.string.share_nostr_needs_signer),
+                        enabled = canSign,
+                    ) { composing = true }
+                }
                 ShareOption(Icons.Outlined.Link, R.string.share_link, stringResource(R.string.share_link_sub)) {
                     sendText(ctx, shared.name, ctx.getString(R.string.share_link_text, shared.name, shared.link())); onDismiss()
                 }
@@ -110,6 +132,55 @@ private fun ShareOption(icon: ImageVector, title: Int, sub: String, enabled: Boo
             Text(sub, color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
         }
     }
+}
+
+/**
+ * Nota de Nostr (kind 1) ya escrita en el idioma de la app, con el enlace y, si es un streamer, su
+ * mención; se puede editar antes de publicar. Se firma con Amber o bunker y se publica en tus relays.
+ */
+@Composable
+private fun NostrPostDialog(c: AppContainer, shared: Shared, onDismiss: () -> Unit) {
+    val ctx = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val settings by c.settings.flow.collectAsStateWithLifecycle(initialValue = null)
+    val host = shared.items.singleOrNull()?.hostPubkey
+    val initial = buildString {
+        append(stringResource(if (shared.kind == Shared.Kind.ITEM) R.string.share_nostr_text else R.string.share_nostr_text_list, shared.name, shared.link()))
+        if (host != null) append("\nnostr:").append(Nip19.hexToNpub(host))
+        append("\n\n#wavestr")
+    }
+    var text by remember { mutableStateOf(initial) }
+    var sending by remember { mutableStateOf(false) }
+    val done = stringResource(R.string.share_nostr_done)
+    val failed = stringResource(R.string.share_nostr_failed)
+    AlertDialog(
+        onDismissRequest = { if (!sending) onDismiss() },
+        title = { Text(stringResource(R.string.share_nostr)) },
+        text = {
+            OutlinedTextField(
+                value = text, onValueChange = { text = it.take(2000) },
+                modifier = Modifier.fillMaxWidth().heightIn(min = 140.dp),
+                enabled = !sending,
+            )
+        },
+        confirmButton = {
+            TextButton(enabled = text.isNotBlank() && !sending, onClick = {
+                val me = settings?.pubkey ?: return@TextButton
+                val content = text.trim()
+                sending = true
+                scope.launch {
+                    val signed = c.signer.sign(EventSigning.unsigned(me, Kinds.TEXT_NOTE, noteTags(content), content))
+                    if (signed == null) { sending = false; return@launch }
+                    val relays = runCatching { c.nostr.ownRelays(me) }.getOrNull().orEmpty().ifEmpty { RelayPool.DEFAULT }
+                    val ok = runCatching { c.relays.publish(relays, signed) > 0 }.getOrDefault(false)
+                    sending = false
+                    Toast.makeText(ctx, if (ok) done else failed, Toast.LENGTH_LONG).show()
+                    if (ok) onDismiss()
+                }
+            }) { Text(stringResource(if (sending) R.string.share_nostr_sending else R.string.share_nostr_post)) }
+        },
+        dismissButton = { TextButton(enabled = !sending, onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
 }
 
 private fun sendText(ctx: Context, subject: String, text: String) {

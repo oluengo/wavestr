@@ -499,4 +499,13 @@
     <string name="follow_new_list_title">¿Crear lista de seguidos?</string>
     <string name="follow_new_list_body">No se encuentra tu lista de seguidos en tus relays. Si continúas, se creará una nueva solo con esta cuenta; si sigues a gente desde otra app, esa lista podría sustituirse.</string>
     <string name="follow_create">Crear y seguir</string>
+    <string name="share_nostr">Publicar en Nostr</string>
+    <string name="share_nostr_sub">Una nota con el enlace, desde tu cuenta. Puedes editarla antes.</string>
+    <string name="share_nostr_needs_signer">Entra con Amber o con un bunker para publicar.</string>
+    <string name="share_nostr_text">Escuchando %1$s en Wavestr 📻\n%2$s</string>
+    <string name="share_nostr_post">Publicar</string>
+    <string name="share_nostr_sending">Publicando…</string>
+    <string name="share_nostr_done">Publicado en Nostr</string>
+    <string name="share_nostr_failed">No se ha podido publicar. Inténtalo otra vez.</string>
+    <string name="share_nostr_text_list">Mi lista «%1$s» en Wavestr 📻\n%2$s</string>
 </resources>

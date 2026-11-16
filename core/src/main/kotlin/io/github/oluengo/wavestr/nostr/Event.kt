@@ -89,6 +89,7 @@ data class Filter(
 
 object Kinds {
     const val METADATA = 0
+    const val TEXT_NOTE = 1
     const val CONTACTS = 3
     const val ZAP_REQUEST = 9734
     const val ZAP_RECEIPT = 9735

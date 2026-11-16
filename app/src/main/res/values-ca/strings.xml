@@ -499,4 +499,13 @@
     <string name="follow_new_list_title">Crear la llista de seguits?</string>
     <string name="follow_new_list_body">No es troba la teva llista de seguits als teus relays. Si continues, se\'n crearà una de nova només amb aquest compte; si segueixes gent des d\'una altra app, aquesta llista es podria substituir.</string>
     <string name="follow_create">Crea i segueix</string>
+    <string name="share_nostr">Publica a Nostr</string>
+    <string name="share_nostr_sub">Una nota amb l’enllaç, des del teu compte. La pots editar abans.</string>
+    <string name="share_nostr_needs_signer">Entra amb Amber o amb un bunker per publicar.</string>
+    <string name="share_nostr_text">Escoltant %1$s a Wavestr 📻\n%2$s</string>
+    <string name="share_nostr_post">Publica</string>
+    <string name="share_nostr_sending">Publicant…</string>
+    <string name="share_nostr_done">Publicat a Nostr</string>
+    <string name="share_nostr_failed">No s\'ha pogut publicar. Torna-ho a provar.</string>
+    <string name="share_nostr_text_list">La meva llista «%1$s» a Wavestr 📻\n%2$s</string>
 </resources>

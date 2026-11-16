@@ -500,4 +500,13 @@
     <string name="follow_new_list_title">Create a follow list?</string>
     <string name="follow_new_list_body">Your follow list wasn\'t found on your relays. If you continue, a new one will be created with just this account; if you follow people from another app, that list could be replaced.</string>
     <string name="follow_create">Create and follow</string>
+    <string name="share_nostr">Post on Nostr</string>
+    <string name="share_nostr_sub">A note with the link, from your account. You can edit it first.</string>
+    <string name="share_nostr_needs_signer">Sign in with Amber or a bunker to post.</string>
+    <string name="share_nostr_text">Listening to %1$s on Wavestr 📻\n%2$s</string>
+    <string name="share_nostr_post">Post</string>
+    <string name="share_nostr_sending">Posting…</string>
+    <string name="share_nostr_done">Posted on Nostr</string>
+    <string name="share_nostr_failed">Couldn\'t post. Try again.</string>
+    <string name="share_nostr_text_list">My list “%1$s” on Wavestr 📻\n%2$s</string>
 </resources>

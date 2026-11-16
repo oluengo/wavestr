@@ -102,7 +102,7 @@ fun PlayerScreen(c: AppContainer, onClose: (() -> Unit)?, onOpenProfile: (String
     var zap by remember { mutableStateOf<io.github.oluengo.wavestr.ui.zap.ZapViewModel.Target?>(null) }
     var shareOpen by remember { mutableStateOf<io.github.oluengo.wavestr.data.Shared?>(null) }
     var fullscreen by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
-    shareOpen?.let { io.github.oluengo.wavestr.ui.common.ShareDialog(it, onDismiss = { shareOpen = null }) }
+    shareOpen?.let { io.github.oluengo.wavestr.ui.common.ShareDialog(c, it, onDismiss = { shareOpen = null }) }
     val streamZap = np?.takeIf { it.isLive }?.hostPubkey?.let { h -> { zap = io.github.oluengo.wavestr.ui.zap.ZapViewModel.Target(h, np.subtitle, liveAddress, np.title) } }
     @kotlin.OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
     val typing = androidx.compose.foundation.layout.WindowInsets.isImeVisible
