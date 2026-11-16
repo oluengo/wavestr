@@ -1,8 +1,9 @@
 # Changelog
 
-## Next
+## 0.13.0
 
 - **Post on Nostr when sharing:** if you're signed in with Amber or a bunker, sharing a station, a folder or your favourites can write the note directly from your account, in the app's language, with the link (and a mention if it's a streamer). You can edit it before posting.
+- **Player bar:** previous, play and next stay centred whether or not there is a zap button.
 
 ## 0.12.0
 
