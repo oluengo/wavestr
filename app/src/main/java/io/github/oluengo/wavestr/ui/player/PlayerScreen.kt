@@ -314,9 +314,10 @@ private fun Info(c: AppContainer, st: PlayerUiState, onOpenProfile: (String) -> 
 private fun PlayerBar(c: AppContainer, st: PlayerUiState, onZap: (() -> Unit)?) {
     val np = st.nowPlaying ?: return
     val lib by c.library.library.collectAsStateWithLifecycle()
+    // Tres bloques: zap | anterior · play · siguiente | favorito. Los laterales ocupan lo mismo, así
+    // que el bloque central queda siempre en el centro, haya o no zap.
     Row(
         Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 6.dp),
-        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val station = np.station
@@ -324,10 +325,16 @@ private fun PlayerBar(c: AppContainer, st: PlayerUiState, onZap: (() -> Unit)?) 
         val favKey = station?.id ?: host?.let { "npub:$it" }
         val isFav = favKey != null && lib.isFavorite(favKey)
         val small = Modifier.size(36.dp)
-        if (onZap != null) IconButton(onClick = onZap, modifier = small) {
-            Icon(Icons.Filled.Bolt, stringResource(R.string.zap_button), Modifier.size(22.dp), tint = Rs.colors.zap)
+        Box(Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
+            if (onZap != null) IconButton(onClick = onZap, modifier = small) {
+                Icon(Icons.Filled.Bolt, stringResource(R.string.zap_button), Modifier.size(22.dp), tint = Rs.colors.zap)
+            }
         }
-        if (onZap != null) Spacer(Modifier.size(8.dp))
+        Row(
+            Modifier.padding(horizontal = 14.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
         // Anterior / siguiente: siempre visibles; desactivados si no hay lista por la que moverse.
         val canSkip = c.player.canSkip()
         IconButton(onClick = { c.player.skip(-1) }, enabled = canSkip, modifier = small) {
@@ -350,6 +357,8 @@ private fun PlayerBar(c: AppContainer, st: PlayerUiState, onZap: (() -> Unit)?) 
         IconButton(onClick = { c.player.skip(+1) }, enabled = canSkip, modifier = small) {
             Icon(Icons.Outlined.SkipNext, stringResource(R.string.skip_next), Modifier.size(22.dp), tint = if (canSkip) Rs.colors.muted else Rs.colors.line)
         }
+        }
+        Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
         IconButton(onClick = {
             when {
                 station != null -> c.library.toggleStation(station)
@@ -362,6 +371,7 @@ private fun PlayerBar(c: AppContainer, st: PlayerUiState, onZap: (() -> Unit)?) 
                 Modifier.size(20.dp),
                 tint = if (isFav) Rs.colors.live else Rs.colors.muted,
             )
+        }
         }
     }
 }
