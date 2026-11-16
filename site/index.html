@@ -292,11 +292,11 @@ const I = {
 		featTitle: "All your live audio in one place",
 		featLead: "What's live on Nostr and what radio stations broadcast, with the same favourites and the same player.",
 		features: [
-			["live", "Nostr streams", ["Live streams (NIP-53) from people you follow, or from all of Nostr.", "Audio-only or video without cutting the stream; switches to audio when the screen turns off.", "Stream chat and zaps in the player."]],
+			["live", "Nostr streams", ["Live streams (NIP-53) from people you follow, or from all of Nostr.", "Audio-only or video without cutting the stream; switches to audio when the screen turns off.", "Stream chat, reactions and zaps in the player; upcoming streams with reminders."]],
 			["radio", "Online radio", ["The free Radio Browser directory: popular, near you, by style and search.", "Import PLS and M3U playlists by link, text or file.", "Selectable quality, now playing and cover art."]],
-			["fav", "Favourites your way", ["Folders and subfolders for stations and streamers.", "Share them by link, M3U or text; import or export them.", "Optional: stored on Nostr, encrypted (NIP-78 + NIP-44)."]],
+			["fav", "Favourites your way", ["Folders and subfolders for stations and streamers.", "Share them by link, M3U or text, or post them on Nostr; import or export them.", "Optional: stored on Nostr, encrypted (NIP-78 + NIP-44)."]],
 			["car", "In the car and at home", ["Android Auto with voice search and previous/next.", "Home screen widgets and controls in the notification.", "Sleep timer and buffer against dropouts."]],
-			["zap", "Zaps", ["Support streamers with zaps via NWC.", "A monthly limit so there are no surprises.", "Sign in with Amber (NIP-55) or read-only with your npub."]],
+			["zap", "Zaps", ["Support streamers with zaps via NWC.", "A monthly limit so there are no surprises.", "Sign in with Amber (NIP-55), a bunker (NIP-46) or read-only with your npub."]],
 			["dice", "And more", ["Surprise button: radio, stream or both.", "Light, dark or automatic theme and an accent colour of your choice.", "Side navigation on tablets and wide screens."]]
 		],
 		shotsTitle: "Take a look", shotsLead: "Screenshots of the interactive mockup, with sample data.",
@@ -312,11 +312,11 @@ const I = {
 		autoLead: "Because it doesn't come from Google Play, Android Auto hides it until you allow it.",
 		autoSteps: ["Install Wavestr (0.10.0 or later) and open it once.", "Open the Android Auto settings on your phone (search “Android Auto” in Settings).", "Tap “Version” about 10 times and accept the prompt to enable developer mode.", "⋮ menu → Developer settings → turn on “Unknown sources”.", "Disconnect the phone, force stop Android Auto and reconnect.", "If it doesn't show up: Android Auto settings → Customise app menu → tick Wavestr."],
 		privTitle: "Your keys stay with you", privLead: "Wavestr has no accounts of its own and no server. It connects directly to Nostr relays, the radio directory and the stations you listen to.",
-		privacy: [["Never sees your private key", "Sign with Amber (NIP-55) or sign in read-only with your npub."], ["No tracking libraries", "No analytics or ads inside the app."], ["Favourites on your phone", "Storing them on Nostr is optional, and they're encrypted."], ["Zaps with a limit", "You set the monthly cap the app can spend through NWC."]],
+		privacy: [["Never sees your private key", "Sign with Amber (NIP-55) or a bunker (NIP-46), or sign in read-only with your npub."], ["No tracking libraries", "No analytics or ads inside the app."], ["Favourites on your phone", "Storing them on Nostr is optional, and they're encrypted."], ["Zaps with a limit", "You set the monthly cap the app can spend through NWC."]],
 		faqTitle: "FAQ",
 		faq: [
 			["How much does it cost?", "Nothing. Wavestr is free, with no ads or purchases. Zaps are optional and go straight to the streamer."],
-			["Do I need a Nostr account?", "Not to listen to radio or streams from all of Nostr. With your npub you see live streams from people you follow; with Amber you can chat and store favourites on Nostr."],
+			["Do I need a Nostr account?", "Not to listen to radio or streams from all of Nostr. With your npub you see live streams from people you follow; with Amber or a bunker you can chat, post and store favourites on Nostr."],
 			["Why isn't it on Google Play?", "It's published on GitHub and installed with Obtainium or the APK, the same choice as Usus."],
 			["Is there a desktop version?", "Yes: the web app runs in any browser. And Linux and Windows versions are in beta (they need VLC), in Wavestr Beta."],
 			["Is there a beta?", "Yes: Wavestr Beta, with the latest changes before each release. It installs alongside the regular app, with its own data, and may have bugs. In Obtainium, turn on “include pre-releases”."],
