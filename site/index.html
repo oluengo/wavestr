@@ -152,6 +152,17 @@ footer .links a:hover { color: var(--accent); }
 	.hero { padding-top: 6rem; }
 }
 .top nav .navlink.more { display: inline-flex; white-space: nowrap; }
+.opts { list-style: none; padding-left: 0 !important; margin: .6rem 0 1.2rem; }
+.opts li { position: relative; padding-left: 2.1rem; margin: .55rem 0; }
+.opts .opt-logo { position: absolute; left: 0; top: .05rem; width: 1.5rem; height: 1.5rem; border-radius: .38rem; }
+.opts .opt-logo.dl { padding: .2rem; border: 1px solid currentColor; opacity: .7; box-sizing: border-box; }
+.btn img.logo { width: 1.3rem; height: 1.3rem; border-radius: .32rem; flex: none; }
+.btn svg.dlb, .btn svg.glb { width: 1.15rem; height: 1.15rem; flex: none; }
+.avail { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem .9rem; margin-top: 1.1rem; font-size: .88rem; }
+.avail span { opacity: .65; }
+.avail a { display: inline-flex; align-items: center; gap: .4rem; color: inherit; text-decoration: none; font-weight: 600; opacity: .9; }
+.avail a:hover { opacity: 1; text-decoration: underline; }
+.avail img, .avail svg { width: 1.15rem; height: 1.15rem; border-radius: .28rem; flex: none; }
 </style>
 </head>
 <body>
@@ -185,6 +196,7 @@ footer .links a:hover { color: var(--accent); }
 					</a>
 					<a class="btn dark" href="app/" data-i="openWeb"></a>
 				</div>
+				<div class="avail"><span>Available on</span><a href="https://zapstore.dev/apps/io.github.oluengo.wavestr"><img src="img/zapstore.png" alt="">Zapstore</a><a href="https://github.com/ImranR98/Obtainium"><img src="img/obtainium.png" alt="">Obtainium</a><a href="app/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg>Web</a></div>
 				<ul class="meta" data-list="meta"></ul>
 			</div>
 			<div class="phones" id="phones"></div>
@@ -214,17 +226,17 @@ footer .links a:hover { color: var(--accent); }
 			<div class="install">
 				<div class="card">
 					<h3 data-i="androidTitle"></h3>
-					<ol data-list="androidSteps"></ol>
+					<ol class="opts" data-list="androidSteps"></ol>
 					<div class="actions">
-						<a class="btn grad" href="https://zapstore.dev/apps/io.github.oluengo.wavestr">Zapstore</a>
-						<a class="btn line" href="https://github.com/ImranR98/Obtainium">Obtainium</a>
-						<a class="btn line" href="https://github.com/oluengo/wavestr/releases/latest" data-i="apk"></a>
+						<a class="btn grad" href="https://zapstore.dev/apps/io.github.oluengo.wavestr"><img class="logo" src="img/zapstore.png" alt="">Zapstore</a>
+						<a class="btn line" href="https://github.com/ImranR98/Obtainium"><img class="logo" src="img/obtainium.png" alt="">Obtainium</a>
+						<a class="btn line" href="https://github.com/oluengo/wavestr/releases/latest"><svg class="dlb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span data-i="apk"></span></a>
 					</div>
 				</div>
 				<div class="card">
 					<h3 data-i="webTitle"></h3>
 					<ol data-list="webSteps"></ol>
-					<div class="actions"><a class="btn line" href="app/" data-i="openWeb"></a></div>
+					<div class="actions"><a class="btn line" href="app/"><svg class="glb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg><span data-i="openWeb"></span></a></div>
 				</div>
 			</div>
 			<div class="fp">
@@ -302,7 +314,7 @@ const I = {
 		shots: [["live", "Streams"], ["player", "Player"], ["radio", "Radio"], ["fav", "Favourites"]],
 		installTitle: "Install", installLead: "On Android, from Zapstore or GitHub, outside Google Play. On any other device, it runs in the browser.", webTitle: "Web and PWA", webSteps: ["Open Wavestr in your browser: nothing to install.", "If you like, install it as an app from the browser (Chrome or Edge: install icon; Safari: Share → “Add to Home Screen”).", "Sign in with a NIP-07 extension, a bunker or your npub; zaps with NWC, WebLN or QR."],
 		androidTitle: "Android",
-		androidSteps: ["<b>Zapstore</b>: install Wavestr from the Nostr app store. Updates arrive there.", "<b>Obtainium</b>: add <code>github.com/oluengo/wavestr</code> to get updates from GitHub.", "<b>APK</b>: download it from the latest release and open it. Allow installing from that source if Android asks."],
+		androidSteps: ["<img class='opt-logo' src='img/zapstore.png' alt=''><b>Zapstore</b>: install Wavestr from the Nostr app store. Updates arrive there.", "<img class='opt-logo' src='img/obtainium.png' alt=''><b>Obtainium</b>: add <code>github.com/oluengo/wavestr</code> to get updates from GitHub.", "<svg class='opt-logo dl' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M12 4v11M7 10l5 5 5-5M5 20h14'/></svg><b>APK</b>: download it from the latest release and open it. Allow installing from that source if Android asks."],
 		fpText: "Check that the certificate fingerprint matches (also in Settings → About):",
 		copy: "Copy fingerprint",
 		autoTitle: "Enable Android Auto (once)",
