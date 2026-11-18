@@ -4,7 +4,7 @@
 
 <p align="center"><b>Online radio and Nostr live streams in one app.</b></p>
 
-<p align="center"><a href="https://oluengo.github.io/wavestr/">Website</a> · <a href="https://oluengo.github.io/wavestr/app/">Open the app</a> · <a href="https://github.com/oluengo/wavestr/releases/latest">Download for Android</a></p>
+<p align="center"><a href="https://oluengo.github.io/wavestr/">Website</a> · <a href="https://oluengo.github.io/wavestr/app/">Open the app</a> · <a href="https://github.com/oluengo/wavestr/releases/latest">Download for Android</a> · <a href="https://zapstore.dev/apps/io.github.oluengo.wavestr">Zapstore</a></p>
 
 <table><tr>
 <td width="25%"><img src="site/img/live-en-dark.webp" alt="Streams"></td>
@@ -31,7 +31,7 @@
 
 | | How |
 |---|---|
-| **Android** | The APK from the [latest release](https://github.com/oluengo/wavestr/releases/latest), or add `https://github.com/oluengo/wavestr` to [Obtainium](https://github.com/ImranR98/Obtainium) to get updates. Also on Zapstore. |
+| **Android** | From [Zapstore](https://zapstore.dev/apps/io.github.oluengo.wavestr), the Nostr app store; or add `https://github.com/oluengo/wavestr` to [Obtainium](https://github.com/ImranR98/Obtainium) to get updates from GitHub; or the APK from the [latest release](https://github.com/oluengo/wavestr/releases/latest). |
 | **Web and PWA** | Open <https://oluengo.github.io/wavestr/app/> and, if you like, install it from the browser. Sign in with a NIP-07 extension, a bunker or your npub; zaps with NWC, WebLN or QR. |
 | **Desktop (Linux and Windows)** | In beta: `.deb`, `.tar.gz` and `.msi` in [Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta). Needs [VLC](https://www.videolan.org/vlc/). |
 | **Beta** | The [Wavestr Beta](https://github.com/oluengo/wavestr/releases/tag/wavestr-beta) pre-release (in Obtainium, “include pre-releases”). Installs separately, as Wavestr Beta, with its own data. |

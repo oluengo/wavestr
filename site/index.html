@@ -179,9 +179,9 @@ footer .links a:hover { color: var(--accent); }
 				<h1><span data-i="title1"></span> <span class="grad-text" data-i="title2"></span></h1>
 				<p data-i="intro"></p>
 				<div class="cta">
-					<a class="btn grad" href="https://github.com/oluengo/wavestr/releases/latest">
+					<a class="btn grad" href="#install">
 						<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 9.5l1.8-3.1a.4.4 0 0 0-.7-.4l-1.8 3.2A11 11 0 0 0 12 8.2c-1.8 0-3.4.4-4.9 1L5.3 6a.4.4 0 0 0-.7.4l1.8 3.1A10.5 10.5 0 0 0 1 18h22a10.5 10.5 0 0 0-5.4-8.5zM7 15.3a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm10 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
-						<span data-i="download"></span>
+						<span data-i="android"></span>
 					</a>
 					<a class="btn dark" href="app/" data-i="openWeb"></a>
 				</div>
@@ -213,19 +213,18 @@ footer .links a:hover { color: var(--accent); }
 			<p class="lead" data-i="installLead"></p>
 			<div class="install">
 				<div class="card">
-					<h3>Obtainium</h3>
-					<ol data-list="obtSteps"></ol>
-					<div class="actions"><a class="btn line" href="https://github.com/ImranR98/Obtainium" data-i="getObt"></a></div>
+					<h3 data-i="androidTitle"></h3>
+					<ol data-list="androidSteps"></ol>
+					<div class="actions">
+						<a class="btn grad" href="https://zapstore.dev/apps/io.github.oluengo.wavestr">Zapstore</a>
+						<a class="btn line" href="https://github.com/ImranR98/Obtainium">Obtainium</a>
+						<a class="btn line" href="https://github.com/oluengo/wavestr/releases/latest" data-i="apk"></a>
+					</div>
 				</div>
 				<div class="card">
 					<h3 data-i="webTitle"></h3>
 					<ol data-list="webSteps"></ol>
 					<div class="actions"><a class="btn line" href="app/" data-i="openWeb"></a></div>
-				</div>
-				<div class="card">
-					<h3 data-i="apkTitle"></h3>
-					<ol data-list="apkSteps"></ol>
-					<div class="actions"><a class="btn grad" href="https://github.com/oluengo/wavestr/releases/latest" data-i="download"></a></div>
 				</div>
 			</div>
 			<div class="fp">
@@ -286,7 +285,7 @@ const I = {
 		badge: "Android · Web",
 		title1: "Online radio and live streams from", title2: "Nostr",
 		intro: "One app to listen to stations from all over the world and to watch or listen to live streams from the people you follow on Nostr. With zaps, favourites in folders and Android Auto.",
-		download: "Download", openWeb: "Open in the browser",
+		android: "Get it on Android", apk: "Download APK", openWeb: "Open in the browser",
 		meta: ["Free and open source", "No ads", "No Nostr account needed", "English · Spanish · Catalan"],
 		phones: [["live", "Live streams"], ["player", "Player"], ["radio", "Radio"]],
 		featTitle: "All your live audio in one place",
@@ -301,11 +300,9 @@ const I = {
 		],
 		shotsTitle: "Take a look", shotsLead: "Screenshots of the interactive mockup, with sample data.",
 		shots: [["live", "Streams"], ["player", "Player"], ["radio", "Radio"], ["fav", "Favourites"]],
-		installTitle: "Install", installLead: "On Android it installs from GitHub, outside Google Play. On any other device, it runs in the browser.", webTitle: "Web and PWA", webSteps: ["Open Wavestr in your browser: nothing to install.", "If you like, install it as an app from the browser (Chrome or Edge: install icon; Safari: Share → “Add to Home Screen”).", "Sign in with a NIP-07 extension, a bunker or your npub; zaps with NWC, WebLN or QR."],
-		obtSteps: ["Install Obtainium.", "“Add app” and paste <code>https://github.com/oluengo/wavestr</code>.", "You'll be notified of every new version."],
-		getObt: "Get Obtainium",
-		apkTitle: "Direct APK",
-		apkSteps: ["Download the APK from the latest release.", "Open it and allow installing from that source if Android asks.", "To update, repeat the steps with the new version."],
+		installTitle: "Install", installLead: "On Android, from Zapstore or GitHub, outside Google Play. On any other device, it runs in the browser.", webTitle: "Web and PWA", webSteps: ["Open Wavestr in your browser: nothing to install.", "If you like, install it as an app from the browser (Chrome or Edge: install icon; Safari: Share → “Add to Home Screen”).", "Sign in with a NIP-07 extension, a bunker or your npub; zaps with NWC, WebLN or QR."],
+		androidTitle: "Android",
+		androidSteps: ["<b>Zapstore</b>: install Wavestr from the Nostr app store. Updates arrive there.", "<b>Obtainium</b>: add <code>github.com/oluengo/wavestr</code> to get updates from GitHub.", "<b>APK</b>: download it from the latest release and open it. Allow installing from that source if Android asks."],
 		fpText: "Check that the certificate fingerprint matches (also in Settings → About):",
 		copy: "Copy fingerprint",
 		autoTitle: "Enable Android Auto (once)",
@@ -317,7 +314,7 @@ const I = {
 		faq: [
 			["How much does it cost?", "Nothing. Wavestr is free, with no ads or purchases. Zaps are optional and go straight to the streamer."],
 			["Do I need a Nostr account?", "Not to listen to radio or streams from all of Nostr. With your npub you see live streams from people you follow; with Amber or a bunker you can chat, post and store favourites on Nostr."],
-			["Why isn't it on Google Play?", "It's published on GitHub and installed with Obtainium or the APK, the same choice as Usus."],
+			["Why isn't it on Google Play?", "It's published on Zapstore, the Nostr app store, and on GitHub (with Obtainium or the APK), like Usus and Tansu."],
 			["Is there a desktop version?", "Yes: the web app runs in any browser. And Linux and Windows versions are in beta (they need VLC), in Wavestr Beta."],
 			["Is there a beta?", "Yes: Wavestr Beta, with the latest changes before each release. It installs alongside the regular app, with its own data, and may have bugs. In Obtainium, turn on “include pre-releases”."],
 			["Something not working?", "Open an issue on GitHub or use Settings → About → Report a problem."]
