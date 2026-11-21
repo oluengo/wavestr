@@ -24,6 +24,9 @@ import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.Code
 import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.outlined.Lightbulb
+import androidx.compose.material.icons.outlined.NewReleases
+import androidx.compose.material.icons.outlined.Storefront
+import androidx.compose.material.icons.outlined.Update
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -52,6 +55,8 @@ import io.github.oluengo.wavestr.ui.theme.Rs
 import java.util.Locale
 
 const val REPO_URL = "https://github.com/oluengo/wavestr"
+const val ZAPSTORE_URL = "https://zapstore.dev/apps/io.github.oluengo.wavestr"
+const val OBTAINIUM_URL = "https://github.com/ImranR98/Obtainium"
 
 /** Las mismas direcciones que en Usus. Se copian al tocar. */
 private data class Donation(val name: String, val address: String, val color: Color, val symbol: String, val symbolColor: Color)
@@ -124,8 +129,6 @@ fun AboutSection() {
                         .background(MaterialTheme.colorScheme.background, RoundedCornerShape(8.dp))
                         .horizontalScroll(rememberScrollState()).padding(10.dp),
                 )
-                Text(stringResource(R.string.about_fingerprint), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
-                Text(SIGN_FP, fontFamily = FontFamily.Monospace, fontSize = 10.sp, lineHeight = 13.sp, color = Rs.colors.muted)
                 if (ctx.resources.configuration.locales[0].language != "en") {
                     Text(stringResource(R.string.about_legal_english), color = Rs.colors.muted, fontSize = 11.sp)
                 }
@@ -140,6 +143,39 @@ fun AboutSection() {
             LinkRow(Icons.Outlined.BugReport, R.string.about_bug, stringResource(R.string.about_bug_sub), "↗") { openUrl(ctx, issueUrl(ctx, bug = true)) }
             HorizontalDivider(color = Rs.colors.line)
             LinkRow(Icons.Outlined.Lightbulb, R.string.about_idea, stringResource(R.string.about_idea_sub), "↗") { openUrl(ctx, issueUrl(ctx, bug = false)) }
+        }
+    }
+
+    // Actualizaciones, como en Usus: la app no busca versiones; dónde se publican y cómo recibirlas.
+    androidx.compose.foundation.layout.Spacer(Modifier.size(4.dp))
+    io.github.oluengo.wavestr.ui.common.SectionLabel(stringResource(R.string.upd_title))
+    Group {
+        Text(stringResource(R.string.upd_body), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(bottom = 4.dp))
+        LinkRow(Icons.Outlined.Storefront, "Zapstore", stringResource(R.string.upd_zapstore_sub), "↗") { openUrl(ctx, ZAPSTORE_URL) }
+        HorizontalDivider(color = Rs.colors.line)
+        val copied = stringResource(R.string.copied)
+        LinkRow(Icons.Outlined.Update, "Obtainium", stringResource(R.string.upd_obtainium_sub, "github.com/oluengo/wavestr"), "↗",
+            trailing = {
+                androidx.compose.material3.IconButton(onClick = {
+                    clipboard.setText(AnnotatedString(REPO_URL)); Toast.makeText(ctx, copied, Toast.LENGTH_SHORT).show()
+                }) { Icon(Icons.Outlined.ContentCopy, stringResource(R.string.upd_copy_link), tint = Rs.colors.muted, modifier = Modifier.size(20.dp)) }
+            },
+        ) { openUrl(ctx, OBTAINIUM_URL) }
+        HorizontalDivider(color = Rs.colors.line)
+        LinkRow(Icons.Outlined.NewReleases, stringResource(R.string.upd_releases),
+            stringResource(if (BuildConfig.BETA) R.string.upd_releases_beta_sub else R.string.upd_releases_sub), "↗") {
+            openUrl(ctx, if (BuildConfig.BETA) "$REPO_URL/releases/tag/wavestr-beta" else "$REPO_URL/releases/latest")
+        }
+        var fpOpen by remember { mutableStateOf(false) }
+        Text(
+            (if (fpOpen) "▾ " else "▸ ") + stringResource(R.string.upd_check_apk),
+            color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(top = 6.dp).clickable { fpOpen = !fpOpen }.padding(vertical = 4.dp),
+        )
+        if (fpOpen) {
+            Text(stringResource(R.string.about_fingerprint), color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
+            Text(SIGN_FP, fontFamily = FontFamily.Monospace, fontSize = 10.sp, lineHeight = 13.sp, color = Rs.colors.muted,
+                modifier = Modifier.padding(top = 4.dp).clickable { clipboard.setText(AnnotatedString(SIGN_FP)); Toast.makeText(ctx, copied, Toast.LENGTH_SHORT).show() })
         }
     }
 
@@ -174,7 +210,11 @@ fun AboutSection() {
 private fun shortAddr(a: String) = if (a.length > 24) "${a.take(12)}…${a.takeLast(8)}" else a
 
 @Composable
-private fun LinkRow(icon: ImageVector, @StringRes title: Int, sub: String, end: String, onClick: () -> Unit) {
+private fun LinkRow(icon: ImageVector, @StringRes title: Int, sub: String, end: String, onClick: () -> Unit) =
+    LinkRow(icon, stringResource(title), sub, end, onClick = onClick)
+
+@Composable
+private fun LinkRow(icon: ImageVector, title: String, sub: String, end: String, trailing: (@Composable () -> Unit)? = null, onClick: () -> Unit) {
     Row(
         Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -182,9 +222,10 @@ private fun LinkRow(icon: ImageVector, @StringRes title: Int, sub: String, end: 
     ) {
         Icon(icon, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(22.dp))
         Column(Modifier.weight(1f)) {
-            Text(stringResource(title), fontWeight = FontWeight.SemiBold)
+            Text(title, fontWeight = FontWeight.SemiBold)
             Text(sub, color = Rs.colors.muted, style = MaterialTheme.typography.bodySmall)
         }
+        trailing?.invoke()
         Text(end, color = Rs.colors.muted)
     }
 }

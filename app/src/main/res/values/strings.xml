@@ -509,4 +509,13 @@
     <string name="share_nostr_done">Posted on Nostr</string>
     <string name="share_nostr_failed">Couldn\'t post. Try again.</string>
     <string name="share_nostr_text_list">My list “%1$s” on Wavestr 📻\n%2$s</string>
+    <string name="upd_title">Updates</string>
+    <string name="upd_body">Wavestr doesn\'t check for new versions on its own. They\'re published on Zapstore and GitHub; installing a new one over the old keeps your data.</string>
+    <string name="upd_zapstore_sub">The Nostr app store: install and update Wavestr there.</string>
+    <string name="upd_obtainium_sub">Free app that watches GitHub and alerts you or installs each new version. In “Add app”, paste: %1$s</string>
+    <string name="upd_copy_link">Copy link</string>
+    <string name="upd_releases">See versions</string>
+    <string name="upd_releases_sub">The latest release on GitHub, with its notes and the APK.</string>
+    <string name="upd_releases_beta_sub">The Wavestr Beta pre-release on GitHub (in Obtainium, turn on “include pre-releases”).</string>
+    <string name="upd_check_apk">Check the APK is genuine</string>
 </resources>

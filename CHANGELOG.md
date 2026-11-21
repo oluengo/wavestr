@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- **Updates in About**, as in Usus: Wavestr doesn't check for new versions by itself; links to Zapstore, Obtainium (with the link to copy) and the GitHub releases, and how to check the APK is genuine.
+
 ## [0.13.1]
 
 - **Remove a streamer from favourites while they're offline:** the item options now show Share, View profile and Remove from favourites at the top, with the folders below. The streamer's profile also has a favourite button next to Follow.

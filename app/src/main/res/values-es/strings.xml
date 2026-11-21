@@ -508,4 +508,13 @@
     <string name="share_nostr_done">Publicado en Nostr</string>
     <string name="share_nostr_failed">No se ha podido publicar. Inténtalo otra vez.</string>
     <string name="share_nostr_text_list">Mi lista «%1$s» en Wavestr 📻\n%2$s</string>
+    <string name="upd_title">Actualizaciones</string>
+    <string name="upd_body">Wavestr no busca versiones nuevas por su cuenta. Se publican en Zapstore y en GitHub; al instalar una nueva encima, tus datos se mantienen.</string>
+    <string name="upd_zapstore_sub">La tienda de apps de Nostr: instala y actualiza Wavestr desde ahí.</string>
+    <string name="upd_obtainium_sub">App gratuita que vigila GitHub y te avisa o instala cada versión nueva. En «Añadir app», pega: %1$s</string>
+    <string name="upd_copy_link">Copiar enlace</string>
+    <string name="upd_releases">Ver versiones</string>
+    <string name="upd_releases_sub">La última versión en GitHub, con sus novedades y el APK.</string>
+    <string name="upd_releases_beta_sub">La versión previa Wavestr Beta en GitHub (en Obtainium, activa «incluir versiones previas»).</string>
+    <string name="upd_check_apk">Comprobar que el APK es original</string>
 </resources>
