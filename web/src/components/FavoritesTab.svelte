@@ -97,7 +97,7 @@
 {/if}
 
 {#if !L.favorites.length && !L.folders.length}
-  <p class="muted pad">{t('web_fav_empty')}</p>
+  <div class="none"><p class="bold">{t('fav_none_title')}</p><p class="muted small">{t('fav_empty_all')}</p></div>
 {/if}
 
 {#if folders.length}
@@ -193,6 +193,7 @@
   h1 { font-size: 24px; letter-spacing: -.02em; }
   .crumbs { flex-wrap: wrap; gap: 2px; margin-bottom: 4px; }
   .pad { padding: 14px 4px; }
+  .none { text-align: center; padding: 36px 12px; display: grid; gap: 6px; }
   .folders { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
   .folder { padding: 6px 4px 6px 12px; }
   .fic { color: var(--accent); display: grid; place-items: center; width: 36px; height: 36px; background: var(--accent-soft); border-radius: 10px; flex: none; }

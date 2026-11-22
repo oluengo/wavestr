@@ -56,9 +56,10 @@ import io.github.oluengo.wavestr.ui.profile.ProfileScreen
 import io.github.oluengo.wavestr.ui.settings.SettingsScreen
 
 private enum class Tab(val route: String, @StringRes val label: Int, val icon: ImageVector) {
+    // Favoritos primero: se abre con lo tuyo, al momento, mientras los streams se cargan.
+    FAVORITES("favorites", R.string.tab_favorites, Icons.Outlined.FavoriteBorder),
     LIVE("live", R.string.tab_live, Icons.Outlined.Sensors),
     RADIO("radio", R.string.tab_radio, Icons.Outlined.Radio),
-    FAVORITES("favorites", R.string.tab_favorites, Icons.Outlined.FavoriteBorder),
     SETTINGS("settings", R.string.tab_settings, Icons.Outlined.Settings),
 }
 
@@ -137,7 +138,7 @@ fun WavestrRoot(c: AppContainer) {
                 },
             ) { pad ->
                 // consumeWindowInsets: las pantallas no vuelven a sumar la barra de estado (el reproductor quedaba bajado).
-                NavHost(nav, startDestination = Tab.LIVE.route, modifier = Modifier.padding(pad).consumeWindowInsets(pad)) {
+                NavHost(nav, startDestination = Tab.FAVORITES.route, modifier = Modifier.padding(pad).consumeWindowInsets(pad)) {
                     composable(Tab.LIVE.route) {
                         LiveScreen(c, onPlay = { c.player.play(it); openPlayer() }, onSignIn = { nav.navigate("me") }, onOpenMe = { nav.navigate("me") }, onOpenProfile = { nav.navigate("profile/$it") })
                     }
@@ -148,6 +149,7 @@ fun WavestrRoot(c: AppContainer) {
                         FavoritesScreen(
                             c, onOpenPlayer = openPlayer,
                             onOpenProfile = { nav.navigate("profile/$it") }, onOpenMe = { nav.navigate("me") },
+                            onGoRadio = { nav.goTab(Tab.RADIO.route) }, onGoLive = { nav.goTab(Tab.LIVE.route) },
                         )
                     }
                     composable(Tab.SETTINGS.route) { SettingsScreen(c, onOpenMe = { nav.navigate("me") }) }

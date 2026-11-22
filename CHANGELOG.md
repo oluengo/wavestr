@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- **Favourites first:** the app now opens on Favourites (Android, desktop and web), with a clear message and shortcuts to Radios and Streams when you have none yet, instead of a blank screen while streams load.
+- **Favourites ≠ Nostr follows:** the Favourites screen now says they're saved in Wavestr, separate from who you follow on Nostr.
 - **Updates in About**, as in Usus: Wavestr doesn't check for new versions by itself; links to Zapstore, Obtainium (with the link to copy) and the GitHub releases, and how to check the APK is genuine.
 
 ## [0.13.1]

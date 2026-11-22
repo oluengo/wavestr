@@ -18,6 +18,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.CreateNewFolder
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Folder
@@ -68,7 +69,7 @@ private sealed interface Dialog {
 }
 
 @Composable
-fun FavoritesScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenProfile: (String) -> Unit, onOpenMe: () -> Unit) {
+fun FavoritesScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenProfile: (String) -> Unit, onOpenMe: () -> Unit, onGoRadio: () -> Unit = {}, onGoLive: () -> Unit = {}) {
     val lib by c.library.library.collectAsStateWithLifecycle()
     var current by rememberSaveable { mutableStateOf<String?>(null) }
     if (current != null && lib.folder(current) == null) current = null
@@ -123,9 +124,23 @@ fun FavoritesScreen(c: AppContainer, onOpenPlayer: () -> Unit, onOpenProfile: (S
                     HorizontalDivider(color = Rs.colors.line)
                 }
             }
+            // Sin nada guardado: un aviso claro y atajos a radios y streams, en vez de una lista vacía.
+            if (lib.favorites.isEmpty() && lib.folders.isEmpty()) item {
+                Column(Modifier.fillMaxWidth().padding(top = 32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(Icons.Outlined.FavoriteBorder, null, tint = Rs.colors.muted, modifier = Modifier.size(40.dp))
+                    Text(stringResource(R.string.fav_none_title), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 10.dp))
+                    Text(stringResource(R.string.fav_empty_all), color = Rs.colors.muted, style = MaterialTheme.typography.bodyMedium,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center, modifier = Modifier.padding(top = 6.dp))
+                    Row(Modifier.padding(top = 16.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        androidx.compose.material3.FilledTonalButton(onClick = onGoRadio) { Text(stringResource(R.string.tab_radio)) }
+                        androidx.compose.material3.FilledTonalButton(onClick = onGoLive) { Text(stringResource(R.string.tab_live)) }
+                    }
+                }
+            } else {
             item { SectionLabel(stringResource(if (current == null) R.string.fav_no_folder else R.string.fav_in_folder) + " · ${items.size}") }
             if (items.isEmpty()) item {
                 EmptyNote(stringResource(if (lib.favorites.isEmpty()) R.string.fav_empty_all else R.string.fav_empty_folder))
+            }
             }
             items(items, key = { it.key }) { item ->
                 ItemRow(c, item, live = item.hostPubkey?.let { h -> live?.let { h in it } }, onClick = {

@@ -117,7 +117,7 @@ fun FavoritesScreen(c: DesktopContainer) {
             contentPadding = PaddingValues(20.dp), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             if (folders.isEmpty() && items.isEmpty()) item(span = { GridItemSpan(maxLineSpan) }) {
-                EmptyNote(t(if (current == null) "fav_empty_all" else "fav_empty_folder"))
+                EmptyNote(if (current == null) t("fav_none_title") + ". " + t("fav_empty_all") else t("fav_empty_folder"))
             }
             items(folders, key = { "f:" + it.id }) { f ->
                 FolderCard(f, lib.countIn(f.id).first, onOpen = { current = f.id }, onRename = { naming = f }, onDelete = { deleting = f })

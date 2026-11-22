@@ -63,15 +63,16 @@ import io.github.oluengo.wavestr.nostr.Nip19
 import io.github.oluengo.wavestr.nostr.Profile
 
 enum class Tab(val label: String, val icon: ImageVector) {
+    // Favoritos primero, como en Android: se abre con lo tuyo mientras los streams se cargan.
+    FAVORITES("tab_favorites", Icons.Outlined.FavoriteBorder),
     LIVE("tab_live", Icons.Outlined.Sensors),
     RADIO("tab_radio", Icons.Outlined.Radio),
-    FAVORITES("tab_favorites", Icons.Outlined.FavoriteBorder),
     SETTINGS("tab_settings", Icons.Outlined.Settings),
 }
 
 /** Pestaña actual (también la usa la prueba de arranque de CI para abrir Radios). */
 object SmokeHooks {
-    val tab = mutableStateOf(Tab.LIVE)
+    val tab = mutableStateOf(Tab.FAVORITES)
 }
 
 /** Acciones de navegación que necesitan las pantallas. */

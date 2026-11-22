@@ -18,8 +18,8 @@
   import { incoming } from './components/incoming.svelte'
 
   type Tab = 'live' | 'radio' | 'favs' | 'settings'
-  const TABS: [Tab, string, string][] = [['live', 'live', 'tab_live'], ['radio', 'radio', 'tab_radio'], ['favs', 'heart', 'tab_favorites'], ['settings', 'settings', 'tab_settings']]
-  let tab = $state<Tab>((localStorage.getItem('wavestr.tab') as Tab) || 'live')
+  const TABS: [Tab, string, string][] = [['favs', 'heart', 'tab_favorites'], ['live', 'live', 'tab_live'], ['radio', 'radio', 'tab_radio'], ['settings', 'settings', 'tab_settings']]
+  let tab = $state<Tab>((localStorage.getItem('wavestr.tab') as Tab) || 'favs')
   let wide = $state(window.innerWidth >= 1000)
   let sheet = $state(false)
   let installEvent = $state<any>(null)

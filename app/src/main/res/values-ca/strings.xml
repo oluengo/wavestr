@@ -108,14 +108,14 @@
     <string name="retry">Torna-ho a provar</string>
     <string name="fav_add">Afegeix als preferits</string>
     <string name="fav_remove">Treu dels preferits</string>
-    <string name="fav_sub">Les teves ràdios i streamers, en carpetes</string>
+    <string name="fav_sub">Desats a Wavestr, a part dels teus seguits de Nostr</string>
     <string name="fav_new_folder">Carpeta nova</string>
     <string name="fav_inside">Dins de «%s»</string>
     <string name="fav_folders">Carpetes</string>
     <string name="fav_subfolders">Subcarpetes</string>
     <string name="fav_no_folder">Sense carpeta</string>
     <string name="fav_in_folder">En aquesta carpeta</string>
-    <string name="fav_empty_all">Encara no tens preferits. Toca ♥ en una ràdio o al reproductor per desar-la.</string>
+    <string name="fav_empty_all">Toca ♥ en una ràdio, un stream o un perfil per desar-lo aquí. Els teus preferits es desen a Wavestr, no als teus seguits de Nostr.</string>
     <string name="fav_empty_folder">Buida. Fes servir ⋮ en un preferit per moure’l aquí.</string>
     <string name="fav_empty_short">Buida</string>
     <string name="fav_folder_options">Opcions de %s</string>
@@ -517,4 +517,5 @@
     <string name="upd_releases_sub">L’última versió a GitHub, amb les novetats i l’APK.</string>
     <string name="upd_releases_beta_sub">La versió prèvia Wavestr Beta a GitHub (a Obtainium, activa «inclou versions prèvies»).</string>
     <string name="upd_check_apk">Comprova que l’APK és original</string>
+    <string name="fav_none_title">Encara no tens preferits</string>
 </resources>

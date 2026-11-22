@@ -109,14 +109,14 @@
     <string name="retry">Try again</string>
     <string name="fav_add">Add to favorites</string>
     <string name="fav_remove">Remove from favorites</string>
-    <string name="fav_sub">Your radios and streamers, in folders</string>
+    <string name="fav_sub">Saved in Wavestr, separate from who you follow on Nostr</string>
     <string name="fav_new_folder">New folder</string>
     <string name="fav_inside">Inside «%s»</string>
     <string name="fav_folders">Folders</string>
     <string name="fav_subfolders">Subfolders</string>
     <string name="fav_no_folder">No folder</string>
     <string name="fav_in_folder">In this folder</string>
-    <string name="fav_empty_all">No favorites yet. Tap ♥ on a radio or in the player to save it.</string>
+    <string name="fav_empty_all">Tap ♥ on a station, a stream or a profile to save it here. Your favourites are kept in Wavestr, not in your Nostr follows.</string>
     <string name="fav_empty_folder">Empty. Use ⋮ on a favorite to move it here.</string>
     <string name="fav_empty_short">Empty</string>
     <string name="fav_folder_options">Options for %s</string>
@@ -518,4 +518,5 @@
     <string name="upd_releases_sub">The latest release on GitHub, with its notes and the APK.</string>
     <string name="upd_releases_beta_sub">The Wavestr Beta pre-release on GitHub (in Obtainium, turn on “include pre-releases”).</string>
     <string name="upd_check_apk">Check the APK is genuine</string>
+    <string name="fav_none_title">You don\'t have any favourites yet</string>
 </resources>
