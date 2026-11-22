@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.14.0]
 
 - **Favourites first:** the app now opens on Favourites (Android, desktop and web), with a clear message and shortcuts to Radios and Streams when you have none yet, instead of a blank screen while streams load.
 - **Favourites ≠ Nostr follows:** the Favourites screen now says they're saved in Wavestr, separate from who you follow on Nostr.
