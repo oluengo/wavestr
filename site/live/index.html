@@ -138,12 +138,13 @@ const tag = (e, k) => (e.tags.find(t => t[0] === k) || [])[1];
     ${tags ? `<div class="tags">${esc(tags)}</div>` : ''}
     ${ev ? '' : '<p class="muted">The stream couldn’t be found on the relays right now. It may have ended; you can still open it on Nostr.</p>'}
     <div class="actions">
-      <a class="btn primary" href="../app/#stream=${code}">Watch on the web</a>
+      <a class="btn primary" href="wavestr://live#${code}">Open in Wavestr</a>
+      <a class="btn" href="../app/#stream=${code}">Watch on the web</a>
       <a class="btn" href="nostr:${code}">Open in a Nostr app</a>
       <a class="btn" href="https://njump.me/${code}">View the Nostr event</a>
       <a class="btn" href="https://github.com/oluengo/wavestr#readme">Get Wavestr</a>
     </div>
-    <p class="note">Wavestr plays online radio and Nostr live streams (Android, desktop and web).</p>`;
+    <p class="note">With Wavestr installed (Android), “Open in Wavestr” plays the stream in the app. Wavestr plays online radio and Nostr live streams on Android, desktop and the web.</p>`;
 })();
 </script>
 </body>

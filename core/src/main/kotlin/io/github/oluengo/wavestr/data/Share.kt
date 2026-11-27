@@ -66,6 +66,24 @@ data class Shared(
 
     fun link(): String = "$LINK_BASE#${toCode()}"
 
+    /** El elemento suelto que se comparte (una emisora o un streamer), o null si es una lista. */
+    val single: FavItem? get() = items.singleOrNull()?.takeIf { kind == Kind.ITEM }
+
+    /**
+     * Texto de compartir un stream (WAV-001): [intro] («discovering a new #stream on #nostr via
+     * #wavestr», ya traducido), el enlace a la página del stream (o al de compartir si no hay
+     * evento), dos saltos de línea y el streamer: en Nostr solo la mención (el cliente pone el
+     * nombre); fuera de Nostr, nombre y enlace a njump. null si no es un streamer suelto.
+     */
+    fun streamText(intro: String, liveAddress: String?, nostr: Boolean): String? {
+        val item = single ?: return null
+        val host = item.hostPubkey ?: return null
+        val url = liveAddress?.let { liveLink(it) } ?: link()
+        val npub = io.github.oluengo.wavestr.nostr.Nip19.hexToNpub(host)
+        val who = if (nostr) "nostr:$npub" else "${item.title} https://njump.me/$npub"
+        return "$intro\n$url\n\n$who"
+    }
+
     // ---------- Texto ----------
 
     /** Texto legible: nombre y dirección de cada emisora (y enlace de cada streamer), por carpetas. */
@@ -139,6 +157,11 @@ data class Shared(
         /** Enlace a la página del stream con dirección «30311:pubkey:d»; null si no es válida. */
         fun liveLink(address: String, relays: List<String> = emptyList()): String? =
             io.github.oluengo.wavestr.nostr.Nip19.naddr(address, relays)?.let { "$LIVE_LINK_BASE#$it" }
+
+        /** Dirección del stream de un enlace de su página (…/wavestr/live/#naddr… o wavestr://live#naddr…); null si no lo es. */
+        fun liveAddressFrom(url: String): String? =
+            url.takeIf { "/wavestr/live" in it || it.startsWith("wavestr://live") }?.substringAfter('#', "")?.takeIf { it.isNotEmpty() }
+                ?.let { io.github.oluengo.wavestr.nostr.Nip19.addressOf(it) }
 
         fun ofItem(item: FavItem) = Shared(Kind.ITEM, item.title, emptyList(), listOf(item.copy(folderId = null)))
 

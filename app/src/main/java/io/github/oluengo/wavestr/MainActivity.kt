@@ -39,7 +39,10 @@ class MainActivity : AppCompatActivity() {
         handleShare(intent)
     }
 
-    /** Enlace compartido (https://oluengo.github.io/wavestr/s/#… o wavestr://s#…): vista previa para importar. */
+    /**
+     * Enlace compartido (https://oluengo.github.io/wavestr/s/#… o wavestr://s#…): vista previa para importar.
+     * Enlace de la página de un stream (…/wavestr/live/#naddr…): a reproducirlo.
+     */
     private fun handleShare(intent: android.content.Intent?) {
         if (intent?.action == io.github.oluengo.wavestr.reminder.Reminders.ACTION_OPEN) {
             val a = intent.getStringExtra(io.github.oluengo.wavestr.reminder.Reminders.EXTRA_ADDRESS)
@@ -48,6 +51,11 @@ class MainActivity : AppCompatActivity() {
             return
         }
         val data = intent?.takeIf { it.action == android.content.Intent.ACTION_VIEW }?.dataString ?: return
+        // Página de un stream: a reproducirlo (o, si no está en directo, el perfil del streamer).
+        io.github.oluengo.wavestr.data.Shared.liveAddressFrom(data)?.let { address ->
+            container.openStream.value = address to address.split(':')[1]
+            return
+        }
         val code = io.github.oluengo.wavestr.data.Shared.codeFrom(data) ?: return
         val shared = io.github.oluengo.wavestr.data.Shared.decode(code)
         if (shared == null) {

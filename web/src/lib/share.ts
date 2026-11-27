@@ -2,6 +2,7 @@
 import { lib, type FavItem, type Folder, type Library } from './library'
 import type { Station } from './radio'
 import { npub } from './nostr'
+import { nip19 } from 'nostr-tools'
 
 export const LINK_BASE = 'https://oluengo.github.io/wavestr/s/'
 export type Kind = 'i' | 'f' | 'a'
@@ -82,6 +83,32 @@ export async function decode(code: string): Promise<Shared | null> {
     if (!items.length) return null
     return { kind, name: o.n || '', folders: folders.map(f => (f.parent && !ids.has(f.parent) ? { ...f, parent: undefined } : f)), items }
   } catch { return null }
+}
+
+/** Página web de un stream de Nostr (en inglés): el naddr del evento va tras la almohadilla. */
+export const LIVE_LINK_BASE = 'https://oluengo.github.io/wavestr/live/'
+
+/** Enlace a la página del stream con dirección «30311:pubkey:d»; null si no es válida. */
+export function liveLink(address: string): string | null {
+  const [kind, pubkey, ...rest] = address.split(':')
+  if (!/^[0-9a-f]{64}$/.test(pubkey || '') || !Number(kind)) return null
+  return LIVE_LINK_BASE + '#' + nip19.naddrEncode({ kind: Number(kind), pubkey, identifier: rest.join(':') })
+}
+
+/**
+ * Texto de compartir un stream o una emisora sueltos (WAV-001/002), fuera de Nostr: el stream con
+ * enlace a su página y el streamer con nombre y enlace a njump; la emisora con «listening … via
+ * #wavestr». null si es una lista.
+ */
+export async function singleText(s: Shared, liveAddress: string | null, t: (k: string, ...a: any[]) => string): Promise<string | null> {
+  if (s.kind !== 'i' || s.items.length !== 1) return null
+  const i = s.items[0]
+  if (i.host) {
+    const url = (liveAddress && liveLink(liveAddress)) || (await link(s))
+    return `${t('share_stream_intro')}\n${url}\n\n${i.title} https://njump.me/${npub(i.host)}`
+  }
+  if (i.station) return t('share_radio_text', i.title, await link(s))
+  return null
 }
 
 export function toText(s: Shared): string {

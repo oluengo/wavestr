@@ -102,6 +102,24 @@ object Nip19 {
         tlv(3, byteArrayOf((kind ushr 24).toByte(), (kind ushr 16).toByte(), (kind ushr 8).toByte(), kind.toByte()))
         return Bech32.encode("naddr", out.toByteArray())
     }
+
+    /** Dirección «kind:pubkey:d» de un naddr (acepta «nostr:» delante); null si no es válido. */
+    fun addressOf(naddr: String): String? {
+        val (hrp, b) = Bech32.decode(naddr.trim().removePrefix("nostr:")) ?: return null
+        if (hrp != "naddr") return null
+        var i = 0; var d: String? = null; var pk: String? = null; var kind: Int? = null
+        while (i + 2 <= b.size) {
+            val type = b[i].toInt() and 0xff; val len = b[i + 1].toInt() and 0xff
+            if (i + 2 + len > b.size) return null
+            val v = b.copyOfRange(i + 2, i + 2 + len); i += 2 + len
+            when (type) {
+                0 -> d = String(v, Charsets.UTF_8)
+                2 -> if (len == 32) pk = v.toHex()
+                3 -> if (len == 4) kind = v.fold(0) { acc, x -> (acc shl 8) or (x.toInt() and 0xff) }
+            }
+        }
+        return if (d != null && pk != null && kind != null) "$kind:$pk:$d" else null
+    }
 }
 
 fun ByteArray.toHex(): String = joinToString("") { "%02x".format(it) }

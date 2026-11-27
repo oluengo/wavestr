@@ -404,7 +404,7 @@ fun sharedSummary(sh: Shared): String = listOfNotNull(
 
 /** Compartir: enlace o texto (al portapapeles) o lista M3U (a un archivo). */
 @Composable
-fun ShareDialog(shared: Shared, onDismiss: () -> Unit) {
+fun ShareDialog(shared: Shared, onDismiss: () -> Unit, liveAddress: String? = null) {
     val clipboard = LocalClipboardManager.current
     var msg by remember { mutableStateOf<String?>(null) }
     AlertDialog(
@@ -423,7 +423,12 @@ fun ShareDialog(shared: Shared, onDismiss: () -> Unit) {
                     val f = fd.files.firstOrNull() ?: return@ShareRow
                     msg = t(if (runCatching { f.writeText(shared.toM3u()) }.isSuccess) "backup_m3u_exported" else "backup_write_error")
                 }
-                ShareRow(t("share_text"), t("share_text_sub")) { clipboard.setText(AnnotatedString(shared.toText())); msg = t("desk_share_copied") }
+                // Texto: un stream o una emisora sueltos con el texto de compartir (WAV-001/002); listas, como siempre.
+                ShareRow(t("share_text"), t("share_text_sub")) {
+                    val radio = shared.single?.takeIf { it.station != null }?.let { t("share_radio_text", it.title, shared.link()) }
+                    val text = shared.streamText(t("share_stream_intro"), liveAddress, nostr = false) ?: radio ?: shared.toText()
+                    clipboard.setText(AnnotatedString(text)); msg = t("desk_share_copied")
+                }
                 msg?.let { Text(it, color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.bodySmall, modifier = Modifier.padding(top = 6.dp)) }
             }
         },

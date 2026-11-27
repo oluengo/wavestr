@@ -2,11 +2,11 @@
   import { app } from '../lib/app.svelte'
   import { t, plural } from '../lib/i18n'
   import { libraryToM3u } from '../lib/library'
-  import { asLibrary, link, stations, streamers, toText, type Shared } from '../lib/share'
+  import { asLibrary, link, singleText, stations, streamers, toText, type Shared } from '../lib/share'
   import Icon from './Icon.svelte'
   import Modal from './Modal.svelte'
 
-  let { shared, onclose }: { shared: Shared; onclose: () => void } = $props()
+  let { shared, onclose, liveAddress = null }: { shared: Shared; onclose: () => void; liveAddress?: string | null } = $props()
   const summary = $derived([stations(shared) && plural('share_stations', stations(shared), stations(shared)), streamers(shared) && plural('share_streamers', streamers(shared), streamers(shared))].filter(Boolean).join(t('share_and')))
 
   async function out(text: string, title: string) {
@@ -14,7 +14,7 @@
     await navigator.clipboard.writeText(text); app.notify(t('desk_share_copied'))
   }
   async function shareLink() { await out(t('share_link_text', shared.name, await link(shared)), shared.name); onclose() }
-  async function shareText() { await out(toText(shared), shared.name); onclose() }
+  async function shareText() { await out((await singleText(shared, liveAddress, t)) ?? toText(shared), shared.name); onclose() }
   function m3u() {
     const blob = new Blob([libraryToM3u(asLibrary(shared))], { type: 'audio/x-mpegurl' })
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob)

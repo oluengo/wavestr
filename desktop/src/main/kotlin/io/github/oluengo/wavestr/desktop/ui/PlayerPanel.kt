@@ -177,7 +177,7 @@ fun PlayerPanel(c: DesktopContainer, onClose: (() -> Unit)?) {
 
     if (fullscreen && np != null) FullscreenVideo(c, onExit = { fullscreen = false })
     zap?.let { z -> ZapDialog(c, z, onDismiss = { zap = null }, onZapped = { chat.refreshNow() }) }
-    share?.let { ShareDialog(it, onDismiss = { share = null }) }
+    share?.let { ShareDialog(it, onDismiss = { share = null }, liveAddress = liveAddress) }
 }
 
 /** Barra de arriba: miniatura, título y canción o anfitrión, compartir y parar. */

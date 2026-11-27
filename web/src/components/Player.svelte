@@ -206,7 +206,7 @@
 </section>
 
 {#if zap}<ZapDialog target={zap} onclose={() => (zap = null)} onzapped={() => chat.refresh()} />{/if}
-{#if share}<ShareDialog shared={share} onclose={() => (share = null)} />{/if}
+{#if share}<ShareDialog shared={share} {liveAddress} onclose={() => (share = null)} />{/if}
 
 <style>
   .player { display: flex; flex-direction: column; height: 100%; background: var(--surface); }

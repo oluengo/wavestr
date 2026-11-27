@@ -2,8 +2,9 @@
 
 ## [Unreleased]
 
-- **Share a radio station on Nostr:** the note reads "listening <station> via #wavestr : listen here: <link>" (in the app's language, same hashtag), with the link to its Wavestr share page.
-- **Share a stream on Nostr:** the note reads "discovering a new #stream on #nostr via #wavestr" (in the app's language, same hashtags), with a link to the stream's new Wavestr page and the streamer's name and npub. The page (oluengo.github.io/wavestr/live/, in English) shows the stream and links to the Nostr event, to Nostr apps and to watch it on the Wavestr web app.
+- **Share a stream:** the text reads "discovering a new #stream on #nostr via #wavestr" (in the app's language, same hashtags), with a link to the stream's new Wavestr page and, after two line breaks, the streamer: on Nostr just the mention (nostr:npub…, the client shows the name); in Share › Text, the name and an njump link. Also in Share › Text on desktop and web.
+- **New stream page** (oluengo.github.io/wavestr/live/, in English): shows the stream and links to open it in Wavestr (Android), watch it on the web app, open it in a Nostr app or view the Nostr event. On Android, /wavestr/live/ links open the app and play the stream.
+- **Share a radio station:** "listening <station> via #wavestr : listen here: <link>" (in the app's language, same hashtag), in the Nostr note and in Share › Text on Android, desktop and web.
 
 ## [0.14.0]
 

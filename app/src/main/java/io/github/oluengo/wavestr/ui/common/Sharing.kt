@@ -109,8 +109,13 @@ fun ShareDialog(c: AppContainer, shared: Shared, onDismiss: () -> Unit, liveAddr
                     stringResource(if (shared.stations == 0) R.string.share_m3u_none else R.string.share_m3u_sub),
                     enabled = shared.stations > 0,
                 ) { sendM3u(ctx, shared); onDismiss() }
+                // Texto: para un stream o una emisora sueltos, el mismo texto que en Nostr (WAV-001/002),
+                // con el streamer como nombre y enlace a njump; para listas, la lista de siempre.
+                val streamIntro = stringResource(R.string.share_stream_intro)
+                val radioText = shared.single?.takeIf { it.station != null }?.let { stringResource(R.string.share_radio_text, it.title, shared.link()) }
                 ShareOption(Icons.AutoMirrored.Outlined.Notes, R.string.share_text, stringResource(R.string.share_text_sub)) {
-                    sendText(ctx, shared.name, shared.toText()); onDismiss()
+                    val text = shared.streamText(streamIntro, liveAddress, nostr = false) ?: radioText ?: shared.toText()
+                    sendText(ctx, shared.name, text); onDismiss()
                 }
             }
         },
@@ -148,13 +153,9 @@ private fun NostrPostDialog(c: AppContainer, shared: Shared, liveAddress: String
     val host = single?.hostPubkey
     val initial = when {
         // Stream: enlace a su página web (y de ahí al evento de Nostr) o, si no hay evento, al enlace
-        // de compartir; dos saltos de línea y el nombre con la mención (npub).
-        host != null -> stringResource(
-            R.string.share_nostr_stream,
-            liveAddress?.let { Shared.liveLink(it) } ?: shared.link(),
-            single?.title.orEmpty(), "nostr:" + Nip19.hexToNpub(host),
-        )
-        single?.station != null -> stringResource(R.string.share_nostr_radio, single?.title.orEmpty(), shared.link())
+        // de compartir; dos saltos de línea y la mención (npub), sin repetir el nombre.
+        host != null -> shared.streamText(stringResource(R.string.share_stream_intro), liveAddress, nostr = true).orEmpty()
+        single?.station != null -> stringResource(R.string.share_radio_text, single?.title.orEmpty(), shared.link())
         single != null -> stringResource(R.string.share_nostr_text, single.title, shared.link()) + "\n\n#wavestr"
         else -> stringResource(R.string.share_nostr_text_list, shared.name, shared.link()) + "\n\n#wavestr"
     }
