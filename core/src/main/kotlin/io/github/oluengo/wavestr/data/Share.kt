@@ -133,6 +133,13 @@ data class Shared(
     companion object {
         const val LINK_BASE = "https://oluengo.github.io/wavestr/s/"
 
+        /** Página web de un stream de Nostr (en inglés): el naddr del evento va tras la almohadilla. */
+        const val LIVE_LINK_BASE = "https://oluengo.github.io/wavestr/live/"
+
+        /** Enlace a la página del stream con dirección «30311:pubkey:d»; null si no es válida. */
+        fun liveLink(address: String, relays: List<String> = emptyList()): String? =
+            io.github.oluengo.wavestr.nostr.Nip19.naddr(address, relays)?.let { "$LIVE_LINK_BASE#$it" }
+
         fun ofItem(item: FavItem) = Shared(Kind.ITEM, item.title, emptyList(), listOf(item.copy(folderId = null)))
 
         /** La carpeta y todo lo que cuelga de ella; la carpeta queda en la raíz. */

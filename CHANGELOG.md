@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- **Share a stream on Nostr:** the note reads "discovering a new #stream on #nostr via #wavestr" (in the app's language, same hashtags), with a link to the stream's new Wavestr page and the streamer's name and npub. The page (oluengo.github.io/wavestr/live/, in English) shows the stream and links to the Nostr event, to Nostr apps and to watch it on the Wavestr web app.
+
 ## [0.14.0]
 
 - **Favourites first:** the app now opens on Favourites (Android, desktop and web), with a clear message and shortcuts to Radios and Streams when you have none yet, instead of a blank screen while streams load.

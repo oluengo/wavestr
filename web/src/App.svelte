@@ -4,7 +4,8 @@
   import { player } from './lib/player.svelte'
   import { t } from './lib/i18n'
   import { codeFrom, decode } from './lib/share'
-  import { liveGlobal, profiles, isLiveNow } from './lib/nostr'
+  import { liveGlobal, profiles, isLiveNow, stream } from './lib/nostr'
+  import { nip19 } from 'nostr-tools'
   import { liveNow } from './lib/live'
   import { radio, webPlayable } from './lib/radio'
   import Icon from './components/Icon.svelte'
@@ -37,6 +38,19 @@
 
   async function checkHash() {
     const h = location.hash
+    // Enlace de la página de un stream (/wavestr/live/): #stream=naddr1… → a reproducirlo.
+    if (h.startsWith('#stream=')) {
+      history.replaceState(null, '', location.pathname)
+      try {
+        const d = nip19.decode(h.slice(8).replace(/^nostr:/, ''))
+        if (d.type !== 'naddr') throw 0
+        const s = await stream(`${d.data.kind}:${d.data.pubkey}:${d.data.identifier}`, app.pubkey)
+        if (!s?.streamingUrl) { app.notify(t('fav_offline')); return }
+        const host = (await profiles([s.hostPubkey], app.pubkey))[s.hostPubkey]
+        await player.play(liveNow(s, host)); openPlayer()
+      } catch { app.notify(t('share_bad_link')) }
+      return
+    }
     if (!h.startsWith('#import=')) return
     const sh = await decode(codeFrom(h) || '')
     history.replaceState(null, '', location.pathname)

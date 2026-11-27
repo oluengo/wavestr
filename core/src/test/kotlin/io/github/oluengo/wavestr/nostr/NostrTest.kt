@@ -121,4 +121,11 @@ class NostrTest {
         val tags = noteTags("Radio Paradise on Wavestr https://x.y/s/#ab12 nostr:$npub #Wavestr #radio #wavestr")
         assertEquals(listOf(listOf("p", pk), listOf("t", "wavestr"), listOf("t", "radio")), tags)
     }
+
+    @Test fun naddrMatchesNip19() {
+        // nostr-tools (nip19.decode) lo lee como kind 30311, autor aaaa…, d «stream-1», relay nos.lol.
+        val pk = "a".repeat(64)
+        assertEquals("naddr1qqy8xarjv4sk6tf3qyxhwumn8ghj7mn0wvhxcmmvqgs242424242424242424242424242424242424242424242424242srqsqqqan863pdrw", Nip19.naddr("30311:$pk:stream-1", listOf("wss://nos.lol")))
+        assertNull(Nip19.naddr("30311:xyz:stream-1"))
+    }
 }

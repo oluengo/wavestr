@@ -518,4 +518,5 @@
     <string name="upd_releases_beta_sub">La versió prèvia Wavestr Beta a GitHub (a Obtainium, activa «inclou versions prèvies»).</string>
     <string name="upd_check_apk">Comprova que l’APK és original</string>
     <string name="fav_none_title">Encara no tens preferits</string>
+    <string name="share_nostr_stream">descobrint un nou #stream a #nostr amb #wavestr\n%1$s\n\n%2$s %3$s</string>
 </resources>

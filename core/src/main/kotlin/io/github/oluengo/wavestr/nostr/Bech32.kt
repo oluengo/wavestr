@@ -83,6 +83,25 @@ object Nip19 {
     }
 
     fun shortNpub(hex: String): String = hexToNpub(hex).let { it.take(10) + "…" + it.takeLast(4) }
+
+    /**
+     * naddr (NIP-19) de un evento direccionable a partir de su dirección «kind:pubkey:d», con hasta
+     * dos relays de pista. null si la dirección no es válida.
+     */
+    fun naddr(address: String, relays: List<String> = emptyList()): String? {
+        val parts = address.split(":", limit = 3)
+        if (parts.size < 3) return null
+        val kind = parts[0].toIntOrNull() ?: return null
+        val pk = parts[1].lowercase().takeIf { it.length == 64 && it.all { c -> c in "0123456789abcdef" } } ?: return null
+        val d = parts[2].toByteArray(Charsets.UTF_8).takeIf { it.size < 256 } ?: return null
+        val out = java.io.ByteArrayOutputStream()
+        fun tlv(type: Int, value: ByteArray) { out.write(type); out.write(value.size); out.write(value) }
+        tlv(0, d)
+        relays.map { it.toByteArray(Charsets.UTF_8) }.filter { it.size < 256 }.take(2).forEach { tlv(1, it) }
+        tlv(2, pk.hexToBytes())
+        tlv(3, byteArrayOf((kind ushr 24).toByte(), (kind ushr 16).toByte(), (kind ushr 8).toByte(), kind.toByte()))
+        return Bech32.encode("naddr", out.toByteArray())
+    }
 }
 
 fun ByteArray.toHex(): String = joinToString("") { "%02x".format(it) }

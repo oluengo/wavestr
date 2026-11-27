@@ -519,4 +519,5 @@
     <string name="upd_releases_beta_sub">The Wavestr Beta pre-release on GitHub (in Obtainium, turn on “include pre-releases”).</string>
     <string name="upd_check_apk">Check the APK is genuine</string>
     <string name="fav_none_title">You don\'t have any favourites yet</string>
+    <string name="share_nostr_stream">discovering a new #stream on #nostr via #wavestr\n%1$s\n\n%2$s %3$s</string>
 </resources>

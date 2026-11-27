@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Wavestr · Nostr stream</title>
+<link rel="icon" href="../icon.svg">
+<style>
+  :root { --bg:#f6f6f9; --card:#fff; --ink:#16151d; --mute:#6b6a78; --line:#e7e6ee; --acc:#e0457b; --acc2:#f59e0b; --btn:#16151d; --btnInk:#fff; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0d0c14; --card:#17161f; --ink:#f2f1f7; --mute:#9a99a8; --line:#2a2935; --btn:#f2f1f7; --btnInk:#0d0c14; } }
+  * { box-sizing:border-box; margin:0; }
+  body { background:var(--bg); color:var(--ink); font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; padding:28px 16px 48px; }
+  .wrap { max-width:560px; margin:0 auto; }
+  header { display:flex; align-items:center; gap:10px; margin-bottom:22px; }
+  header img { width:34px; height:34px; border-radius:9px; }
+  header b { font-size:19px; letter-spacing:-.02em; }
+  h1 { font-size:24px; letter-spacing:-.02em; line-height:1.2; }
+  .sub { color:var(--mute); margin:4px 0 18px; }
+  .actions { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; }
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:11px 16px; border-radius:12px; font-weight:600; text-decoration:none; border:1px solid var(--line); color:var(--ink); background:var(--card); cursor:pointer; font-size:14px; }
+  .btn.primary { background:linear-gradient(135deg,var(--acc2),var(--acc) 60%,#c026d3); color:#fff; border:0; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:6px 14px; }
+  .folder { display:flex; align-items:center; gap:6px; color:var(--mute); font-size:12.5px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; padding:14px 0 4px; }
+  .item { display:flex; align-items:center; gap:12px; padding:9px 0; border-top:1px solid var(--line); }
+  .folder + .item, .card > .item:first-child { border-top:0; }
+  .art { width:40px; height:40px; border-radius:10px; flex:none; background:linear-gradient(135deg,#f59e0b,#e0457b); color:#fff; display:grid; place-items:center; font-weight:700; font-size:14px; overflow:hidden; }
+  .art.round { border-radius:50%; }
+  .art img { width:100%; height:100%; object-fit:cover; background:#fff; }
+  .t { font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .m { color:var(--mute); font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .grow { flex:1; min-width:0; }
+  .note { color:var(--mute); font-size:13px; margin-top:18px; }
+  .err { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px; }
+  a { color:inherit; }
+  .hero { width:100%; aspect-ratio:16/9; border-radius:16px; background:linear-gradient(135deg,#2b1d4a,#0e0b18 60%,#3b1530); overflow:hidden; margin-bottom:16px; }
+  .hero img { width:100%; height:100%; object-fit:cover; display:block; }
+  .badge { display:inline-block; font-size:11px; font-weight:700; letter-spacing:.04em; padding:2px 7px; border-radius:5px; background:var(--line); color:var(--mute); vertical-align:middle; margin-right:6px; }
+  .badge.live { background:#e5483b; color:#fff; }
+  .host { display:flex; align-items:center; gap:10px; margin:6px 0 18px; text-decoration:none; }
+  .summary { margin:0 0 18px; white-space:pre-line; }
+  .tags { color:var(--mute); font-size:13px; margin-bottom:18px; }
+  .muted { color:var(--mute); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><img src="../icon.svg" alt=""><b>Wavestr</b></header>
+  <main id="app"><p class="muted">Loading the stream…</p></main>
+</div>
+<script>
+// Page of a Nostr live stream (NIP-53, kind 30311). The naddr of the event goes after the #.
+const RELAYS = ['wss://relay.damus.io', 'wss://nos.lol', 'wss://relay.primal.net', 'wss://purplepag.es'];
+const app = document.getElementById('app');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const initials = s => String(s || '?').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+const CH = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
+function bech32(str) {
+  const s = str.trim().toLowerCase(), pos = s.lastIndexOf('1');
+  if (pos < 1) return null;
+  const data = [...s.slice(pos + 1, -6)].map(c => CH.indexOf(c));
+  if (data.some(x => x < 0)) return null;
+  let acc = 0, bits = 0; const out = [];
+  for (const v of data) { acc = (acc << 5) | v; bits += 5; while (bits >= 8) { bits -= 8; out.push((acc >> bits) & 255); } }
+  return { hrp: s.slice(0, pos), bytes: out };
+}
+function encode(hrp, bytes) {
+  const G = [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3];
+  const poly = v => { let c = 1; for (const x of v) { const b = c >>> 25; c = ((c & 0x1ffffff) << 5) ^ x; for (let i = 0; i < 5; i++) if ((b >> i) & 1) c ^= G[i]; } return c; };
+  const hx = [...hrp].map(c => c.charCodeAt(0) >> 5).concat([0], [...hrp].map(c => c.charCodeAt(0) & 31));
+  let acc = 0, bits = 0; const v = [];
+  for (const b of bytes) { acc = (acc << 8) | b; bits += 8; while (bits >= 5) { bits -= 5; v.push((acc >> bits) & 31); } }
+  if (bits) v.push((acc << (5 - bits)) & 31);
+  const mod = poly(hx.concat(v, [0, 0, 0, 0, 0, 0])) ^ 1;
+  for (let i = 0; i < 6; i++) v.push((mod >>> (5 * (5 - i))) & 31);
+  return hrp + '1' + v.map(x => CH[x]).join('');
+}
+const hex = b => b.map(x => x.toString(16).padStart(2, '0')).join('');
+const npub = pk => encode('npub', pk.match(/../g).map(h => parseInt(h, 16)));
+function naddr(code) {
+  const r = bech32(code); if (!r || r.hrp !== 'naddr') return null;
+  const o = { relays: [] }; let i = 0; const b = r.bytes;
+  while (i + 2 <= b.length) {
+    const t = b[i], l = b[i + 1], v = b.slice(i + 2, i + 2 + l); i += 2 + l;
+    if (t === 0) o.d = new TextDecoder().decode(new Uint8Array(v));
+    else if (t === 1) o.relays.push(new TextDecoder().decode(new Uint8Array(v)));
+    else if (t === 2 && l === 32) o.pubkey = hex(v);
+    else if (t === 3 && l === 4) o.kind = ((v[0] << 24) | (v[1] << 16) | (v[2] << 8) | v[3]) >>> 0;
+  }
+  return o.pubkey && o.kind && o.d != null ? o : null;
+}
+/** Newest event matching the filter, from several relays at once (gives up after 6 s). */
+function query(relays, filter) {
+  return new Promise(resolve => {
+    let best = null, left = relays.length;
+    const done = () => { if (--left <= 0) resolve(best); };
+    const timer = setTimeout(() => resolve(best), 6000);
+    for (const url of relays) {
+      let ws; try { ws = new WebSocket(url); } catch { done(); continue; }
+      const id = 'w' + Math.random().toString(36).slice(2, 8);
+      const stop = () => { try { ws.close(); } catch {} done(); if (left <= 0) clearTimeout(timer); };
+      ws.onopen = () => ws.send(JSON.stringify(['REQ', id, filter]));
+      ws.onmessage = m => {
+        let msg; try { msg = JSON.parse(m.data); } catch { return; }
+        if (msg[0] === 'EVENT' && msg[1] === id && (!best || msg[2].created_at > best.created_at)) best = msg[2];
+        if (msg[0] === 'EOSE' && msg[1] === id) stop();
+      };
+      ws.onerror = stop;
+    }
+  });
+}
+const tag = (e, k) => (e.tags.find(t => t[0] === k) || [])[1];
+(async () => {
+  const code = location.hash.slice(1).replace(/^nostr:/, '');
+  const a = naddr(code);
+  if (!a) { app.innerHTML = '<div class="err">This link can’t be read. It may be incomplete: ask for it to be sent again.</div>'; return; }
+  const relays = [...new Set([...a.relays, ...RELAYS])];
+  const ev = await query(relays, { kinds: [a.kind], authors: [a.pubkey], '#d': [a.d], limit: 1 });
+  const hostPk = (ev && (ev.tags.find(t => t[0] === 'p' && (t[3] || '').toLowerCase() === 'host') || [])[1]) || a.pubkey;
+  const meta = await query(relays, { kinds: [0], authors: [hostPk], limit: 1 });
+  let p = {}; try { p = meta ? JSON.parse(meta.content) : {}; } catch {}
+  const hostName = p.display_name || p.name || npub(hostPk).slice(0, 12) + '…';
+  const title = (ev && tag(ev, 'title')) || 'Nostr stream';
+  const status = ev ? (tag(ev, 'status') || '').toLowerCase() : '';
+  const image = ev && tag(ev, 'image');
+  const summary = ev && tag(ev, 'summary');
+  const tags = ev ? ev.tags.filter(t => t[0] === 't').map(t => '#' + t[1]).slice(0, 8).join(' ') : '';
+  const badge = status === 'live' ? '<span class="badge live">LIVE</span>' : status === 'planned' ? '<span class="badge">UPCOMING</span>' : status === 'ended' ? '<span class="badge">ENDED</span>' : '';
+  document.title = 'Wavestr · ' + title;
+  app.innerHTML = `
+    <div class="hero">${image ? `<img src="${esc(image)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}</div>
+    <h1>${badge}${esc(title)}</h1>
+    <a class="host" href="https://njump.me/${npub(hostPk)}">
+      <div class="art round">${p.picture ? `<img src="${esc(p.picture)}" alt="" referrerpolicy="no-referrer" onerror="this.replaceWith(document.createTextNode('${esc(initials(hostName))}'))">` : esc(initials(hostName))}</div>
+      <div class="grow"><div class="t">${esc(hostName)}</div><div class="m">Nostr streamer</div></div>
+    </a>
+    ${summary ? `<p class="summary">${esc(summary)}</p>` : ''}
+    ${tags ? `<div class="tags">${esc(tags)}</div>` : ''}
+    ${ev ? '' : '<p class="muted">The stream couldn’t be found on the relays right now. It may have ended; you can still open it on Nostr.</p>'}
+    <div class="actions">
+      <a class="btn primary" href="../app/#stream=${code}">Watch on the web</a>
+      <a class="btn" href="nostr:${code}">Open in a Nostr app</a>
+      <a class="btn" href="https://njump.me/${code}">View the Nostr event</a>
+      <a class="btn" href="https://github.com/oluengo/wavestr#readme">Get Wavestr</a>
+    </div>
+    <p class="note">Wavestr plays online radio and Nostr live streams (Android, desktop and web).</p>`;
+})();
+</script>
+</body>
+</html>

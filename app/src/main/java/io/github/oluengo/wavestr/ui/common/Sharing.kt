@@ -72,11 +72,11 @@ fun sharedSummary(sh: Shared): String {
 
 /** Elegir cómo compartir: en Nostr (si hay cuenta), enlace, lista M3U o texto. */
 @Composable
-fun ShareDialog(c: AppContainer, shared: Shared, onDismiss: () -> Unit) {
+fun ShareDialog(c: AppContainer, shared: Shared, onDismiss: () -> Unit, liveAddress: String? = null) {
     val ctx = LocalContext.current
     val settings by c.settings.flow.collectAsStateWithLifecycle(initialValue = null)
     var composing by remember { mutableStateOf(false) }
-    if (composing) { NostrPostDialog(c, shared, onDismiss); return }
+    if (composing) { NostrPostDialog(c, shared, liveAddress, onDismiss); return }
     if (shared.items.isEmpty()) {
         AlertDialog(
             onDismissRequest = onDismiss,
@@ -139,15 +139,23 @@ private fun ShareOption(icon: ImageVector, title: Int, sub: String, enabled: Boo
  * mención; se puede editar antes de publicar. Se firma con Amber o bunker y se publica en tus relays.
  */
 @Composable
-private fun NostrPostDialog(c: AppContainer, shared: Shared, onDismiss: () -> Unit) {
+private fun NostrPostDialog(c: AppContainer, shared: Shared, liveAddress: String?, onDismiss: () -> Unit) {
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
     val settings by c.settings.flow.collectAsStateWithLifecycle(initialValue = null)
-    val host = shared.items.singleOrNull()?.hostPubkey
-    val initial = buildString {
-        append(stringResource(if (shared.kind == Shared.Kind.ITEM) R.string.share_nostr_text else R.string.share_nostr_text_list, shared.name, shared.link()))
-        if (host != null) append("\nnostr:").append(Nip19.hexToNpub(host))
-        append("\n\n#wavestr")
+    // Texto de WAV-001 (stream); los hashtags son los mismos en todos los idiomas.
+    val single = shared.items.singleOrNull()?.takeIf { shared.kind == Shared.Kind.ITEM }
+    val host = single?.hostPubkey
+    val initial = when {
+        // Stream: enlace a su página web (y de ahí al evento de Nostr) o, si no hay evento, al enlace
+        // de compartir; dos saltos de línea y el nombre con la mención (npub).
+        host != null -> stringResource(
+            R.string.share_nostr_stream,
+            liveAddress?.let { Shared.liveLink(it) } ?: shared.link(),
+            single?.title.orEmpty(), "nostr:" + Nip19.hexToNpub(host),
+        )
+        single != null -> stringResource(R.string.share_nostr_text, single.title, shared.link()) + "\n\n#wavestr"
+        else -> stringResource(R.string.share_nostr_text_list, shared.name, shared.link()) + "\n\n#wavestr"
     }
     var text by remember { mutableStateOf(initial) }
     var sending by remember { mutableStateOf(false) }
