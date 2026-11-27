@@ -519,4 +519,5 @@
     <string name="upd_check_apk">Comprobar que el APK es original</string>
     <string name="fav_none_title">Aún no tienes favoritos</string>
     <string name="share_nostr_stream">descubriendo un nuevo #stream en #nostr con #wavestr\n%1$s\n\n%2$s %3$s</string>
+    <string name="share_nostr_radio">escuchando %1$s con #wavestr : escúchala aquí: %2$s</string>
 </resources>

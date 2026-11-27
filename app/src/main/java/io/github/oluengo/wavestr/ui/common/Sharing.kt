@@ -143,7 +143,7 @@ private fun NostrPostDialog(c: AppContainer, shared: Shared, liveAddress: String
     val ctx = LocalContext.current
     val scope = rememberCoroutineScope()
     val settings by c.settings.flow.collectAsStateWithLifecycle(initialValue = null)
-    // Texto de WAV-001 (stream); los hashtags son los mismos en todos los idiomas.
+    // Textos de WAV-001 (stream) y WAV-002 (radio); los hashtags son los mismos en todos los idiomas.
     val single = shared.items.singleOrNull()?.takeIf { shared.kind == Shared.Kind.ITEM }
     val host = single?.hostPubkey
     val initial = when {
@@ -154,6 +154,7 @@ private fun NostrPostDialog(c: AppContainer, shared: Shared, liveAddress: String
             liveAddress?.let { Shared.liveLink(it) } ?: shared.link(),
             single?.title.orEmpty(), "nostr:" + Nip19.hexToNpub(host),
         )
+        single?.station != null -> stringResource(R.string.share_nostr_radio, single?.title.orEmpty(), shared.link())
         single != null -> stringResource(R.string.share_nostr_text, single.title, shared.link()) + "\n\n#wavestr"
         else -> stringResource(R.string.share_nostr_text_list, shared.name, shared.link()) + "\n\n#wavestr"
     }

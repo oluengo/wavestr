@@ -519,4 +519,5 @@
     <string name="upd_check_apk">Comprova que l’APK és original</string>
     <string name="fav_none_title">Encara no tens preferits</string>
     <string name="share_nostr_stream">descobrint un nou #stream a #nostr amb #wavestr\n%1$s\n\n%2$s %3$s</string>
+    <string name="share_nostr_radio">escoltant %1$s amb #wavestr : escolta-la aquí: %2$s</string>
 </resources>
